@@ -8,6 +8,7 @@ count = []
 @client.event
 async def on_ready():
     print(f'{client.user.name} has connected to Discord!')
+    await client.change_presence(activity=discord.Playing(name="with the Counting Channel"))
 
 @client.event
 async def on_message(message):
