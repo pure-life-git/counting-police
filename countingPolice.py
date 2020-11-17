@@ -30,7 +30,7 @@ async def on_message(message):
     correctNumber = count[len(count)-1]+1
     print('Correct Number: ',str(correctNumber))
     
-    if int(message.content) != correctNumber or str(message.content).isnumeric == False:
+    if str(message.content).isnumeric == False or int(message.content) != correctNumber:
         #await message.author.edit(roles='Counting Clown', reason='Ya done goofed the count')
         server = client.get_guild(599808865093287956)
         role = discord.utils.get(server.roles,name='Counting Clown')
