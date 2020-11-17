@@ -1,4 +1,5 @@
 import discord
+import os
 from discord.ext import commands
 
 client = discord.Client()
@@ -41,4 +42,4 @@ async def on_message(message):
         count.append(int(message.content))
 
 
-client.run('Nzc3NzAxNTQ4MjYzNjA0MjI0.X7HRAg.ayFBwNrlslG6xUL9qVMtVzkESBM')
+client.run(os.environ['token'])
