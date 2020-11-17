@@ -37,7 +37,7 @@ async def on_message(message):
         #message.author.edit(discord.utils.get(message.guild.role, name = 'Counting Clown'))
         await message.delete()
         count.clear()
-        await message.channel.send(message.author.mention + 'entered' + str(message.content) + 'and screwed up the count. Shame them!')
+        await message.channel.send(message.author.mention + ' entered ' + str(message.content) + ' and screwed up the count. Shame them!')
     else:
         count.append(int(message.content))
 
