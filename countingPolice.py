@@ -16,7 +16,7 @@ async def on_message(message):
     if message.author == client.user:
         return
     
-    if message.content.startswith('$decide'):
+    if str(message.content) == '$decide':
         await message.channel.send(random.randint(0,1))
 
 @client.event
