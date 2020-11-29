@@ -1,5 +1,6 @@
 import discord
 import os
+import random
 from discord.ext import commands
 
 client = discord.Client()
@@ -9,6 +10,14 @@ count = []
 async def on_ready():
     print(f'{client.user.name} has connected to Discord!')
     await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening,name="Joe Mama"))
+
+@client.event
+async def on_message(message):
+    if message.author == client.user:
+        return
+    
+    if message.content.startswith('$decide'):
+        await message.channel.send(random.randint(0,1))
 
 @client.event
 async def on_message(message):
