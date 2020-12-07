@@ -2,6 +2,7 @@ import discord
 import os
 import random
 from discord.ext import commands
+from time import sleep
 
 #bot = discord.bot()
 bot = commands.Bot(command_prefix = '.')
@@ -59,6 +60,12 @@ async def poll(ctx,*args):
         m = await ctx.send(embed=embedVar)
         await m.add_reaction('✅')
         await m.add_reaction('❌')
+
+    sleep(60)
+
+    ctx.send('The poll has closed!')
+
+
 
 
 @bot.event
