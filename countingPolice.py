@@ -18,7 +18,7 @@ async def on_ready():
 async def decide(ctx,arg1,arg2):
     number = random.randint(int(arg1),int(arg2))
     await ctx.send(number)
-
+"""
 @bot.command()
 async def game(ctx, *, arg):
     games.append(str(arg))
@@ -32,7 +32,7 @@ async def choosegame(ctx):
 @bot.command()
 async def ping(ctx):
     await ctx.send('Pong!')
-
+"""
 @bot.event
 async def on_message(message):
     if message.author == bot.user:
