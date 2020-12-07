@@ -38,7 +38,6 @@ async def on_message(message):
             game = message.content.split(' ',1)[1]
             games.append(game)
             await message.channel.send(game + ' has been added to the games list.')
-            await message.channel.send('\n'.join('{}: *{}*'.format(*k) for k in enumerate(games)))
         
         if message.content.startswith('$choicegame'):
             num = random.randint(0,len(games)-1)
@@ -48,6 +47,9 @@ async def on_message(message):
             for i in range(len(games)):
                 games.pop()
             await message.channel.send('The list of games has been successfully cleared.')
+
+        if message.content.startswith('$listgames'):
+            await message.channel.send('\n'.join('{}: *{}*'.format(*k) for k in enumerate(games)))
 
         return
     else:
