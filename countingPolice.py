@@ -43,6 +43,11 @@ async def on_message(message):
         if message.content.startswith('$choicegame'):
             num = random.randint(0,len(games)-1)
             await message.channel.send(games[num] + ' has been chosen by machine engineering randomness!')
+        
+        if message.content.startswith('$cleargames'):
+            for i in len(games):
+                games.pop()
+            await message.channel.send('The list of games has been successfully cleared.')
 
         return
     else:
