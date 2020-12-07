@@ -54,7 +54,7 @@ async def poll(ctx,*args):
         await m.add_reaction('✅')
         await m.add_reaction('❌')
     else:
-        embedVar = discord.Embed(title='Poll', description = '{}'.format(args))
+        embedVar = discord.Embed(title='Poll', description = args)
         embedVar.add_field(name="Yes", value='<:white_check_mark:785597865081962528>', inline=False)
         embedVar.add_field(name="No", value='<:x:785598446983839784>', inline=False)
         m = await ctx.send(embed=embedVar)
