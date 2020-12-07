@@ -1,11 +1,10 @@
 import discord
 import os
-import string
 import random
 from discord.ext import commands
 
 #client = discord.Client()
-client = commands.Bot(command_prefix='.')
+client = commands.Bot(command_prefix = '.')
 
 count = []
 games = []
@@ -20,14 +19,17 @@ async def decide(ctx,arg1,arg2):
     number = random.randint(int(arg1),int(arg2))
     await ctx.send(number)
 
+@client.command()
 async def game(ctx, *, arg):
     games.append(str(arg))
     await ctx.send('**Successfully added **' + str(arg) + '** to the Game List.**')
 
+@client.command()
 async def choosegame(ctx):
     num = random.randint(0, len(games)-1)
     await ctx.send(games[num] + '** has been chosen by machine engineered randomness!**')
 
+@client.command()
 async def ping(ctx):
     await ctx.send('Pong!')
 
