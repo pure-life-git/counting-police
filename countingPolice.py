@@ -1,6 +1,7 @@
 import discord
 import os
 import string
+import random
 from discord.ext import commands
 
 client = discord.Client()
@@ -22,14 +23,17 @@ async def on_message(message):
         print(messageChannel)
         print(type(messageChannel))
 
-        if message.content.lower().startswith('im') or str(message.content).lower().startswith("i'm"): 
+        if message.content.lower().startswith('im') or str(message.content).lower().startswith("i'm"):
             await message.channel.send('Hi ' + message.content.split(' ',1)[1] + ", I'm dad!")
         
         if message.content.lower().startswith('i am'):
             await message.channel.send('Hi ' + message.content.lower().split('i am ',1)[1] + ", I'm dad!")
 
-        if str(message.channel) != 'counting':
-            return
+        if message.content.startswith('$decide'):
+            number = random.randin(message.content[1],message.content[2])
+            await message.channel.send(number)
+
+        return
     else:
         if len(count) == 0:
             count.append(int(message.content))
