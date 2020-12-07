@@ -61,13 +61,6 @@ async def poll(ctx,*args):
         await m.add_reaction('✅')
         await m.add_reaction('❌')
 
-    sleep(60)
-
-    ctx.send('The poll has closed!')
-
-
-
-
 @bot.event
 async def on_message(message):
     await bot.process_commands(message)
