@@ -93,7 +93,7 @@ async def on_message(message):
             await message.channel.send(message.author.mention + ' entered ' + str(message.content) + ' and screwed up the count. Shame them!')
         else:
             count.append(int(message.content))
-    bot.process_commands(message)
+    await bot.process_commands(message)
 
 
 bot.run(os.environ['token'])
