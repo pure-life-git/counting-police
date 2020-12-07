@@ -28,11 +28,11 @@ async def game(ctx, *, arg):
 async def choosegame(ctx):
     num = random.randint(0, len(games)-1)
     await ctx.send(games[num] + '** has been chosen by machine engineered randomness!**')
-
+"""
 @bot.command()
 async def ping(ctx):
     await ctx.send('Pong!')
-"""
+
 @bot.event
 async def on_message(message):
     if message.author == bot.user:
