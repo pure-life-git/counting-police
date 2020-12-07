@@ -22,7 +22,7 @@ async def on_message(message):
     print(type(messageChannel))
 
     if message.content.startswith('im') or message.content.startswith('Im') or message.content.startswith('IM') or message.content.startswith('iM') or message.content.startswith("i'm") or message.content.startswith("I'm") or message.content.startswith("I'M") or message.content.startswith("i'M") or message.content.startswith('i am') or message.content.startswith('I am') or message.content.startswith('I Am') or message.content.startswith('I AM') or message.content.startswith('i Am') or message.content.startswith('i AM') or message.content.startswith('i aM'):
-        await message.channel.send(str('Hi' + message.content.split('m')[1] + ", I'm dad!"))
+        await message.channel.send(str('Hi' + ' '.join(message.content.split('m')[1:]) + ", I'm dad!"))
 
     if str(message.channel) != 'counting':
         return
