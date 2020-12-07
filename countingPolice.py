@@ -48,12 +48,12 @@ async def poll(ctx,*args):
     if len(args) == 0:
         embedVar = discord.Embed(title='Poll', description = 'Vote')
         embedVar.add_field(name="Yes", value='<:white_check_mark:785597865081962528>', inline=False)
-        embedVar.add_field(name="No", value='<:x:8becd37ab9d13cdfe37c08c496a9def3>', inline=False)
+        embedVar.add_field(name="No", value='<:x:785598446983839784>', inline=False)
         await ctx.send(embed=embedVar)
     else:
         embedVar = discord.Embed(title='Poll', description = '{}'.format(args))
         embedVar.add_field(name="Yes", value='<:white_check_mark:785597865081962528>', inline=False)
-        embedVar.add_field(name="No", value='<:x:8becd37ab9d13cdfe37c08c496a9def3>', inline=False)
+        embedVar.add_field(name="No", value='<:x:785598446983839784>', inline=False)
         await ctx.send(embed=embedVar)
 
 
