@@ -37,6 +37,7 @@ async def choosegame(ctx):
 
 @bot.event
 async def on_message(message):
+    await bot.process_commands(message)
     if message.author == bot.user:
             return
     if str(message.channel) != 'counting':
@@ -94,7 +95,6 @@ async def on_message(message):
             await message.channel.send(message.author.mention + ' entered ' + str(message.content) + ' and screwed up the count. Shame them!')
         else:
             count.append(int(message.content))
-    await bot.process_commands(message)
 
 
-bot.run(os.environ['token'], bot=True)
+bot.run(os.environ['token'])
