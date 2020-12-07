@@ -49,16 +49,16 @@ async def poll(ctx,*args):
         embedVar = discord.Embed(title='Poll', description = 'Vote')
         embedVar.add_field(name="Yes", value='<:white_check_mark:785597865081962528>', inline=False)
         embedVar.add_field(name="No", value='<:x:785598446983839784>', inline=False)
-        await ctx.send(embed=embedVar)
-        await ctx.add_reaction('<:white_check_mark:785597865081962528>')
-        await ctx.add_reaction('<:x:785598446983839784>')
+        m = await ctx.send(embed=embedVar)
+        await m.add_reaction('<:white_check_mark:785597865081962528>')
+        await m.add_reaction('<:x:785598446983839784>')
     else:
         embedVar = discord.Embed(title='Poll', description = '{}'.format(args))
         embedVar.add_field(name="Yes", value='<:white_check_mark:785597865081962528>', inline=False)
         embedVar.add_field(name="No", value='<:x:785598446983839784>', inline=False)
-        await ctx.send(embed=embedVar)
-        await ctx.add_reaction('<:white_check_mark:785597865081962528>')
-        await ctx.add_reaction('<:x:785598446983839784>')
+        m = await ctx.send(embed=embedVar)
+        await m.add_reaction('<:white_check_mark:785597865081962528>')
+        await m.add_reaction('<:x:785598446983839784>')
 
 
 @bot.event
