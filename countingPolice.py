@@ -6,6 +6,7 @@ from discord.ext import commands
 
 client = discord.Client()
 count = []
+games = []
 
 @client.event
 async def on_ready():
@@ -32,6 +33,16 @@ async def on_message(message):
         if message.content.startswith('$decide'):
             number = random.randint(int(message.content.split(' ')[1]),int(message.content.split(' ')[2]))
             await message.channel.send(number)
+
+        if message.content.startswith('$game'):
+            game = message.content.split(' ',1)[1]
+            games.append(game)
+            await message.channel.send(game + ' has been added to the games list.')
+            await message.channel.send(games)
+        
+        if message.content.startswith('$gamedecide'):
+            num = random.randint(0,len(games)-1)
+            await message.channel.send(games[num] + ' has been chosen by machine engineering randomness!')
 
         return
     else:
