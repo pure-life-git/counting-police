@@ -30,7 +30,7 @@ async def on_message(message):
             await message.channel.send('Hi ' + message.content.lower().split('i am ',1)[1] + ", I'm dad!")
 
         if message.content.startswith('$decide'):
-            number = random.randin(message.content[1],message.content[2])
+            number = random.randint(message.content[1],message.content[2])
             await message.channel.send(number)
 
         return
