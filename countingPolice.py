@@ -16,9 +16,15 @@ async def on_ready():
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening,name="Joe Mama"))
 
 @bot.command()
-async def gamehelp(ctx, *args):
-    if len(args) == 0:
-        await ctx.send("```\nHELP\n\n.decide: Decide takes two arguments and generates a random number in the range of the two arguments.\nExample: .decide 1 10 will produce a random number between 1 and 10.\n\n.game: Game will add a game to the Game List. Simply type the command and then the game you would like to add.\nExample: .game Rainbow Six Siege will add Rainbow Six Siege to the Game List\n\n.choosegame: Choosegame will randomly choose a game from the Game List.\n\n.gamelist: Gamelist will print out a list of all the games you have added to the gamelist\n\n.gameclear: Gameclear will clear the game list of all games\n```")
+async def gamehelp(ctx):
+    await ctx.send(".gamelist: Gamelist will print out a list of all the games you have added to the gamelist\n\n.gameclear: Gameclear will clear the game list of all games\n```")
+    helpEmbed = discord.Embed(title='Help', description = 'Help with the bot')
+    helpEmbed.add_field(name=".decide", value='Decide takes two arguments and generates a random number in the range of the two arguments', inline=False)
+    helpEmbed.add_field(name=".game", value='Game will add a game to the Game List. Simply type the command and then\nthe game you would like to add', inline=False)
+    helpEmbed.add_field(name=".choosegame", value='Choosegame will randomly choose a game from the Game List', inline=False)
+    helpEmbed.add_field(name=".gameclear", value='Gameclear will clear the game list of all games')
+    helpEmbed.add_field(name=".gamelist", value='Gamelist will print out a list of all the games you have added to the gamelist', inline=False)
+    m = await ctx.send(embed=helpEmbed)
 @bot.command()
 async def decide(ctx,arg1,arg2):
     number = random.randint(int(arg1),int(arg2))
