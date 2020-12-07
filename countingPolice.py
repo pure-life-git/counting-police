@@ -1,6 +1,6 @@
 import discord
 import os
-import random
+import string
 from discord.ext import commands
 
 client = discord.Client()
@@ -15,19 +15,14 @@ async def on_ready():
 async def on_message(message):
     if message.author == client.user:
         return
-    
-    if str(message.content) == '$decide':
-        await message.channel.send(random.randint(0,1))
-
-@client.event
-async def on_message(message):
-    if message.author == client.user:
-        return
     print(count)
     print('Message recieved: ', message.content, 'by', message.author)
     messageChannel = message.channel
     print(messageChannel)
     print(type(messageChannel))
+
+    if message.content.startswith('im') or message.content.startswith('Im') or message.content.startswith('IM') or message.content.startswith('iM') or message.content.startswith("i'm") or message.content.startswith("I'm") or message.content.startswith("I'M") or message.content.startswith("i'M") or message.content.startswith('i am') or message.content.startswith('I am') or message.content.startswith('I Am') or message.content.startswith('I AM') or message.content.startswith('i Am') or message.content.startswith('i AM') or message.content.startswith('i aM'):
+        await message.channel.send('Hi '+str(message.content).split('m')+"I'm dad!")
 
     if str(message.channel) != 'counting':
         return
