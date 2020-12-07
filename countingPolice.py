@@ -15,10 +15,15 @@ async def on_ready():
     print(f'{bot.user.name} has connected to Discord!')
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening,name="Joe Mama"))
 
+
 @bot.command()
-async def decide(ctx,arg1,arg2):
-    number = random.randint(int(arg1),int(arg2))
-    await ctx.send(number)
+async def ping(ctx):
+    await ctx.send('Pong!')
+
+#@bot.command()
+#async def decide(ctx,arg1,arg2):
+#    number = random.randint(int(arg1),int(arg2))
+#    await ctx.send(number)
 """
 @bot.command()
 async def game(ctx, *, arg):
@@ -30,9 +35,6 @@ async def choosegame(ctx):
     num = random.randint(0, len(games)-1)
     await ctx.send(games[num] + '** has been chosen by machine engineered randomness!**')
 """
-@bot.command()
-async def ping(ctx):
-    await ctx.send('Pong!')
 
 @bot.event
 async def on_message(message):
