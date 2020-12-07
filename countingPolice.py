@@ -4,7 +4,9 @@ import string
 import random
 from discord.ext import commands
 
-client = discord.Client()
+#client = discord.Client()
+client = commands.Bot(command_prefix='$')
+
 count = []
 games = []
 
