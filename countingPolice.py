@@ -20,7 +20,6 @@ async def decide(ctx,arg1,arg2):
     number = random.randint(int(arg1),int(arg2))
     await ctx.send(number)
 
-@client.command()
 async def game(ctx, *, arg):
     games.append(str(arg))
     await ctx.send('**Successfully added **' + str(arg) + '** to the Game List.**')
@@ -28,6 +27,9 @@ async def game(ctx, *, arg):
 async def choosegame(ctx):
     num = random.randint(0, len(games)-1)
     await ctx.send(games[num] + '** has been chosen by machine engineered randomness!**')
+
+async def ping(ctx):
+    ctx.send('Pong!')
 
 @client.event
 async def on_message(message):
