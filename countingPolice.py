@@ -17,14 +17,14 @@ async def on_ready():
 
 @bot.command()
 async def gamehelp(ctx):
-    await ctx.send(".gamelist: Gamelist will print out a list of all the games you have added to the gamelist\n\n.gameclear: Gameclear will clear the game list of all games\n```")
     helpEmbed = discord.Embed(title='Help', description = 'Help with the bot')
     helpEmbed.add_field(name=".decide", value='Decide takes two arguments and generates a random number in the range of the two arguments', inline=False)
     helpEmbed.add_field(name=".game", value='Game will add a game to the Game List. Simply type the command and then\nthe game you would like to add', inline=False)
     helpEmbed.add_field(name=".choosegame", value='Choosegame will randomly choose a game from the Game List', inline=False)
     helpEmbed.add_field(name=".gameclear", value='Gameclear will clear the game list of all games')
     helpEmbed.add_field(name=".gamelist", value='Gamelist will print out a list of all the games you have added to the gamelist', inline=False)
-    m = await ctx.send(embed=helpEmbed)
+    await ctx.send(embed=helpEmbed)
+
 @bot.command()
 async def decide(ctx,arg1,arg2):
     number = random.randint(int(arg1),int(arg2))
