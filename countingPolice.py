@@ -14,41 +14,42 @@ async def on_ready():
 @client.event
 async def on_message(message):
     if message.author == client.user:
-        return
-    print(count)
-    print('Message recieved: ', message.content, 'by', message.author)
-    messageChannel = message.channel
-    print(messageChannel)
-    print(type(messageChannel))
-
-    if message.content.lower().startswith('im') or str(message.content).lower().startswith("i'm"): 
-        await message.channel.send('Hi ' + message.content.split(' ',1)[1] + ", I'm dad!")
-    
-    if message.content.lower().startswith('i am'):
-        await message.channel.send('Hi ' + message.content.lower().split('i am ',1)[1] + ", I'm dad!")
-
+            return
     if str(message.channel) != 'counting':
-        return
+        print(count)
+        print('Message recieved: ', message.content, 'by', message.author)
+        messageChannel = message.channel
+        print(messageChannel)
+        print(type(messageChannel))
 
-    if len(count) == 0:
-        count.append(int(message.content))
-        return
+        if message.content.lower().startswith('im') or str(message.content).lower().startswith("i'm"): 
+            await message.channel.send('Hi ' + message.content.split(' ',1)[1] + ", I'm dad!")
+        
+        if message.content.lower().startswith('i am'):
+            await message.channel.send('Hi ' + message.content.lower().split('i am ',1)[1] + ", I'm dad!")
 
-    correctNumber = count[len(count)-1]+1
-    print('Correct Number: ',str(correctNumber))
-
-    
-    if str(message.content).isnumeric() == False or int(message.content) != correctNumber:
-        #await message.author.edit(roles='Counting Clown', reason='Ya done goofed the count')
-        server = client.get_guild(599808865093287956)
-        role = discord.utils.get(server.roles,name='Counting Clown')
-        await message.author.add_roles(role)
-        #message.author.edit(discord.utils.get(message.guild.role, name = 'Counting Clown'))
-        await message.delete()
-        count.clear()
-        await message.channel.send(message.author.mention + ' entered ' + str(message.content) + ' and screwed up the count. Shame them!')
+        if str(message.channel) != 'counting':
+            return
     else:
-        count.append(int(message.content))
+        if len(count) == 0:
+            count.append(int(message.content))
+            return
+
+        correctNumber = count[len(count)-1]+1
+        print('Correct Number: ',str(correctNumber))
+
+        
+        if str(message.content).isnumeric() == False or int(message.content) != correctNumber:
+            #await message.author.edit(roles='Counting Clown', reason='Ya done goofed the count')
+            server = client.get_guild(599808865093287956)
+            role = discord.utils.get(server.roles,name='Counting Clown')
+            await message.author.add_roles(role)
+            #message.author.edit(discord.utils.get(message.guild.role, name = 'Counting Clown'))
+            await message.delete()
+            count.clear()
+            await message.channel.send(message.author.mention + ' entered ' + str(message.content) + ' and screwed up the count. Shame them!')
+        else:
+            count.append(int(message.content))
 
 
 client.run(os.environ['token'])
