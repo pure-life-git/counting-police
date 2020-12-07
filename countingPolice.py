@@ -40,7 +40,7 @@ async def on_message(message):
             await message.channel.send(game + ' has been added to the games list.')
             await message.channel.send(games)
         
-        if message.content.startswith('$gamedecide'):
+        if message.content.startswith('$gameroulette'):
             num = random.randint(0,len(games)-1)
             await message.channel.send(games[num] + ' has been chosen by machine engineering randomness!')
 
