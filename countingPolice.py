@@ -3,39 +3,39 @@ import os
 import random
 from discord.ext import commands
 
-#client = discord.Client()
-client = commands.Bot(command_prefix = '.')
+#bot = discord.bot()
+bot = commands.Bot(command_prefix = '.')
 
 count = []
 games = []
 
-@client.event
+@bot.event
 async def on_ready():
-    print(f'{client.user.name} has connected to Discord!')
-    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening,name="Joe Mama"))
+    print(f'{bot.user.name} has connected to Discord!')
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening,name="Joe Mama"))
 
-@client.command()
+@bot.command()
 async def decide(ctx,arg1,arg2):
     number = random.randint(int(arg1),int(arg2))
     await ctx.send(number)
 
-@client.command()
+@bot.command()
 async def game(ctx, *, arg):
     games.append(str(arg))
     await ctx.send('**Successfully added **' + str(arg) + '** to the Game List.**')
 
-@client.command()
+@bot.command()
 async def choosegame(ctx):
     num = random.randint(0, len(games)-1)
     await ctx.send(games[num] + '** has been chosen by machine engineered randomness!**')
 
-@client.command()
+@bot.command()
 async def ping(ctx):
     await ctx.send('Pong!')
 
-@client.event
+@bot.event
 async def on_message(message):
-    if message.author == client.user:
+    if message.author == bot.user:
             return
     if str(message.channel) != 'counting':
         print(count)
@@ -83,7 +83,7 @@ async def on_message(message):
         
         if str(message.content).isnumeric() == False or int(message.content) != correctNumber:
             #await message.author.edit(roles='Counting Clown', reason='Ya done goofed the count')
-            server = client.get_guild(599808865093287956)
+            server = bot.get_guild(599808865093287956)
             role = discord.utils.get(server.roles,name='Counting Clown')
             await message.author.add_roles(role)
             #message.author.edit(discord.utils.get(message.guild.role, name = 'Counting Clown'))
@@ -94,4 +94,4 @@ async def on_message(message):
             count.append(int(message.content))
 
 
-client.run(os.environ['token'])
+bot.run(os.environ['token'])
