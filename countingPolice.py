@@ -41,7 +41,7 @@ async def gameclear(ctx):
 
 @bot.command()
 async def gamelist(ctx):
-    await ctx.send('\n'.join('**{}**: {}'.format(*k) for k in range(len(games)+1)))
+    await ctx.send('\n'.join('**{}**: {}'.format(*k) for k in enumerate(games,1)))
 
 
 @bot.event
