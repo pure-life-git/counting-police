@@ -15,8 +15,9 @@ async def on_ready():
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening,name="Joe Mama"))
 
 @bot.command()
-async def ping(ctx):
-    await ctx.send('Pong!')
+async def gamehelp(ctx, *args):
+    if len(args) == 0:
+        await ctx.send("```\n__**HELP**__\n\n**.decide**: Decide takes two arguments and generates a random number in the range of the two arguments.\nExample: .decide 1 10 will produce a random number between 1 and 10.\n\n**.game**: Game will add a game to the Game List. Simply type the command and then the game you would like to add.\nExample: .game Rainbow Six Siege will add Rainbow Six Siege to the Game List\n\n**.choosegame**: Choosegame will randomly choose a game from the Game List.\n\n**.gamelist**: Gamelist will print out a list of all the games you have added to the gamelist\n\n**.gameclear**: Gameclear will clear the game list of all games\n```")
 
 @bot.command()
 async def decide(ctx,arg1,arg2):
@@ -40,7 +41,7 @@ async def gameclear(ctx):
     await ctx.send('The list of games has been successfully cleared')
 
 @bot.command()
-async def gameslist(ctx):
+async def gamelist(ctx):
     await ctx.send('\n'.join('{}: *{}*'.format(*k) for k in enumerate(games)))
 
 
