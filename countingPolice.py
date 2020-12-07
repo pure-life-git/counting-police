@@ -29,7 +29,7 @@ async def choosegame(ctx):
     await ctx.send(games[num] + '** has been chosen by machine engineered randomness!**')
 
 async def ping(ctx):
-    ctx.send('Pong!')
+    await ctx.send('Pong!')
 
 @client.event
 async def on_message(message):
