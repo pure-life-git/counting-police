@@ -98,4 +98,4 @@ async def on_message(message):
     await bot.process_commands(message)
 
 
-bot.run(os.environ['token'])
+bot.run(os.environ['token'], bot=True)
