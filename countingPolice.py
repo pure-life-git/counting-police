@@ -14,16 +14,15 @@ async def on_ready():
     print(f'{bot.user.name} has connected to Discord!')
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening,name="Joe Mama"))
 
-
 @bot.command()
 async def ping(ctx):
     await ctx.send('Pong!')
 
-#@bot.command()
-#async def decide(ctx,arg1,arg2):
-#    number = random.randint(int(arg1),int(arg2))
-#    await ctx.send(number)
-"""
+@bot.command()
+async def decide(ctx,arg1,arg2):
+    number = random.randint(int(arg1),int(arg2))
+    await ctx.send(number)
+
 @bot.command()
 async def game(ctx, *, arg):
     games.append(str(arg))
@@ -33,49 +32,36 @@ async def game(ctx, *, arg):
 async def choosegame(ctx):
     num = random.randint(0, len(games)-1)
     await ctx.send(games[num] + '** has been chosen by machine engineered randomness!**')
-"""
+
+@bot.command()
+async def gameclear(ctx):
+    for i in range(len(games)):
+        games.pop()
+    await ctx.send('The list of games has been successfully cleared')
+
+@bot.command()
+async def gameslist(ctx):
+    await ctx.send('\n'.join('{}: *{}*'.format(*k) for k in enumerate(games)))
+
 
 @bot.event
 async def on_message(message):
     await bot.process_commands(message)
+    
     if message.author == bot.user:
             return
+    
+    print('Message recieved: ', message.content, 'by', message.author, 'in '+ str(message.channel))
+    
     if str(message.channel) != 'counting':
-        print(count)
-        print('Message recieved: ', message.content, 'by', message.author)
-        messageChannel = message.channel
-        print(messageChannel)
-        print(type(messageChannel))
-
         if message.content.lower().startswith('im') or str(message.content).lower().startswith("i'm"):
             await message.channel.send('Hi ' + message.content.split(' ',1)[1] + ", I'm dad!")
         
         if message.content.lower().startswith('i am'):
             await message.channel.send('Hi ' + message.content.lower().split('i am ',1)[1] + ", I'm dad!")
-
-        #if message.content.startswith('$decide'):
-        #    number = random.randint(int(message.content.split(' ')[1]),int(message.content.split(' ')[2]))
-        #    await message.channel.send(number)
-
-        #if message.content.startswith('$game'):
-        #    game = message.content.split(' ',1)[1]
-        #    games.append(game)
-        #    await message.channel.send(game + ' has been added to the games list.')
-        
-        #if message.content.startswith('$choicegame'):
-        #    num = random.randint(0,len(games)-1)
-        #    await message.channel.send(games[num] + ' has been chosen by machine engineering randomness!')
-        
-        if message.content.startswith('$cleargames'):
-            for i in range(len(games)):
-                games.pop()
-            await message.channel.send('The list of games has been successfully cleared.')
-
-        if message.content.startswith('$listgames'):
-            await message.channel.send('\n'.join('{}: *{}*'.format(*k) for k in enumerate(games)))
-
         return
     else:
+        print(count)
         if len(count) == 0:
             count.append(int(message.content))
             return
