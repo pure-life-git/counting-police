@@ -39,12 +39,12 @@ async def game(ctx, *, arg):
     games.append(str(arg).lower())
     message = ctx.message
     await message.add_reaction('👍')
-    await ctx.send('**Successfully added **' + str(arg) + '** to the Game List.**')
+    #await ctx.send('**Successfully added **' + str(arg) + '** to the Game List.**')
 
 @bot.command()
 async def choosegame(ctx):
     num = random.randint(0, len(games)-1)
-    await ctx.send(games[num] + '** has been chosen by machine engineered randomness!**')
+    #await ctx.send(games[num] + '** has been chosen by machine engineered randomness!**')
 
 @bot.command()
 async def gameclear(ctx):
@@ -52,7 +52,7 @@ async def gameclear(ctx):
         games.pop()
     message = ctx.message
     await message.add_reaction('👍')
-    await ctx.send('The list of games has been successfully cleared')
+    #await ctx.send('The list of games has been successfully cleared')
 
 @bot.command()
 async def gamelist(ctx):
@@ -64,7 +64,7 @@ async def gameremove(ctx,*,arg):
         games.remove(str(arg).lower())
         message = ctx.message
         await message.add_reaction('👍')
-        await ctx.send(str(arg).lower()+'** was successfully removed from the list**')
+        #await ctx.send(str(arg).lower()+'** was successfully removed from the list**')
 
 @bot.command()
 async def poll(ctx,*args):
