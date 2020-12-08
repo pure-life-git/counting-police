@@ -20,6 +20,7 @@ async def gamehelp(ctx):
     helpEmbed = discord.Embed(title='Help', description = 'Help with the bot')
     helpEmbed.add_field(name=".decide", value='Decide takes two arguments and generates a random number in the range of the two arguments', inline=False)
     helpEmbed.add_field(name=".game", value='Game will add a game to the Game List. Simply type the command and then\nthe game you would like to add', inline=False)
+    helpEmbed.add_field(name=".gameremove", value='Gameremove removes a game from the Game List. Simply type the command then\nthe game you would like to add', inline=False)
     helpEmbed.add_field(name=".choosegame", value='Choosegame will randomly choose a game from the Game List', inline=False)
     helpEmbed.add_field(name=".gameclear", value='Gameclear will clear the game list of all games')
     helpEmbed.add_field(name=".gamelist", value='Gamelist will print out a list of all the games you have added to the gamelist', inline=False)
