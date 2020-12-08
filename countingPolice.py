@@ -37,6 +37,8 @@ async def game(ctx, *, arg):
         await ctx.send('That game is already in the list')
         return
     games.append(str(arg).lower())
+    message = ctx.message
+    await message.add_reaction('👍')
     await ctx.send('**Successfully added **' + str(arg) + '** to the Game List.**')
 
 @bot.command()
@@ -48,6 +50,8 @@ async def choosegame(ctx):
 async def gameclear(ctx):
     for i in range(len(games)):
         games.pop()
+    message = ctx.message
+    await message.add_reaction('👍')
     await ctx.send('The list of games has been successfully cleared')
 
 @bot.command()
@@ -58,6 +62,8 @@ async def gamelist(ctx):
 async def gameremove(ctx,*,arg):
     if str(arg).lower() in games:
         games.remove(str(arg).lower())
+        message = ctx.message
+        await message.add_reaction('👍')
         await ctx.send(str(arg).lower()+'** was successfully removed from the list**')
 
 @bot.command()
