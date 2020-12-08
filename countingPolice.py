@@ -112,7 +112,7 @@ async def on_message(message):
         if str(message.content).isnumeric() == False or int(message.content) != correctNumber:
             #await message.author.edit(roles='Counting Clown', reason='Ya done goofed the count')
             server = bot.get_guild(599808865093287956)
-            role = discord.utils.get(server.roles,name='Counting Clown')
+            role = discord.utils.get(server.roles,id='777761204365951017')
             await message.author.add_roles(role)
             #message.author.edit(discord.utils.get(message.guild.role, name = 'Counting Clown'))
             await message.delete()
