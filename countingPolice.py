@@ -32,7 +32,10 @@ async def decide(ctx,arg1,arg2):
 
 @bot.command()
 async def game(ctx, *, arg):
-    games.append(str(arg))
+    if str(arg).lower() in games:
+        await ctx.send('That game is already in the list')
+        return
+    games.append(str(arg).lower())
     await ctx.send('**Successfully added **' + str(arg) + '** to the Game List.**')
 
 @bot.command()
@@ -49,6 +52,12 @@ async def gameclear(ctx):
 @bot.command()
 async def gamelist(ctx):
     await ctx.send('\n'.join('**{}**: {}'.format(*k) for k in enumerate(games,1)))
+
+@bot.command()
+async def gameremove(ctx,*,arg):
+    if str(arg).lower() in games:
+        games.remove(str(arg).lower())
+        await ctx.send(str(arg).lower()+'** was successfully removed from the list**')
 
 @bot.command()
 async def poll(ctx,*args):
