@@ -20,7 +20,9 @@ def countEntry(num):
     conn.commit()
 
 def gameEntry(game):
-    cur.execute("INSERT INTO countingtable (games) VALUES (%s);", (game))
+    SQL = "INSERT INTO countingtable (games) VALUES (%s);"
+    data = game
+    cur.execute(SQL,data)
     conn.commit()
 
 @bot.event
