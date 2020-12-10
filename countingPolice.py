@@ -21,7 +21,7 @@ def countEntry(num):
 
 def gameEntry(game):
     SQL = "INSERT INTO countingtable (games) VALUES (%s);"
-    data = game
+    data = (game,)
     cur.execute(SQL,data)
     conn.commit()
 
@@ -51,9 +51,9 @@ async def game(ctx, *, arg):
     if str(arg).lower() in games:
         await ctx.send('That game is already in the list')
         return
-    #gameLower = str(arg)#.lower()
-    gameEntry(arg)
-    games.append(str(arg).lower())
+    gameLower = str(arg).lower()
+    gameEntry(gameLower)
+    games.append(gameLower)
     message = ctx.message
     await message.add_reaction('👍')
     #await ctx.send('**Successfully added **' + str(arg) + '** to the Game List.**')
