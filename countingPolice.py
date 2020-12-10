@@ -21,6 +21,9 @@ def countEntry(num):
     cur.execute(SQL, data)
     conn.commit()
     print(cur.execute("SELECT * FROM countingtable"))
+    cur.execute("SELECT countingtable FROM information_schema.tables WHERE table_schema = 'puclib'")
+    for table in cur.fetchall():
+        print(table)
 
 def gameEntry(game):
     SQL = "INSERT INTO gametable (games) VALUES (%s);"
