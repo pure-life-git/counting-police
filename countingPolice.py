@@ -3,12 +3,25 @@ import os
 import random
 from discord.ext import commands
 from time import sleep
+import psycopg2
 
 #bot = discord.bot()
 bot = commands.Bot(command_prefix = '.')
 
+DATABASE_URL = os.environ['DATABASE_URL']
+conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+cur = conn.cursor()
+
 count = []
 games = []
+
+def countEntry(num):
+    cur.execute("UPDATE countingtable SET count = ?", (num))
+    conn.commit()
+
+def gameEntry(game):
+    cur.execute("INSERT INTO countingtable (games) VALUES (?)", (game))
+    conn.commit()
 
 @bot.event
 async def on_ready():
@@ -36,6 +49,7 @@ async def game(ctx, *, arg):
     if str(arg).lower() in games:
         await ctx.send('That game is already in the list')
         return
+    gameEntry(str(arg).lower())
     games.append(str(arg).lower())
     message = ctx.message
     await message.add_reaction('👍')
@@ -91,7 +105,7 @@ async def on_message(message):
             return
     
     print('Message recieved: ', message.content, 'by', message.author, 'in '+ str(message.channel))
-    
+
     if str(message.channel) != 'counting':
         if message.content.lower().startswith('im') or str(message.content).lower().startswith("i'm"):
             await message.channel.send('Hi ' + message.content.split(' ',1)[1] + ", I'm dad!")
@@ -119,6 +133,7 @@ async def on_message(message):
             await message.channel.send(message.author.mention + ' entered ' + str(message.content) + ' and screwed up the count. Shame them!')
         else:
             count.append(int(message.content))
+            countEntry(int(message.content))
 
 
 bot.run(os.environ['token'])
