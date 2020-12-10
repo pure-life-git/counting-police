@@ -16,11 +16,11 @@ count = []
 games = []
 
 def countEntry(num):
-    cur.execute("UPDATE countingtable SET count = ?", (num))
+    cur.execute("UPDATE countingtable SET count = ?;", (num))
     conn.commit()
 
 def gameEntry(game):
-    cur.execute("INSERT INTO countingtable (games) VALUES (?)", (game))
+    cur.execute("INSERT INTO countingtable (games) VALUES (?);", (game))
     conn.commit()
 
 @bot.event
