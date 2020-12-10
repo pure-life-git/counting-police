@@ -20,6 +20,7 @@ def countEntry(num):
     data = (num,)
     cur.execute(SQL, data)
     conn.commit()
+    print(cur.execute("SELECT * FROM countingtable"))
 
 def gameEntry(game):
     SQL = "INSERT INTO gametable (games) VALUES (%s);"
@@ -126,6 +127,7 @@ async def on_message(message):
         print(count)
         if len(count) == 0:
             count.append(int(message.content))
+            countEntry(int(message.content))
             return
 
         correctNumber = count[len(count)-1]+1
