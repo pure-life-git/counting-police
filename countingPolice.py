@@ -49,7 +49,7 @@ async def game(ctx, *, arg):
     if str(arg).lower() in games:
         await ctx.send('That game is already in the list')
         return
-    gameEntry(str(arg).lower())
+    gameEntry(str(arg.lower()))
     games.append(str(arg).lower())
     message = ctx.message
     await message.add_reaction('👍')
