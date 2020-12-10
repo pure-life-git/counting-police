@@ -133,7 +133,7 @@ async def on_message(message):
         correctNumberDB = list(cur.fetchone())
         correctNumberSQL = int(correctNumberDB[0])+1
         print('Correct Number: ',str(correctNumber))
-        print('Correct Number in DB: ',str(correctNumberDB))
+        print('Correct Number in DB: ',str(correctNumberSQL))
 
         
         if str(message.content).isnumeric() == False or int(message.content) != correctNumber:
