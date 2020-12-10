@@ -125,7 +125,10 @@ async def on_message(message):
             return
 
         correctNumber = count[len(count)-1]+1
+        cur.execute("SELECT * FROM countingtable")
+        correctNumberDB = int(cur.fetchone())+1
         print('Correct Number: ',str(correctNumber))
+        print('Correct Number in DB: ',str(correctNumberDB))
 
         
         if str(message.content).isnumeric() == False or int(message.content) != correctNumber:
