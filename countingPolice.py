@@ -16,7 +16,7 @@ count = []
 games = []
 
 def countEntry(num):
-    SQL = "UPDATE countingtable SET count = %s;"
+    SQL = "INSER INTO countingtable (count) VALUES (%s);"
     data = (num,)
     cur.execute(SQL, data)
     conn.commit()
@@ -131,7 +131,7 @@ async def on_message(message):
             return
 
         correctNumber = count[len(count)-1]+1
-        cur.execute("SELECT * FROM countingtable;")
+        cur.execute("SELECT LAST (count) FROM countingtable;")
         correctNumberDB = list(cur.fetchone())
         correctNumberSQL = int(correctNumberDB[0])+1
         print('Correct Number: ',str(correctNumber))
