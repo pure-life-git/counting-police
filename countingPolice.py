@@ -69,6 +69,7 @@ async def choosegame(ctx):
 async def gameclear(ctx):
     for i in range(len(games)):
         games.pop()
+    cur.execute("DELETE FROM gametable;")
     message = ctx.message
     await message.add_reaction('👍')
     #await ctx.send('The list of games has been successfully cleared')
@@ -125,7 +126,7 @@ async def on_message(message):
             return
 
         correctNumber = count[len(count)-1]+1
-        cur.execute("SELECT * FROM countingtable")
+        cur.execute("SELECT * FROM countingtable;")
         correctNumberDB = int(cur.fetchone())+1
         print('Correct Number: ',str(correctNumber))
         print('Correct Number in DB: ',str(correctNumberDB))
