@@ -51,7 +51,7 @@ async def game(ctx, *, arg):
     if str(arg).lower() in games:
         await ctx.send('That game is already in the list')
         return
-    gameLower = str(arg).lower()
+    gameLower = str(arg)#.lower()
     gameEntry(gameLower)
     games.append(str(arg).lower())
     message = ctx.message
