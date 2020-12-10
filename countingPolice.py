@@ -16,13 +16,13 @@ count = []
 games = []
 
 def countEntry(num):
-    SQL = "UPDATE countingtable SET count - %s;"
+    SQL = "UPDATE countingtable SET count = %s;"
     data = (num,)
     cur.execute(SQL, data)
     conn.commit()
 
 def gameEntry(game):
-    SQL = "INSERT INTO countingtable (games) VALUES (%s);"
+    SQL = "INSERT INTO gametable (games) VALUES (%s);"
     data = (game,)
     cur.execute(SQL,data)
     conn.commit()
