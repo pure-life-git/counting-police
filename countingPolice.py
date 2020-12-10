@@ -16,7 +16,9 @@ count = []
 games = []
 
 def countEntry(num):
-    cur.execute("UPDATE countingtable SET count = %s;", (num))
+    SQL = "UPDATE countingtable SET count - %s;"
+    data = (num,)
+    cur.execute(SQL, data)
     conn.commit()
 
 def gameEntry(game):
