@@ -131,7 +131,7 @@ async def on_message(message):
             return
 
         correctNumber = count[len(count)-1]+1
-        cur.execute("SELECT LAST (count) FROM countingtable;")
+        cur.execute("SELECT MAX(count) FROM countingtable;")
         correctNumberDB = list(cur.fetchone())
         correctNumberSQL = int(correctNumberDB[0])+1
         print('Correct Number: ',str(correctNumber))
