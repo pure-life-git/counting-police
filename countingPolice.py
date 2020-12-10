@@ -63,12 +63,13 @@ async def game(ctx, *, arg):
 @bot.command()
 async def choosegame(ctx):
     num = random.randint(0, len(games)-1)
-    #await ctx.send(games[num] + '** has been chosen by machine engineered randomness!**')
+    num = cur.exe
+    await ctx.send(games[num] + '** has been chosen by machine engineered randomness!**')
 
 @bot.command()
 async def gameclear(ctx):
-    for i in range(len(games)):
-        games.pop()
+    #for i in range(len(games)):
+    #    games.pop()
     cur.execute("DELETE FROM gametable;")
     message = ctx.message
     await message.add_reaction('👍')
@@ -76,6 +77,8 @@ async def gameclear(ctx):
 
 @bot.command()
 async def gamelist(ctx):
+    cur.execute("SELECT * FROM gametable;")
+    games = list(cur.fetchall())
     await ctx.send('\n'.join('**{}**: {}'.format(*k) for k in enumerate(games,1)))
 
 @bot.command()
@@ -127,7 +130,8 @@ async def on_message(message):
 
         correctNumber = count[len(count)-1]+1
         cur.execute("SELECT * FROM countingtable;")
-        correctNumberDB = int(cur.fetchone())+1
+        correctNumberDB = list(cur.fetchone())
+        correctNumberSQL = int(correctNumberDB[0])+1
         print('Correct Number: ',str(correctNumber))
         print('Correct Number in DB: ',str(correctNumberDB))
 
