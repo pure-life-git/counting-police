@@ -12,7 +12,7 @@ DATABASE_URL = os.environ['DATABASE_URL']
 conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 cur = conn.cursor()
 
-count = []
+#count = []
 games = []
 
 def countEntry(num):
@@ -127,21 +127,21 @@ async def on_message(message):
             await message.channel.send('Hi ' + message.content.lower().split('i am ',1)[1] + ", I'm dad!")
         return
     else:
-        print(count)
-        if len(count) == 0:
-            count.append(int(message.content))
-            countEntry(int(message.content))
-            return
+        #print(count)
+        #if len(count) == 0:
+        #    count.append(int(message.content))
+        #    countEntry(int(message.content))
+        #    return
 
-        correctNumber = count[len(count)-1]+1
+        #correctNumber = count[len(count)-1]+1
         cur.execute("SELECT MAX(count) FROM countingtable;")
         correctNumberDB = list(cur.fetchone())
         correctNumberSQL = int(correctNumberDB[0])+1
-        print('Correct Number: ',str(correctNumber))
+        #print('Correct Number: ',str(correctNumber))
         print('Correct Number in DB: ',str(correctNumberSQL))
 
         
-        if str(message.content).isnumeric() == False or int(message.content) != correctNumber:
+        if str(message.content).isnumeric() == False or int(message.content) != correctNumberSQL:
             #await message.author.edit(roles='Counting Clown', reason='Ya done goofed the count')
             #server = bot.get_guild(599808865093287956)
             role = discord.utils.get(message.guild.roles,name='Counting Clown')
@@ -150,7 +150,7 @@ async def on_message(message):
             await message.delete()
             await message.channel.send(message.author.mention + ' entered ' + str(message.content) + ' and screwed up the count. Shame them!')
         else:
-            count.append(int(message.content))
+            #count.append(int(message.content))
             countEntry(int(message.content))
 
 
