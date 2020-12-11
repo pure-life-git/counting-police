@@ -26,8 +26,15 @@ def countEntry(num):
     #    print(table)
 
 def gameEntry(game):
-    SQL = "INSERT INTO gametable (games) VALUES (%s);"
-    data = (game,)
+    SQL = """
+    IF NOT EXISTS (SELECT * FROM gametable 
+                    WHERE games = %s) 
+        BEGIN 
+            INSERT INTO gametable (games) 
+            VALUES (%s)
+        END
+        """
+    data = (game,game,)
     cur.execute(SQL,data)
     conn.commit()
 
@@ -54,10 +61,11 @@ async def decide(ctx,arg1,arg2):
 
 @bot.command()
 async def game(ctx, *, arg):
-    if str(arg).lower() in games:
+    gameLower = str(arg).lower()
+
+    if gameLower in games:
         await ctx.send('That game is already in the list')
         return
-    gameLower = str(arg).lower()
     gameEntry(gameLower)
     games.append(gameLower)
     message = ctx.message
