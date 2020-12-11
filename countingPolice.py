@@ -55,27 +55,29 @@ async def decide(ctx,arg1,arg2):
 @bot.command()
 async def game(ctx, *, arg):
     gameLower = str(arg).lower()
-
+    cur.execute("SELECT * FROM gametable;")
+    games = list(cur.fetchall())
     if gameLower in games:
         await ctx.send('That game is already in the list')
         return
     gameEntry(gameLower)
-    games.append(gameLower)
+    #games.append(gameLower)
     message = ctx.message
     await message.add_reaction('👍')
     #await ctx.send('**Successfully added **' + str(arg) + '** to the Game List.**')
 
 @bot.command()
 async def choosegame(ctx):
-    num = random.randint(0, len(games)-1)
-    num = cur.exe
-    await ctx.send(games[num] + '** has been chosen by machine engineered randomness!**')
+    numSQL = list(cur.execute("SELECT * FROM gametable"))
+    num = random.randint(0, len(numSQL)-1)
+    await ctx.send(numSQL[num] + '** has been chosen by machine engineered randomness!**')
 
 @bot.command()
 async def gameclear(ctx):
     #for i in range(len(games)):
     #    games.pop()
     cur.execute("DELETE FROM gametable;")
+    conn.commit()
     message = ctx.message
     await message.add_reaction('👍')
     #await ctx.send('The list of games has been successfully cleared')
@@ -88,8 +90,16 @@ async def gamelist(ctx):
 
 @bot.command()
 async def gameremove(ctx,*,arg):
-    if str(arg).lower() in games:
-        games.remove(str(arg).lower())
+    gameLower = str(arg).lower()
+
+    cur.execute("SELECT * FROM gametable;")
+    gameSQL = list(cur.fetchall())
+
+    if gameLower in gameSQL:
+        #games.remove(str(arg).lower())
+        SQL = "DELETE FROM gametable WHERE games = (%s)"
+        cur.execute(SQL,gameLower)
+        conn.commit()
         message = ctx.message
         await message.add_reaction('👍')
         #await ctx.send(str(arg).lower()+'** was successfully removed from the list**')
