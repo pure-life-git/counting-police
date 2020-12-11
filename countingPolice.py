@@ -26,15 +26,8 @@ def countEntry(num):
     #    print(table)
 
 def gameEntry(game):
-    SQL = """
-    IF NOT EXISTS (SELECT * FROM gametable 
-                    WHERE games = %s) 
-        BEGIN 
-            INSERT INTO gametable (games) 
-            VALUES (%s)
-        END
-        """
-    data = (game,game,)
+    SQL = """INSERT INTO gametable (games) VALUES (%s)"""
+    data = (game,)
     cur.execute(SQL,data)
     conn.commit()
 
