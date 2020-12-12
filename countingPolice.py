@@ -37,8 +37,10 @@ async def on_ready():
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening,name=".gamehelp"))
     cur.execute("SELECT * FROM striketable;")
     strikeDict = [{'id': col1, 'strikes': col2} for (col1, col2) in cur.fetchall()]
+    cur.execute("SELECT * FROM striketable;")
+    fetch = cur.fetchall()
     print(strikeDict)
-    print(cur.fetchall())
+    print(fetch)
 
 @bot.command()
 async def gamehelp(ctx):
