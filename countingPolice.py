@@ -161,9 +161,28 @@ async def on_message(message):
         if str(message.content).isnumeric() == False or int(message.content) != correctNumberSQL:
             #await message.author.edit(roles='Counting Clown', reason='Ya done goofed the count')
             #server = bot.get_guild(599808865093287956)
-            #cur.execute("SELECT * FROM striketable;")
-            #strikeDict = [{'id': col1, 'strikes': col2} for (col1, col2) in cur.fetchall()]
-            #userID = message.author.id
+            cur.execute("SELECT * FROM striketable;")
+            strikeList = cur.fetchall()
+            userID = message.author.id
+            for i in strikeList:
+                if i[0] == userID:
+                    if i[1] == 1:
+                        await message.delete()
+                        await message.channel.send(message.author.mention + ' entered ' + str(message.content) + ' and screwed up the count. This is their 2nd infraction.')
+                        SQL = "UPDATE striketable SET strikes = 2 WHERE name = %s;"
+                        cur.execute(SQL, (userID,))
+                    else:
+                        role = discord.utils.get(message.guild.roles,name='Counting Clown')
+                        await message.author.add_roles(role)
+                        await message.delete()
+                        await message.channel.send(message.author.mention + ' entered ' + str(message.content) + ' and screwed up the count. This was their 3rd and final infraction.')
+                else:
+                    SQL = "INSERT INTO striketable (name, strikes) VALUES (%s, 1)"
+                    cur.execute(SQL, (userID,))
+                    conn.commit()
+                    await message.delete()
+                    await message.channel.send(message.author.mention + ' entered ' + str(message.content) + ' and screwed up the count. This is their 1st infraction.')
+
 
             #if userID not in strikeList:
             #    cur.execute("INSERT INTO striketable (name, strikes) VALUES (%s, 1)")
