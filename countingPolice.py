@@ -13,7 +13,7 @@ conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 cur = conn.cursor()
 
 #count = []
-games = []
+#games = []
 
 def countEntry(num):
     SQL = "INSERT INTO countingtable (count) VALUES (%s);"
@@ -35,6 +35,9 @@ def gameEntry(game):
 async def on_ready():
     print(f'{bot.user.name} has connected to Discord!')
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening,name=".gamehelp"))
+    cur.execute("SELECT * FROM striketable;")
+    strikeDict = [{'id': col1, 'strikes': col2} for (col1, col2) in cur.fetchall()]
+    print(strikeDict)
 
 @bot.command()
 async def gamehelp(ctx):
@@ -155,6 +158,15 @@ async def on_message(message):
         if str(message.content).isnumeric() == False or int(message.content) != correctNumberSQL:
             #await message.author.edit(roles='Counting Clown', reason='Ya done goofed the count')
             #server = bot.get_guild(599808865093287956)
+            #cur.execute("SELECT * FROM striketable;")
+            #strikeDict = [{'id': col1, 'strikes': col2} for (col1, col2) in cur.fetchall()]
+            #userID = message.author.id
+
+            #if userID not in strikeList:
+            #    cur.execute("INSERT INTO striketable (name, strikes) VALUES (%s, 1)")
+
+            #SQL = "INSERT IGNORE INTO striketable (name, strikes) VALUES (%s, %s)"
+            #cur.execute()
             role = discord.utils.get(message.guild.roles,name='Counting Clown')
             await message.author.add_roles(role)
             #message.author.edit(discord.utils.get(message.guild.role, name = 'Counting Clown'))
