@@ -38,6 +38,7 @@ async def on_ready():
     cur.execute("SELECT * FROM striketable;")
     strikeDict = [{'id': col1, 'strikes': col2} for (col1, col2) in cur.fetchall()]
     print(strikeDict)
+    print(cur.fetchall())
 
 @bot.command()
 async def gamehelp(ctx):
