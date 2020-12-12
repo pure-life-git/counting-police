@@ -189,11 +189,11 @@ async def on_message(message):
 
             #SQL = "INSERT IGNORE INTO striketable (name, strikes) VALUES (%s, %s)"
             #cur.execute()
-            role = discord.utils.get(message.guild.roles,name='Counting Clown')
-            await message.author.add_roles(role)
+            #role = discord.utils.get(message.guild.roles,name='Counting Clown')
+            #await message.author.add_roles(role)
             #message.author.edit(discord.utils.get(message.guild.role, name = 'Counting Clown'))
-            await message.delete()
-            await message.channel.send(message.author.mention + ' entered ' + str(message.content) + ' and screwed up the count. Shame them!')
+            #await message.delete()
+            #await message.channel.send(message.author.mention + ' entered ' + str(message.content) + ' and screwed up the count. Shame them!')
         else:
             #count.append(int(message.content))
             countEntry(int(message.content))
