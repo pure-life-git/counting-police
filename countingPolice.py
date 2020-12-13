@@ -135,12 +135,15 @@ async def strikes(ctx):
         if int(i[0]) == ctx.message.author.id:
             if i[1] == 1:
                 await ctx.message.add_reaction('1️⃣')
+                return
             if i[1] == 2:
                 await ctx.message.add_reaction('2️⃣')
+                return
             if i[1] == 3:
                 await ctx.message.add_reaction('3️⃣')
-        else:
-            await ctx.message.add_reaction('0️⃣')
+                return
+
+    await ctx.message.add_reaction('0️⃣')
 
 @bot.event
 async def on_message(message):
