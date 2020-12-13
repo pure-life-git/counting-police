@@ -129,6 +129,9 @@ async def poll(ctx,*args):
         await m.add_reaction('❌')
 @bot.command()
 async def strikes(ctx):
+    if ctx.message.author.id == 203282979265576960:
+        await ctx.message.add_reaction('💯')
+        return
     cur.execute("SELECT * FROM striketable;")
     fetch = cur.fetchall()
     for i in fetch:
