@@ -126,6 +126,20 @@ async def poll(ctx,*args):
         m = await ctx.send(embed=embedVar)
         await m.add_reaction('✅')
         await m.add_reaction('❌')
+@bot.command()
+async def strikes(ctx):
+    cur.execute("SELECT * FROM striketable;")
+    fetch = cur.fetchall()
+    for i in fetch:
+        if i[0] == ctx.message.author.id:
+            if i[1] == 1:
+                ctx.message.add_reaction('1️⃣')
+            if i[1] == 2:
+                ctx.message.add_reaction('2️⃣')
+            if i[1] == 3:
+                ctx.message.add_reaction('3️⃣')
+        else:
+            ctx.message.add_reaction('0️⃣')
 
 @bot.event
 async def on_message(message):
