@@ -184,7 +184,7 @@ async def on_message(message):
             #server = bot.get_guild(599808865093287956)
             cur.execute("SELECT * FROM striketable;")
             strikeList = cur.fetchall()
-            userID = message.author.id()
+            userID = message.author.id
             for i in strikeList:
                 if i[0] == userID:
                     if i[1] == 1:
