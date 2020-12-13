@@ -132,7 +132,7 @@ async def strikes(ctx):
     cur.execute("SELECT * FROM striketable;")
     fetch = cur.fetchall()
     for i in fetch:
-        if i[0] == ctx.message.author.id():
+        if int(i[0]) == ctx.message.author.id():
             if i[1] == 1:
                 await ctx.message.add_reaction('1️⃣')
             if i[1] == 2:
