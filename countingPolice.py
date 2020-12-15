@@ -12,6 +12,13 @@ DATABASE_URL = os.environ['DATABASE_URL']
 conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 cur = conn.cursor()
 
+forbiddenList = [
+    "https://img.webmd.com/dtmcms/live/webmd/consumer_assets/site_images/articles/health_tools/ways_to_make_your_feet_feel_better_slideshow/493ss_thinkstock_rf_woman_stretching_feet.jpg",
+    "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/gh-why-do-my-feet-hurt-toes-1594663599.png?crop=0.914xw:0.687xh;0.0864xw,0.110xh&resize=480:*",
+    "https://post.greatist.com/wp-content/uploads/2019/07/Feet_1200x628-facebook.jpg",
+    "https://www.saga.co.uk/contentlibrary/saga/publishing/verticals/health-and-wellbeing/conditions/happyfeetshutterstock_297390392768x576.jpg",
+    "https://media.phillyvoice.com/media/images/09102019_feet_Pixabay.2e16d0ba.fill-735x490.jpg"
+]
 #count = []
 #games = []
 
@@ -58,6 +65,15 @@ async def gamehelp(ctx):
 async def decide(ctx,arg1,arg2):
     number = random.randint(int(arg1),int(arg2))
     await ctx.send(number)
+
+@bot.command()
+async def finn(ctx):
+    link = forbiddenList[random.randint(0,len(forbiddenList)-1)]
+    finnEmbed = discord.Embed(title="Feet Pics", description="Here's some fuel, you weirdo.")
+    finnEmbed.add_field(name="foot", url=link, inline=False)
+    user = await bot.get_user_info(288710564367171595)#203300155762540544
+    await user.send(embed=finnEmbed)
+
 
 @bot.command()
 async def game(ctx, *, arg):
