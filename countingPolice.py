@@ -73,7 +73,7 @@ async def finn(ctx):
     finnEmbed.set_image(url=link)
     id = 288710564367171595
     user = client.get_user(id)#203300155762540544
-    await user.send(embed=finnEmbed)
+    await client.send_message(user, embed=finnEmbed)
 
 
 @bot.command()
