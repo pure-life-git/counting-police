@@ -72,7 +72,7 @@ async def finn(ctx):
     finnEmbed = discord.Embed(title="Feet Pics", description="Here's some fuel, you weirdo.")
     finnEmbed.set_image(url=link)
     id = 288710564367171595
-    user = await client.get_user(id)#203300155762540544
+    user = client.get_user(id)#203300155762540544
     await user.send(embed=finnEmbed)
 
 
