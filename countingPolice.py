@@ -63,7 +63,10 @@ async def decide(ctx,arg1,arg2):
 async def game(ctx, *, arg):
     gameLower = str(arg).lower()
     cur.execute("SELECT * FROM gametable;")
-    games = list(cur.fetchall())
+    rawList = list(cur.fetchall())
+    games = []
+    for i in rawList:
+        games.append(i[0])
     if gameLower in games:
         await ctx.send('That game is already in the list')
         return
@@ -75,7 +78,11 @@ async def game(ctx, *, arg):
 
 @bot.command()
 async def choosegame(ctx):
-    numSQL = list(cur.execute("SELECT * FROM gametable;"))
+    cur.execute("SELECT * FROM gametable;")
+    rawList = list(cur.fetchall())
+    numSQL = []
+    for i in rawList:
+        numSQL.append(i[0])
     num = random.randint(0, len(numSQL)-1)
     await ctx.send(numSQL[num] + ' has been chosen by machine engineered randomness!**')
 
@@ -92,7 +99,10 @@ async def gameclear(ctx):
 @bot.command()
 async def gamelist(ctx):
     cur.execute("SELECT * FROM gametable;")
-    games = list(cur.fetchall())
+    rawList = list(cur.fetchall())
+    games = []
+    for i in rawList:
+        games.append(i[0])
     await ctx.send('\n'.join('**{}**: {}'.format(*k) for k in enumerate(games,1)))
 
 @bot.command()
