@@ -75,9 +75,9 @@ async def game(ctx, *, arg):
 
 @bot.command()
 async def choosegame(ctx):
-    numSQL = list(cur.execute("SELECT * FROM gametable"))
+    numSQL = list(cur.execute("SELECT * FROM gametable;"))
     num = random.randint(0, len(numSQL)-1)
-    await ctx.send(numSQL[num] + '** has been chosen by machine engineered randomness!**')
+    await ctx.send(numSQL[num] + ' has been chosen by machine engineered randomness!**')
 
 @bot.command()
 async def gameclear(ctx):
@@ -98,18 +98,15 @@ async def gamelist(ctx):
 @bot.command()
 async def gameremove(ctx,*,arg):
     gameLower = str(arg).lower()
-
     cur.execute("SELECT * FROM gametable;")
-    gameSQL = list(cur.fetchall())
 
-    if gameLower in gameSQL:
-        #games.remove(str(arg).lower())
-        SQL = "DELETE FROM gametable WHERE games = (%s)"
-        cur.execute(SQL,gameLower)
-        conn.commit()
-        message = ctx.message
-        await message.add_reaction('👍')
-        #await ctx.send(str(arg).lower()+'** was successfully removed from the list**')
+    #games.remove(str(arg).lower())
+    SQL = "DELETE FROM gametable WHERE games=%s;"
+    cur.execute(SQL,gameLower)
+    conn.commit()
+    message = ctx.message
+    await message.add_reaction('👍')
+    #await ctx.send(str(arg).lower()+'** was successfully removed from the list**')
 
 @bot.command()
 async def poll(ctx,*args):
