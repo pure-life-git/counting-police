@@ -74,7 +74,8 @@ async def finn(ctx):
     id = int(288710564367171595)
     #user = client.get_user(id)#203300155762540544
     #print(user)
-    await client.fetch_user(id).send("test")
+    user = await client.fetch_user("288710564367171595")
+    await user.send("test")
 
 
 @bot.command()
