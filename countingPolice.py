@@ -71,7 +71,8 @@ async def finn(ctx):
     link = forbiddenList[random.randint(0,len(forbiddenList)-1)]
     finnEmbed = discord.Embed(title="Feet Pics", description="Here's some fuel, you weirdo.")
     finnEmbed.set_image(url=link)
-    user = await client.get_user(288710564367171595)#203300155762540544
+    id = 288710564367171595
+    user = await client.get_user(id)#203300155762540544
     await user.send(embed=finnEmbed)
 
 
