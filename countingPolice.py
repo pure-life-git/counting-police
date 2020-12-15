@@ -43,18 +43,13 @@ def gameEntry(game):
 async def on_ready():
     print(f'{bot.user.name} has connected to Discord!')
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening,name=".gamehelp"))
-    cur.execute("SELECT * FROM striketable;")
-    strikeDict = [{'id': col1, 'strikes': col2} for (col1, col2) in cur.fetchall()]
-    cur.execute("SELECT * FROM striketable;")
-    fetch = cur.fetchall()
-    print(strikeDict)
-    print(fetch)
 
 @bot.command()
 async def gamehelp(ctx):
     helpEmbed = discord.Embed(title='Help', description = 'Help with the bot')
     helpEmbed.add_field(name=".decide", value='Decide takes two arguments and generates a random number in the range of the two arguments', inline=False)
     helpEmbed.add_field(name=".strikes", value='Lets you know how many strikes you have in the counting channel', inline=False)
+    helpEmbed.add_field(name=".finn", value="Sends a picture of feet to Finn",inline=False)
     helpEmbed.add_field(name=".game", value='Game will add a game to the Game List. Simply type the command and then\nthe game you would like to add', inline=False)
     helpEmbed.add_field(name=".gameremove", value='Gameremove removes a game from the Game List. Simply type the command then\nthe game you would like to add', inline=False)
     helpEmbed.add_field(name=".choosegame", value='Choosegame will randomly choose a game from the Game List', inline=False)
