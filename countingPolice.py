@@ -5,7 +5,7 @@ from discord.ext import commands
 from time import sleep
 import psycopg2
 
-#bot = discord.bot()
+client = discord.Client()
 bot = commands.Bot(command_prefix = '.')
 
 DATABASE_URL = os.environ['DATABASE_URL']
@@ -71,7 +71,7 @@ async def finn(ctx):
     link = forbiddenList[random.randint(0,len(forbiddenList)-1)]
     finnEmbed = discord.Embed(title="Feet Pics", description="Here's some fuel, you weirdo.")
     finnEmbed.set_image(url=link)
-    user = await bot.get_user_info(288710564367171595)#203300155762540544
+    user = await client.get_user_info(288710564367171595)#203300155762540544
     await user.send(embed=finnEmbed)
 
 
