@@ -72,11 +72,11 @@ async def finn(ctx):
     link = forbiddenList[random.randint(0,len(forbiddenList)-1)]
     finnEmbed = discord.Embed(title="Feet Pics", description="Here's some fuel, you weirdo.", type="rich")
     finnEmbed.set_image(url=link)
-    id = int(288710564367171595)
+    id = int(203300155762540544)
     #user = client.get_user(id)#203300155762540544
     #print(user)
     finn = await ctx.message.guild.fetch_member(id)
-    await finn.send("test", embed=finnEmbed)
+    await finn.send(embed=finnEmbed)
     await ctx.message.add_reaction("🦶")
 
 
