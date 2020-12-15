@@ -102,7 +102,7 @@ async def gameremove(ctx,*,arg):
 
     #games.remove(str(arg).lower())
     SQL = "DELETE FROM gametable WHERE games=%s;"
-    cur.execute(SQL,gameLower)
+    cur.execute(SQL,(gameLower,))
     conn.commit()
     message = ctx.message
     await message.add_reaction('👍')
