@@ -75,7 +75,7 @@ async def finn(ctx):
     id = int(288710564367171595)
     #user = client.get_user(id)#203300155762540544
     #print(user)
-    finn = await bot.guild.fetch_member(id)
+    finn = await ctx.message.guild.fetch_member(id)
     await finn.send("test", embed=finnEmbed)
     await ctx.message.add_reaction("🦶")
 
