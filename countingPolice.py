@@ -2,6 +2,7 @@ import discord
 import os
 import random
 from discord.ext import commands
+from discord import DMChannel
 from time import sleep
 import psycopg2
 
@@ -75,7 +76,7 @@ async def finn(ctx):
     #user = client.get_user(id)#203300155762540544
     #print(user)
     user = await client.fetch_user("288710564367171595")
-    await user.send("test")
+    await DMChannel.send(user,"test", embed=finnEmbed)
 
 
 @bot.command()
