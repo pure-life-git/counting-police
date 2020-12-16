@@ -63,10 +63,12 @@ async def operator(ctx,arg1):
         op = random.randint(0, len(attackerList)-1)
         await ctx.send(attackerList[op])
         await ctx.message.add_reaction("⚔️")
+        return
     if arg1.lower() == "defender":
         op = random.randint(0, len(defenderList)-1)
         await ctx.send(defenderList[op])
         await ctx.message.add_reaction("🛡️")
+        return
     else:
         await ctx.send("Please enter either 'Attacker' or 'Defender'")
 
