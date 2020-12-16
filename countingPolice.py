@@ -148,7 +148,9 @@ async def gamelist(ctx):
     games = []
     for i in rawList:
         games.append(i[0])
-    await ctx.send('\n'.join('**{}**: {}'.format(*k) for k in enumerate(games,1)))
+    gamelistEmbed = discord.Embed(title="Game List", description="List of games entered")
+    gamelistEmbed.add_field(name="Games",value='\n'.join('**{}**: {}'.format(*k) for k in enumerate(games,1)))
+    await ctx.send(embed = gamelistEmbed)
 
 @bot.command()
 async def gameremove(ctx,*,arg):
