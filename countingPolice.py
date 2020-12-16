@@ -19,6 +19,20 @@ forbiddenList = [
     "https://www.saga.co.uk/contentlibrary/saga/publishing/verticals/health-and-wellbeing/conditions/happyfeetshutterstock_297390392768x576.jpg",
     "https://media.phillyvoice.com/media/images/09102019_feet_Pixabay.2e16d0ba.fill-735x490.jpg"
 ]
+
+attackerList = [
+    "Zero", "Ace", "Iana", "Kali", "Amaru", "Nøkk", "Gridlock", "Nomad",
+    "Maverick", "Lion", "Finka", "Dokkaebi", "Zofia", "Ying", "Jackal",
+    "Hibana", "Capitão", "Blackbeard", "Buck", "Sledge", "Thatcher", "Ash",
+    "Thermite", "Montagne", "Twitch", "Blitz", "IQ", "Fuze", "Glaz"
+]
+
+defenderList = [
+    "Aruni", "Melusi", "Oryx", "Wamai", "Goyo", "Warden", "Mozzie", "Kaid",
+    "Clash", "Maestro", "Alibi", "Vigil", "Ela", "Lesion", "Mira", "Echo",
+    "Caveira", "Valkyrie", "Frost", "Mute", "Smoke", "Castle", "Pulse", "Doc",
+    "Rook", "Jäger", "Bandit", "Tachanka", "Kapkan"
+]
 #count = []
 #games = []
 
@@ -42,6 +56,17 @@ def gameEntry(game):
 async def on_ready():
     print(f'{bot.user.name} has connected to Discord!')
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening,name=".gamehelp"))
+
+@bot.command()
+async def operator(ctx,arg1):
+    if arg1.lower() == "attacker":
+        op = random.randint(0, len(attackerList)-1)
+        await ctx.send(attackerList[op])
+    if arg1.lower() == "defender":
+        op = random.randint(0, len(defenderList)-1)
+        await ctx.send(defenderList[op])
+    else:
+        await ctx.send("Please enter either 'Attacker' or 'Defender'")
 
 @bot.command()
 async def gamehelp(ctx):
