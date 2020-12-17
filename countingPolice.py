@@ -154,7 +154,7 @@ async def gamelist(ctx):
         await ctx.send(embed = gamelistEmbed)
     else:
         emptygamelistEmbed = discord.Embed(title="Game List", description="List of games entered")
-        emptygamelistEmbed.add_field(name="No Games!")
+        emptygamelistEmbed.add_field(name="No Games!", value="", inline=False)
         await ctx.send(embed = emptygamelistEmbed)
 
 @bot.command()
