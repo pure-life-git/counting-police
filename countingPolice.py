@@ -153,9 +153,9 @@ async def gamelist(ctx):
         gamelistEmbed.add_field(name="Games",value='\n'.join('**{}**: {}'.format(*k) for k in enumerate(games,1)))
         await ctx.send(embed = gamelistEmbed)
     else:
-        gamelistEmbed = discord.Embed(title="Game List", description="List of games entered")
-        gamelistEmbed.add_field(name="No Games!")
-        await ctx.send(embed = gamelistEmbed)
+        emptygamelistEmbed = discord.Embed(title="Game List", description="List of games entered")
+        emptygamelistEmbed.add_field(name="No Games!")
+        await ctx.send(embed = emptygamelistEmbed)
 
 @bot.command()
 async def gameremove(ctx,*,arg):
