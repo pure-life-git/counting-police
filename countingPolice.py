@@ -74,7 +74,7 @@ async def operator(ctx,arg1):
 
 @bot.command()
 async def gamehelp(ctx):
-    helpEmbed = discord.Embed(title='Help', description = 'Help with the bot')
+    helpEmbed = discord.Embed(title='Help', description = 'Help with the bot', color=discord.Color.blurple())
     helpEmbed.add_field(name=".decide", value='Decide takes two arguments and generates a random number in the range of the two arguments', inline=False)
     helpEmbed.add_field(name=".strikes", value='Lets you know how many strikes you have in the counting channel', inline=False)
     helpEmbed.add_field(name=".finn", value="Sends a picture of feet to Finn",inline=False)
@@ -94,7 +94,7 @@ async def decide(ctx,arg1,arg2):
 @bot.command()
 async def finn(ctx):
     link = forbiddenList[random.randint(0,len(forbiddenList)-1)]
-    finnEmbed = discord.Embed(title="Feet Pics", description="Here's some fuel, you weirdo.", type="rich")
+    finnEmbed = discord.Embed(title="Feet Pics", description="Here's some fuel, you weirdo.", type="rich", color=discord.color.dark_green())
     finnEmbed.set_image(url=link)
     id = int(203300155762540544)
     #user = client.get_user(id)#203300155762540544
@@ -149,11 +149,11 @@ async def gamelist(ctx):
     if len(games) != 0:
         for i in rawList:
             games.append(i[0])
-        gamelistEmbed = discord.Embed(title="Game List", description="List of games entered")
+        gamelistEmbed = discord.Embed(title="Game List", description="List of games entered", color=discord.Color.greyple())
         gamelistEmbed.add_field(name="Games",value='\n'.join('**{}**: {}'.format(*k) for k in enumerate(games,1)))
         await ctx.send(embed = gamelistEmbed)
     else:
-        emptygamelistEmbed = discord.Embed(title="Game List", description="List of games entered")
+        emptygamelistEmbed = discord.Embed(title="Game List", description="List of games entered", color=discord.Color.red())
         emptygamelistEmbed.add_field(name="No Games!", value="The game list is empty.", inline=False)
         await ctx.send(embed = emptygamelistEmbed)
 
@@ -173,14 +173,14 @@ async def gameremove(ctx,*,arg):
 @bot.command()
 async def poll(ctx,*args):
     if len(args) == 0:
-        embedVar = discord.Embed(title='Poll', description = 'Vote')
+        embedVar = discord.Embed(title='Poll', description = 'Vote', color=discord.Color.blue())
         embedVar.add_field(name="Yes", value='<:white_check_mark:785597865081962528>', inline=False)
         embedVar.add_field(name="No", value='<:x:785598446983839784>', inline=False)
         m = await ctx.send(embed=embedVar)
         await m.add_reaction('✅')
         await m.add_reaction('❌')
     else:
-        embedVar = discord.Embed(title='Poll', description = ' '.join(args))
+        embedVar = discord.Embed(title='Poll', description = ' '.join(args), color=discord.Color.blue())
         embedVar.add_field(name="Yes", value='<:white_check_mark:785597865081962528>', inline=False)
         embedVar.add_field(name="No", value='<:x:785598446983839784>', inline=False)
         m = await ctx.send(embed=embedVar)
