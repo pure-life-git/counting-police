@@ -107,7 +107,7 @@ async def finn(ctx):
 @bot.command()
 async def game(ctx, *, arg):
     gameLower = str(arg).lower()
-    cur.execute("SELECT * FROM gametable;")
+    cur.execute("SELECT * FROM gametable")
     rawList = list(cur.fetchall())
     games = []
     for i in rawList:
@@ -123,7 +123,7 @@ async def game(ctx, *, arg):
 
 @bot.command()
 async def choosegame(ctx):
-    cur.execute("SELECT * FROM gametable;")
+    cur.execute("SELECT * FROM gametable")
     rawList = list(cur.fetchall())
     numSQL = []
     for i in rawList:
@@ -135,7 +135,7 @@ async def choosegame(ctx):
 async def gameclear(ctx):
     #for i in range(len(games)):
     #    games.pop()
-    cur.execute("DELETE FROM gametable;")
+    cur.execute("DELETE FROM gametable")
     conn.commit()
     message = ctx.message
     await message.add_reaction('👍')
@@ -143,19 +143,24 @@ async def gameclear(ctx):
 
 @bot.command()
 async def gamelist(ctx):
-    cur.execute("SELECT * FROM gametable;")
+    cur.execute("SELECT * FROM gametable")
     rawList = list(cur.fetchall())
     games = []
-    for i in rawList:
-        games.append(i[0])
-    gamelistEmbed = discord.Embed(title="Game List", description="List of games entered")
-    gamelistEmbed.add_field(name="Games",value='\n'.join('**{}**: {}'.format(*k) for k in enumerate(games,1)))
-    await ctx.send(embed = gamelistEmbed)
+    if len(games) == 0:
+        for i in rawList:
+            games.append(i[0])
+        gamelistEmbed = discord.Embed(title="Game List", description="List of games entered")
+        gamelistEmbed.add_field(name="Games",value='\n'.join('**{}**: {}'.format(*k) for k in enumerate(games,1)))
+        await ctx.send(embed = gamelistEmbed)
+    else:
+        gamelistEmbed = discord.Embed(title="Game List", description="List of games entered")
+        gamelistEmbed.add_field(name="No Games!")
+        await ctx.send(embed = gamelistEmbed)
 
 @bot.command()
 async def gameremove(ctx,*,arg):
     gameLower = str(arg).lower()
-    cur.execute("SELECT * FROM gametable;")
+    cur.execute("SELECT * FROM gametable")
 
     #games.remove(str(arg).lower())
     SQL = "DELETE FROM gametable WHERE games=%s;"
@@ -226,7 +231,7 @@ async def on_message(message):
         #    return
 
         #correctNumber = count[len(count)-1]+1
-        cur.execute("SELECT MAX(count) FROM countingtable;")
+        cur.execute("SELECT MAX(count) FROM countingtable")
         correctNumberDB = list(cur.fetchone())
         correctNumberSQL = int(correctNumberDB[0])+1
         #print('Correct Number: ',str(correctNumber))
@@ -236,7 +241,7 @@ async def on_message(message):
         if str(message.content).isnumeric() == False or int(message.content) != correctNumberSQL:
             #await message.author.edit(roles='Counting Clown', reason='Ya done goofed the count')
             #server = bot.get_guild(599808865093287956)
-            cur.execute("SELECT * FROM striketable;")
+            cur.execute("SELECT * FROM striketable")
             strikeList = cur.fetchall()
             userID = message.author.id
             for i in strikeList:
