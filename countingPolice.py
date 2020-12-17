@@ -146,7 +146,7 @@ async def gamelist(ctx):
     cur.execute("SELECT * FROM gametable")
     rawList = list(cur.fetchall())
     games = []
-    if len(games) == 0:
+    if len(games) != 0:
         for i in rawList:
             games.append(i[0])
         gamelistEmbed = discord.Embed(title="Game List", description="List of games entered")
