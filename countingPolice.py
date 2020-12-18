@@ -189,7 +189,7 @@ async def poll(ctx,*args):
         resultsEmbed.add_field(name='✅', value="test", inline=False)
         resultsEmbed.add_field(name='❌', value='test2', inline=False)
         await m.delete()
-        await ctx.send(resultsEmbed)
+        await ctx.send(embed=resultsEmbed)
     else:
         embedVar = discord.Embed(title='Poll', description = ' '.join(args), color=discord.Color.blue())
         embedVar.add_field(name="Yes", value='<:white_check_mark:785597865081962528>', inline=False)
@@ -202,7 +202,7 @@ async def poll(ctx,*args):
         resultsEmbed.add_field(name='✅', value="test", inline=False)
         resultsEmbed.add_field(name='❌', value='test2', inline=False)
         await m.delete()
-        await ctx.send(resultsEmbed)
+        await ctx.send(embed=resultsEmbed)
 @bot.command()
 async def strikes(ctx):
     if ctx.message.author.id == 203282979265576960:
