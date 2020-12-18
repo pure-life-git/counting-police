@@ -273,6 +273,12 @@ async def on_message(message):
             conn.commit()
             await message.delete()
             await message.channel.send(message.author.mention + ' entered ' + str(message.content) + ' and screwed up the count. This is their 1st infraction.')
+            cur.execute("SELECT COUNT(name) FROM striketable;")
+            numCriminalsTable = cur.fetchall()
+            numCriminals = numCriminalsTable[0][0]
+            print(numCriminals)
+            presence = str(numCriminals) + " criminals"
+            await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,name=presence))
 
 
             #if userID not in strikeList:
