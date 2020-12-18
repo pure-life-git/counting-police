@@ -186,6 +186,7 @@ async def poll(ctx,*args):
         await m.add_reaction('❌')
         await asyncio.sleep(10)
         reactions = m.reactions
+        print(reactions)
         yesResult = m.reactions.count('✅')
         print('yesresult='+str(yesResult))
         noResult = m.reactions.count('❌')
