@@ -58,6 +58,7 @@ async def on_ready():
     cur.execute("SELECT COUNT(name) FROM striketable;")
     numCriminalsTable = cur.fetchall()
     numCriminals = numCriminalsTable[0]
+    print(numCriminals)
     presence = numCriminals + " criminals"
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,name=presence))
 
