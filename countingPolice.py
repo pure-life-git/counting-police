@@ -57,7 +57,7 @@ async def on_ready():
     print(f'{bot.user.name} has connected to Discord!')
     cur.execute("SELECT COUNT(name) FROM striketable;")
     numCriminalsTable = cur.fetchall()
-    numCriminals = numCriminalsTable[0]
+    numCriminals = numCriminalsTable[0][0]
     print(numCriminals)
     presence = numCriminals + " criminals"
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,name=presence))
