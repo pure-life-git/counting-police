@@ -185,7 +185,7 @@ async def poll(ctx,*args):
         await m.add_reaction('✅')
         await m.add_reaction('❌')
         await asyncio.sleep(10)
-        reactions = m.Reaction.count()
+        reactions = {react.emoji: react.count for react in m.reactions}
         print(reactions)
         yesResult = m.reactions.count('✅')
         print('yesresult='+str(yesResult))
