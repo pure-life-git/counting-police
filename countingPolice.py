@@ -55,7 +55,11 @@ def gameEntry(game):
 @bot.event
 async def on_ready():
     print(f'{bot.user.name} has connected to Discord!')
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening,name=".gamehelp"))
+    cur.execute("SELECT COUNT(name) FROM striketable;")
+    numCriminalsTable = cur.fetchall()
+    numCriminals = numCriminalsTable[0]
+    presence = numCriminals + " criminals"
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,name=presence))
 
 @bot.command()
 async def operator(ctx,arg1):
