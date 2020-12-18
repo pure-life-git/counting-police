@@ -2,7 +2,7 @@ import discord
 import os
 import random
 from discord.ext import commands
-from time import sleep
+import asyncio
 import psycopg2
 
 client = discord.Client()
@@ -184,6 +184,12 @@ async def poll(ctx,*args):
         m = await ctx.send(embed=embedVar)
         await m.add_reaction('✅')
         await m.add_reaction('❌')
+        await asyncio.sleep(10)
+        resultsEmbed = discord.Embed(title='Results', description = 'Vote', color=discord.Color.gold())
+        resultsEmbed.add_field(name='✅', value="test", inline=False)
+        resultsEmbed.add_field(name='❌', value='test2', inline=False)
+        await m.delete()
+        await ctx.send(resultsEmbed)
     else:
         embedVar = discord.Embed(title='Poll', description = ' '.join(args), color=discord.Color.blue())
         embedVar.add_field(name="Yes", value='<:white_check_mark:785597865081962528>', inline=False)
@@ -191,6 +197,12 @@ async def poll(ctx,*args):
         m = await ctx.send(embed=embedVar)
         await m.add_reaction('✅')
         await m.add_reaction('❌')
+        await asyncio.sleep(10)
+        resultsEmbed = discord.Embed(title='Results', description = 'Vote', color=discord.Color.gold())
+        resultsEmbed.add_field(name='✅', value="test", inline=False)
+        resultsEmbed.add_field(name='❌', value='test2', inline=False)
+        await m.delete()
+        await ctx.send(resultsEmbed)
 @bot.command()
 async def strikes(ctx):
     if ctx.message.author.id == 203282979265576960:
