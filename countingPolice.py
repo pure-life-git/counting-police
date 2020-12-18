@@ -59,7 +59,7 @@ async def on_ready():
     numCriminalsTable = cur.fetchall()
     numCriminals = numCriminalsTable[0][0]
     print(numCriminals)
-    presence = numCriminals + " criminals"
+    presence = str(numCriminals) + " criminals"
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,name=presence))
 
 @bot.command()
