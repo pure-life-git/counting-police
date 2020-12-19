@@ -182,7 +182,7 @@ async def poll(ctx,*args):
     argsList = list(args)
     if len(argsList) != 0:
         if argsList[len(argsList)-1].isnumeric() == True:
-            timer = argsList[len(argsList)-1]
+            timer = int(argsList[len(argsList)-1])
             argsList.pop(len(argsList)-1)
 
     embedVar = discord.Embed(title='Poll', description = ' '.join(argsList), color=discord.Color.blue())
