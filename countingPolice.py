@@ -184,7 +184,7 @@ async def poll(ctx,*args):
         await m.add_reaction('✅')
         await m.add_reaction('❌')
         await asyncio.sleep(10)
-        m = ctx.channel.fetch_message(m.id)
+        m = await ctx.channel.fetch_message(m.id)
         print(m.reactions)
         yesResult = m.reactions.count('✅')
         print('yesresult='+str(yesResult))
