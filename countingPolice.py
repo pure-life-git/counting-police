@@ -177,28 +177,36 @@ async def gameremove(ctx,*,arg):
 
 @bot.command()
 async def poll(ctx,*args):
-        embedVar = discord.Embed(title='Poll', description = ' '.join(args), color=discord.Color.blue())
-        embedVar.add_field(name="Yes", value='<:white_check_mark:785597865081962528>', inline=False)
-        embedVar.add_field(name="No", value='<:x:785598446983839784>', inline=False)
-        m = await ctx.send(embed=embedVar)
-        await m.add_reaction('✅')
-        await m.add_reaction('❌')
-        await asyncio.sleep(10)
-        m = await ctx.channel.fetch_message(m.id)
-        print(m.reactions)
-        counts = {react.emoji: react.count for react in m.reactions}
-        print(counts)
-        yesResult = counts['✅']-1
-        print('yesresult='+str(yesResult))
-        noResult = counts['❌']-1
-        print('noresult='+str(noResult))
-        yesPercent = yesResult/(yesResult+noResult)
-        noPercent = noResult/(yesResult+noResult)
-        resultsEmbed = discord.Embed(title='Results', description = ' '.join(args), color=discord.Color.gold())
-        resultsEmbed.add_field(name='✅', value="{yes} votes - {yespercent:.0%}".format(yes=yesResult,yespercent=yesPercent), inline=False)
-        resultsEmbed.add_field(name='❌', value='{no} votes - {nopercent:.0%}'.format(no=noResult,nopercent=noPercent), inline=False)
-        await m.delete()
-        await ctx.send(embed=resultsEmbed)
+    timer = 120
+
+    argsList = list(args)
+
+    if argsList[len(argsList)-1].isnumeric() == True:
+        timer = argsList[len(argsList)-1]
+        argsList.pop(len(argsList)-1)
+
+    embedVar = discord.Embed(title='Poll', description = ' '.join(argsList), color=discord.Color.blue())
+    embedVar.add_field(name="Yes", value='<:white_check_mark:785597865081962528>', inline=False)
+    embedVar.add_field(name="No", value='<:x:785598446983839784>', inline=False)
+    m = await ctx.send(embed=embedVar)
+    await m.add_reaction('✅')
+    await m.add_reaction('❌')
+    await asyncio.sleep(timer)
+    m = await ctx.channel.fetch_message(m.id)
+    print(m.reactions)
+    counts = {react.emoji: react.count for react in m.reactions}
+    print(counts)
+    yesResult = counts['✅']-1
+    print('yesresult='+str(yesResult))
+    noResult = counts['❌']-1
+    print('noresult='+str(noResult))
+    yesPercent = yesResult/(yesResult+noResult)
+    noPercent = noResult/(yesResult+noResult)
+    resultsEmbed = discord.Embed(title='Results', description = ' '.join(argsList), color=discord.Color.gold())
+    resultsEmbed.add_field(name='✅', value="{yes} votes - {yespercent:.0%}".format(yes=yesResult,yespercent=yesPercent), inline=False)
+    resultsEmbed.add_field(name='❌', value='{no} votes - {nopercent:.0%}'.format(no=noResult,nopercent=noPercent), inline=False)
+    await m.delete()
+    await ctx.send(embed=resultsEmbed)
 
 @bot.command()
 async def strikes(ctx):
