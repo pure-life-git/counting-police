@@ -188,9 +188,9 @@ async def poll(ctx,*args):
         print(m.reactions)
         counts = {react.emoji: react.count for react in m.reactions}
         print(counts)
-        yesResult = m.reactions.count('✅')
+        yesResult = counts['✅']-1
         print('yesresult='+str(yesResult))
-        noResult = m.reactions.count('❌')
+        noResult = counts['❌']-1
         print('noresult='+str(noResult))
         yesPercent = yesResult/(yesResult+noResult)
         noPercent = noResult/(yesResult+noResult)
