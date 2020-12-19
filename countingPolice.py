@@ -177,28 +177,6 @@ async def gameremove(ctx,*,arg):
 
 @bot.command()
 async def poll(ctx,*args):
-    if len(args) == 0:
-        embedVar = discord.Embed(title='Poll', description = 'Vote', color=discord.Color.blue())
-        embedVar.add_field(name="Yes", value='<:white_check_mark:785597865081962528>', inline=False)
-        embedVar.add_field(name="No", value='<:x:785598446983839784>', inline=False)
-        m = await ctx.send(embed=embedVar)
-        await m.add_reaction('✅')
-        await m.add_reaction('❌')
-        await asyncio.sleep(10)
-        reactions = {react.emoji: react.count for react in m.reactions}
-        print(reactions)
-        yesResult = m.reactions.count('✅')
-        print('yesresult='+str(yesResult))
-        noResult = m.reactions.count('❌')
-        print('noresult='+str(noResult))
-        yesPercent = yesResult/(yesResult+noResult)
-        noPercent = noResult/(yesResult+noResult)
-        resultsEmbed = discord.Embed(title='Results', description = 'Vote', color=discord.Color.gold())
-        resultsEmbed.add_field(name='✅', value="{yes} votes - {yespercent:%}".format(yes=yesResult,yespercent=yesPercent), inline=False)
-        resultsEmbed.add_field(name='❌', value='{no} votes - {nopercent:%}'.format(no=noResult,nopercent=noPercent), inline=False)
-        await m.delete()
-        await ctx.send(embed=resultsEmbed)
-    else:
         embedVar = discord.Embed(title='Poll', description = ' '.join(args), color=discord.Color.blue())
         embedVar.add_field(name="Yes", value='<:white_check_mark:785597865081962528>', inline=False)
         embedVar.add_field(name="No", value='<:x:785598446983839784>', inline=False)
@@ -206,8 +184,8 @@ async def poll(ctx,*args):
         await m.add_reaction('✅')
         await m.add_reaction('❌')
         await asyncio.sleep(10)
-        reactions = {react.emoji: react.count for react in m.reactions}
-        print(reactions)
+        
+        print(m.reactions)
         yesResult = m.reactions.count('✅')
         print('yesresult='+str(yesResult))
         noResult = m.reactions.count('❌')
@@ -219,6 +197,7 @@ async def poll(ctx,*args):
         resultsEmbed.add_field(name='❌', value='{no} votes - {nopercent:%}'.format(no=noResult,nopercent=noPercent), inline=False)
         await m.delete()
         await ctx.send(embed=resultsEmbed)
+
 @bot.command()
 async def strikes(ctx):
     if ctx.message.author.id == 203282979265576960:
