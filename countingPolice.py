@@ -247,10 +247,10 @@ async def on_message(message):
     if str(message.channel) != 'counting':
         if message.content.lower().startswith('im') or str(message.content).lower().startswith("i'm"):
             dad = await message.channel.send('Hi ' + message.content.split(' ',1)[1] + ", I'm dad!")
-            await dad.add_reaction('💯')
+            await dad.add_reaction('👌')
         if message.content.lower().startswith('i am'):
             dad = await message.channel.send('Hi ' + message.content.lower().split('i am ',1)[1] + ", I'm dad!")
-            await dad.add_reaction('💯')
+            await dad.add_reaction('👌')
         return
     else:
         #print(count)
