@@ -184,14 +184,12 @@ async def poll(ctx,*args):
         m = await ctx.send(embed=embedVar)
         await m.add_reaction('✅')
         await m.add_reaction('❌')
-        messageId = m.id()
         await asyncio.sleep(10)
-        message = await ctx.fetch_message(messageId)
-        reactions = {react.emoji: react.count for react in message.reactions}
+        reactions = {react.emoji: react.count for react in m.reactions}
         print(reactions)
-        yesResult = message.reactions.count('✅')
+        yesResult = m.reactions.count('✅')
         print('yesresult='+str(yesResult))
-        noResult = message.reactions.count('❌')
+        noResult = m.reactions.count('❌')
         print('noresult='+str(noResult))
         yesPercent = yesResult/(yesResult+noResult)
         noPercent = noResult/(yesResult+noResult)
@@ -208,8 +206,8 @@ async def poll(ctx,*args):
         await m.add_reaction('✅')
         await m.add_reaction('❌')
         await asyncio.sleep(10)
-        reactions = m.reactions()
-        print('reactions='+reactions)
+        reactions = {react.emoji: react.count for react in m.reactions}
+        print(reactions)
         yesResult = m.reactions.count('✅')
         print('yesresult='+str(yesResult))
         noResult = m.reactions.count('❌')
