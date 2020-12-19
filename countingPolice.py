@@ -180,10 +180,10 @@ async def poll(ctx,*args):
     timer = 120
 
     argsList = list(args)
-
-    if argsList[len(argsList)-1].isnumeric() == True:
-        timer = argsList[len(argsList)-1]
-        argsList.pop(len(argsList)-1)
+    if len(argsList) != 0:
+        if argsList[len(argsList)-1].isnumeric() == True:
+            timer = argsList[len(argsList)-1]
+            argsList.pop(len(argsList)-1)
 
     embedVar = discord.Embed(title='Poll', description = ' '.join(argsList), color=discord.Color.blue())
     embedVar.add_field(name="Yes", value='<:white_check_mark:785597865081962528>', inline=False)
