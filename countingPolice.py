@@ -186,6 +186,8 @@ async def poll(ctx,*args):
         await asyncio.sleep(10)
         m = await ctx.channel.fetch_message(m.id)
         print(m.reactions)
+        counts = {react.emoji: react.count for react in m.reactions}
+        print(counts)
         yesResult = m.reactions.count('✅')
         print('yesresult='+str(yesResult))
         noResult = m.reactions.count('❌')
