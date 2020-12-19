@@ -200,6 +200,12 @@ async def poll(ctx,*args):
     print('yesresult='+str(yesResult))
     noResult = counts['❌']-1
     print('noresult='+str(noResult))
+    if noResult == 0 and yesResult == 0:
+        resultsEmbed = discord.Embed(title="No Votes", description=' '.join(argsList), color=discord.Color.gold())
+        resultsEmbed.add_field(name='No Votes Were Counted', value='No results to be shown', inline=False)
+        await m.delete()
+        await ctx.send(embed=resultsEmbed)
+        return
     yesPercent = yesResult/(yesResult+noResult)
     noPercent = noResult/(yesResult+noResult)
     resultsEmbed = discord.Embed(title='Results', description = ' '.join(argsList), color=discord.Color.gold())
