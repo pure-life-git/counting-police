@@ -195,8 +195,8 @@ async def poll(ctx,*args):
         yesPercent = yesResult/(yesResult+noResult)
         noPercent = noResult/(yesResult+noResult)
         resultsEmbed = discord.Embed(title='Results', description = 'Vote', color=discord.Color.gold())
-        resultsEmbed.add_field(name='✅', value="{yes} votes - {yespercent:%}".format(yes=yesResult,yespercent=yesPercent), inline=False)
-        resultsEmbed.add_field(name='❌', value='{no} votes - {nopercent:%}'.format(no=noResult,nopercent=noPercent), inline=False)
+        resultsEmbed.add_field(name='✅', value="{yes} votes - {yespercent:.0%}".format(yes=yesResult,yespercent=yesPercent), inline=False)
+        resultsEmbed.add_field(name='❌', value='{no} votes - {nopercent:.0%}'.format(no=noResult,nopercent=noPercent), inline=False)
         await m.delete()
         await ctx.send(embed=resultsEmbed)
 
