@@ -382,7 +382,7 @@ async def on_message(message):
             strikeList = cur.fetchall()
             userID = message.author.id
             for i in strikeList:
-                if i[0] == userID:
+                if i[0] == str(userID):
                     if i[1] == 1:
                         await message.delete()
                         await message.channel.send(message.author.mention + ' entered ' + str(message.content) + ' and screwed up the count. This is their 2nd infraction.')
