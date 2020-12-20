@@ -111,9 +111,16 @@ async def finn(ctx):
 @bot.command()
 async def dice(ctx, *args):
     argsList = list(args)
+    sum = 0
     for i in range(len(argsList)):
         entry = argsList[i].split('d')
         print(entry)
+        sum = 0
+        for i in range(int(entry[0])):
+            roll = random.randint(0,int(entry[1]))
+            sum += roll
+    ctx.send(sum)
+
 
 @bot.command()
 async def game(ctx, *, arg):
