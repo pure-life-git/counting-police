@@ -112,7 +112,7 @@ async def finn(ctx):
 async def dice(ctx, *args):
     argsList = list(args)
     for i in range(len(argsList)):
-        entry = argsList[i].splice('d')
+        entry = argsList[i].split('d')
         print(entry)
 
 @bot.command()
