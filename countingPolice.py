@@ -118,7 +118,7 @@ async def rps(ctx, userPick):
 
     
     if userPick.lower() == botPick:
-        resultEmbed = discord.Embed(title="Rock Paper Scissors with {}".format(str(ctx.message.author)), description=" ", color=discord.Color.yellow())
+        resultEmbed = discord.Embed(title="Rock Paper Scissors with {}".format(str(ctx.message.author)), description=" ", color=discord.Color.gold())
         resultEmbed.add_field(name="Your Pick", value="{}".format(userPick), inline=False)
         resultEmbed.add_field(name="Bot's Pick", value="{}".format(botPick), inline=False)
         resultEmbed.add_field(name="Draw", value="You both chose the same option", inline=False)
