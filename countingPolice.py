@@ -115,6 +115,8 @@ async def rps(ctx, userPick):
         resultEmbed.add_field(name="Your Pick", value="{}".format(userPick), inline=False)
         resultEmbed.add_field(name="Bot's Pick", value="{}".format(botPick), inline=False)
         resultEmbed.add_field(name="You Lose!", value="Better luck next time", inline=False)
+        await ctx.channel.send(embed=resultEmbed)
+        return
 
     
     if userPick.lower() == botPick:
@@ -122,6 +124,8 @@ async def rps(ctx, userPick):
         resultEmbed.add_field(name="Your Pick", value="{}".format(userPick), inline=False)
         resultEmbed.add_field(name="Bot's Pick", value="{}".format(botPick), inline=False)
         resultEmbed.add_field(name="Draw", value="You both chose the same option", inline=False)
+        await ctx.channel.send(embed=resultEmbed)
+        return
 
     
     if userPick.lower() == "rock":
@@ -130,43 +134,57 @@ async def rps(ctx, userPick):
             resultEmbed.add_field(name="Your Pick", value="{}".format(userPick), inline=False)
             resultEmbed.add_field(name="Bot's Pick", value="{}".format(botPick), inline=False)
             resultEmbed.add_field(name="You Win!", value="Congratulations!", inline=False)
+            await ctx.channel.send(embed=resultEmbed)
+            return
 
         if botPick == "paper":
             resultEmbed = discord.Embed(title="Rock Paper Scissors with {}".format(str(ctx.message.author)), description=" ", color=discord.Color.red())
             resultEmbed.add_field(name="Your Pick", value="{}".format(userPick), inline=False)
             resultEmbed.add_field(name="Bot's Pick", value="{}".format(botPick), inline=False)
             resultEmbed.add_field(name="You Lose!", value="Better luck next time", inline=False)
+            await ctx.channel.send(embed=resultEmbed)
+            return
 
     
     if userPick.lower() == "scissors":
         if botPick == "paper":
-            resultEmbed.add_field(name="You Win!", value="Congratulations!", inline=False)
             resultEmbed = discord.Embed(title="Rock Paper Scissors with {}".format(str(ctx.message.author)), description=" ", color=discord.Color.green())
             resultEmbed.add_field(name="Your Pick", value="{}".format(userPick), inline=False)
             resultEmbed.add_field(name="Bot's Pick", value="{}".format(botPick), inline=False)
+            resultEmbed.add_field(name="You Win!", value="Congratulations!", inline=False)
+            await ctx.channel.send(embed=resultEmbed)
+            return
+            
 
         if botPick == "rock":
             resultEmbed = discord.Embed(title="Rock Paper Scissors with {}".format(str(ctx.message.author)), description=" ", color=discord.Color.red())
             resultEmbed.add_field(name="Your Pick", value="{}".format(userPick), inline=False)
             resultEmbed.add_field(name="Bot's Pick", value="{}".format(botPick), inline=False)
             resultEmbed.add_field(name="You Lose!", value="Better luck next time", inline=False)
+            await ctx.channel.send(embed=resultEmbed)
+            return
 
 
     if userPick.lower() == "paper":
         if botPick == "rock":
-            resultEmbed.add_field(name="You Win!", value="Congratulations!", inline=False)
             resultEmbed = discord.Embed(title="Rock Paper Scissors with {}".format(str(ctx.message.author)), description=" ", color=discord.Color.green())
             resultEmbed.add_field(name="Your Pick", value="{}".format(userPick), inline=False)
             resultEmbed.add_field(name="Bot's Pick", value="{}".format(botPick), inline=False)
+            resultEmbed.add_field(name="You Win!", value="Congratulations!", inline=False)
+            await ctx.channel.send(embed=resultEmbed)
+            return
+            
 
         if botPick == "scissors":
             resultEmbed = discord.Embed(title="Rock Paper Scissors with {}".format(str(ctx.message.author)), description=" ", color=discord.Color.red())
             resultEmbed.add_field(name="Your Pick", value="{}".format(userPick), inline=False)
             resultEmbed.add_field(name="Bot's Pick", value="{}".format(botPick), inline=False)
             resultEmbed.add_field(name="You Lose!", value="Better luck next time", inline=False)
+            await ctx.channel.send(embed=resultEmbed)
+            return
 
 
-    await ctx.channel.send(embed=resultEmbed)
+    
     
 
 @bot.command()
