@@ -86,7 +86,7 @@ async def operator(ctx,arg1):
 
 #help command to explain each command for the bot
 @bot.command()
-async def gamehelp(ctx):
+async def help(ctx):
     helpEmbed = discord.Embed(title='Help', description = 'Help with the bot', color=discord.Color.blurple())
     helpEmbed.add_field(name=".decide", value='Decide takes two arguments and generates a random number in the range of the two arguments', inline=False)
     helpEmbed.add_field(name=".strikes", value='Lets you know how many strikes you have in the counting channel', inline=False)
