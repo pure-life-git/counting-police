@@ -93,6 +93,65 @@ async def gamehelp(ctx):
     await ctx.send(embed=helpEmbed)
 
 @bot.command()
+async def rps(ctx):
+    botMessage = await ctx.send("React with what you choose")
+    reactions = [
+        "<:rock:790020056855085107>", 
+        "<:newspaper:790020275525779487>", 
+        "<:scissors:790020379467972650>"
+    ]
+    for i in reactions:
+        await botMessage.add_reaction(i)
+    await asyncio.sleep(10)
+    botMessage = await ctx.channel.fetch_message(botMessage.id)
+    counts = {react.emoji: react.count for react in botMessage.reactions}
+    key_list = list(counts.keys())
+    val_list = list(counts.values())
+    botPick = random.choice(reactions)
+    userPickVal = val_list.index(2)
+    userPick = key_list[userPickVal]
+    resultEmbed = discord.Embed(title="Rock Paper Scissors with {}".format(ctx.message.author()), description=" ", color=discord.Color.dark_teal())
+    resultEmbed.add_field(name="Your Pick", value="{}".format(userPick))
+    resultEmbed.add_field(name="Bot's Pick", value="{}".format(botPick))
+
+    if userPick == "<:rock:790020056855085107>":
+        if botPick == "<:scissors:790020379467972650>":
+            resultEmbed.add_field(name="You Win!", value="Congratulations!")
+            return
+        if botPick == "<:newspaper:790020275525779487>":
+            resultEmbed.add_field(name="You Lose!", value="Better luck next time")
+            return
+        else:
+            resultEmbed.add_field(name="Draw", value="You both chose the same option")
+            return
+    
+    if userPick == "<:scissors:790020379467972650>":
+        if botPick == "<:newspaper:790020275525779487>":
+            resultEmbed.add_field(name="You Win!", value="Congratulations!")
+            return
+        if botPick == "<:rock:790020056855085107>":
+            resultEmbed.add_field(name="You Lose!", value="Better luck next time")
+            return            
+        else:
+            resultEmbed.add_field(name="Draw", value="You both chose the same option")
+            return
+
+    if userPick == "<:newspaper:790020275525779487>":
+        if botPick == "<:rock:790020056855085107>":
+            resultEmbed.add_field(name="You Win!", value="Congratulations!")
+            return
+        if botPick == "<:scissors:790020379467972650>":
+            resultEmbed.add_field(name="You Lose!", value="Better luck next time")
+            return
+        else:
+            resultEmbed.add_field(name="Draw", value="You both chose the same option")
+            return
+    
+    await botMessage.delete()
+    await ctx.channel.send(embed=resultEmbed)
+    
+
+@bot.command()
 async def decide(ctx,arg1,arg2):
     number = random.randint(int(arg1),int(arg2))
     await ctx.send(number)
