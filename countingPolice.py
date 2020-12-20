@@ -51,6 +51,11 @@ def countEntry(num):
     data = (num,)
     cur.execute(SQL, data)
     conn.commit()
+    if num % 25 == 0:
+        SQLtwo = "DELETE FROM countingtable WHERE count < (%s);"
+        dataTwo = (num-1,)
+        cur.execute(SQLtwo, dataTwo)
+        conn.commit()
 
 #enters a game from any channel into the postgresql DB
 def gameEntry(game):
