@@ -76,7 +76,7 @@ async def wolfram(ctx,*args):
     question = ' '.join(args)
     response = wolframClient.query(question)
     wolframEmbed = discord.Embed(title="Wolfram|Alpha API", description=" ", color=discord.Color.from_rgb(255,125,0))
-    wolframEmbed.add_field(name="Result", value=next(response.results).text,inline=False)
+    wolframEmbed.add_field(name="Result", value=response.results.text,inline=False)
     await ctx.channel.send(embed=wolframEmbed)
 
 #sends user input to the wolframalpha api and prints out a full answer
