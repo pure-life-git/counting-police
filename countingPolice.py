@@ -77,7 +77,7 @@ async def wolfram(ctx,*args):
     response = wolframClient.query(question)
     wolframEmbed = discord.Embed(title="Wolfram|Alpha API", description=" ", color=discord.Color.from_rgb(255,125,0))
     wolframEmbed.add_field(name="Result", value=next(response.results).text,inline=False)
-    ctx.channel.send(embed=wolframEmbed)
+    await ctx.channel.send(embed=wolframEmbed)
 #randomly chooses an attacker or defender from the respective lists
 @bot.command()
 async def operator(ctx,arg1):
