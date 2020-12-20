@@ -110,7 +110,7 @@ async def rps(ctx, userPick):
     else:
         botPick = random.choice(choices)
     
-    resultEmbed = discord.Embed(title="Rock Paper Scissors with {}".format(str(ctx.message.author), description=" ", color=discord.Color.teal()))
+    resultEmbed = discord.Embed(title="Rock Paper Scissors with {}".format(str(ctx.message.author)), description=" ", color=discord.Color.teal())
     resultEmbed.add_field(name="Your Pick", value="{}".format(userPick), inline=False)
     resultEmbed.add_field(name="Bot's Pick", value="{}".format(botPick), inline=False)
 
