@@ -117,7 +117,7 @@ async def dice(ctx, *args):
         entry = argsList[i].split('d')
         print(entry)
         for i in range(int(entry[0])):
-            roll = random.randint(0,int(entry[1]))
+            roll = random.randint(1,int(entry[1]))
             rolls.append(roll)
             sum += roll
     await ctx.send("Rolls: "+', '.join(map(str,rolls))+"\nSum: "+str(sum))
