@@ -96,9 +96,9 @@ async def gamehelp(ctx):
 async def rps(ctx):
     botMessage = await ctx.send("React with what you choose")
     reactions = [
-        "<:rock:790020056855085107>", 
-        "<:newspaper:790020275525779487>", 
-        "<:scissors:790020379467972650>"
+        "<:rock:790031654030278686>", 
+        "<:newspaper:790031761967022110>", 
+        "<:scissors:790031816656551937>"
     ]
     for i in reactions:
         await botMessage.add_reaction(i)
