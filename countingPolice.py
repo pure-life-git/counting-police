@@ -8,6 +8,7 @@ import psycopg2
 #initialize client and bot
 client = discord.Client()
 bot = commands.Bot(command_prefix = '.')
+bot.remove_command('help')
 
 #initializes connections to postgresql database
 DATABASE_URL = os.environ['DATABASE_URL']
