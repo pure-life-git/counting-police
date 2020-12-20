@@ -108,6 +108,12 @@ async def finn(ctx):
     await finn.send(embed=finnEmbed)
     await ctx.message.add_reaction("🦶")
 
+@bot.command()
+async def dice(ctx, *args):
+    argsList = list(args)
+    for i in range(len(argsList)):
+        entry = argsList[i].splice('d')
+        print(entry)
 
 @bot.command()
 async def game(ctx, *, arg):
