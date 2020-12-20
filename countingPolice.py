@@ -111,39 +111,39 @@ async def rps(ctx, userPick):
         botPick = random.choice(choices)
     
     resultEmbed = discord.Embed(title="Rock Paper Scissors with {}".format(str(ctx.message.author), description=" ", color=discord.Color.dark_teal()))
-    resultEmbed.add_field(name="Your Pick", value="{}".format(userPick))
-    resultEmbed.add_field(name="Bot's Pick", value="{}".format(botPick))
+    resultEmbed.add_field(name="Your Pick", value="{}".format(userPick), inline=False)
+    resultEmbed.add_field(name="Bot's Pick", value="{}".format(botPick), inline=False)
 
     if botPick == "gun":
-        resultEmbed.add_field(name="You Lose!", value="Better luck next time")
+        resultEmbed.add_field(name="You Lose!", value="Better luck next time", inline=False)
 
     
     if userPick.lower() == botPick:
-        resultEmbed.add_field(name="Draw", value="You both chose the same option")
+        resultEmbed.add_field(name="Draw", value="You both chose the same option", inline=False)
 
     
     if userPick.lower() == "rock":
         if botPick == "scissors":
-            resultEmbed.add_field(name="You Win!", value="Congratulations!")
+            resultEmbed.add_field(name="You Win!", value="Congratulations!", inline=False)
 
         if botPick == "paper":
-            resultEmbed.add_field(name="You Lose!", value="Better luck next time")
+            resultEmbed.add_field(name="You Lose!", value="Better luck next time", inline=False)
 
     
     if userPick.lower() == "scissors":
         if botPick == "paper":
-            resultEmbed.add_field(name="You Win!", value="Congratulations!")
+            resultEmbed.add_field(name="You Win!", value="Congratulations!", inline=False)
 
         if botPick == "rock":
-            resultEmbed.add_field(name="You Lose!", value="Better luck next time")
+            resultEmbed.add_field(name="You Lose!", value="Better luck next time", inline=False)
 
 
     if userPick.lower() == "paper":
         if botPick == "rock":
-            resultEmbed.add_field(name="You Win!", value="Congratulations!")
+            resultEmbed.add_field(name="You Win!", value="Congratulations!", inline=False)
 
         if botPick == "scissors":
-            resultEmbed.add_field(name="You Lose!", value="Better luck next time")
+            resultEmbed.add_field(name="You Lose!", value="Better luck next time", inline=False)
 
 
     await ctx.channel.send(embed=resultEmbed)
