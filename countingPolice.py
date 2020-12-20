@@ -84,6 +84,7 @@ async def gamehelp(ctx):
     helpEmbed.add_field(name=".strikes", value='Lets you know how many strikes you have in the counting channel', inline=False)
     helpEmbed.add_field(name=".finn", value="Sends a picture of feet to Finn",inline=False)
     helpEmbed.add_field(name=".dice", value="Rolls dice in the format (# of dice)d(# of sides). You can even input multiple dice in one command.\nExample: '.dice 1d4 2d6' would roll 1 4 sided die and 2 6 sided die", inline=False)
+    helpEmbed.add_field(name=".rps", value="Plays a game of rock paper scissors with you\nExample: .rps paper")
     helpEmbed.add_field(name=".operator", value="Chooses a random operator from Rainbow Six Siege. Enter either 'Attacker' or 'Defender'", inline=False)
     helpEmbed.add_field(name=".game", value='Game will add a game to the Game List. Simply type the command and then\nthe game you would like to add', inline=False)
     helpEmbed.add_field(name=".gameremove", value='Gameremove removes a game from the Game List. Simply type the command then\nthe game you would like to remove', inline=False)
@@ -93,62 +94,58 @@ async def gamehelp(ctx):
     await ctx.send(embed=helpEmbed)
 
 @bot.command()
-async def rps(ctx):
-    botMessage = await ctx.send("React with what you choose")
-    #reactions = [
-    #    "<:rock:790031654030278686>", 
-    #    "<:newspaper:790031761967022110>", 
-    #    "<:scissors:790031816656551937>"
-    #]
-    #for i in reactions:
-    #    await botMessage.add_reaction(i)
-    await botMessage.add_reaction("<:rock:790031654030278686>")
-    await asyncio.sleep(10)
-    botMessage = await ctx.channel.fetch_message(botMessage.id)
-    counts = {react.emoji: react.count for react in botMessage.reactions}
-    key_list = list(counts.keys())
-    val_list = list(counts.values())
-    botPick = random.choice(reactions)
-    userPickVal = val_list.index(2)
-    userPick = key_list[userPickVal]
+async def rps(ctx, userPick):
+    choices = [
+        "rock",
+        "paper",
+        "scissors"
+    ]
+    if userPick.lower() not in choices:
+        ctx.channel.send("Please enter either 'rock', 'paper' or 'scissors'")
+        return
+    
+    gunChance = random.randint(1,100)
+    if  gunChance == 69:
+        botPick = "gun"
+    else:
+        botPick = random.choice(choices)
+    
     resultEmbed = discord.Embed(title="Rock Paper Scissors with {}".format(ctx.message.author()), description=" ", color=discord.Color.dark_teal())
     resultEmbed.add_field(name="Your Pick", value="{}".format(userPick))
     resultEmbed.add_field(name="Bot's Pick", value="{}".format(botPick))
 
-    if userPick == "<:rock:790020056855085107>":
-        if botPick == "<:scissors:790020379467972650>":
-            resultEmbed.add_field(name="You Win!", value="Congratulations!")
-            return
-        if botPick == "<:newspaper:790020275525779487>":
-            resultEmbed.add_field(name="You Lose!", value="Better luck next time")
-            return
-        else:
-            resultEmbed.add_field(name="Draw", value="You both chose the same option")
-            return
-    
-    if userPick == "<:scissors:790020379467972650>":
-        if botPick == "<:newspaper:790020275525779487>":
-            resultEmbed.add_field(name="You Win!", value="Congratulations!")
-            return
-        if botPick == "<:rock:790020056855085107>":
-            resultEmbed.add_field(name="You Lose!", value="Better luck next time")
-            return            
-        else:
-            resultEmbed.add_field(name="Draw", value="You both chose the same option")
-            return
+    if botPick == "gun":
+        resultEmbed.add_field(name="You Lose!", value="Better luck next time")
 
-    if userPick == "<:newspaper:790020275525779487>":
-        if botPick == "<:rock:790020056855085107>":
-            resultEmbed.add_field(name="You Win!", value="Congratulations!")
-            return
-        if botPick == "<:scissors:790020379467972650>":
-            resultEmbed.add_field(name="You Lose!", value="Better luck next time")
-            return
-        else:
-            resultEmbed.add_field(name="Draw", value="You both chose the same option")
-            return
     
-    await botMessage.delete()
+    if userPick.lower() == botPick:
+        resultEmbed.add_field(name="Draw", value="You both chose the same option")
+
+    
+    if userPick.lower() == "rock":
+        if botPick == "scissors":
+            resultEmbed.add_field(name="You Win!", value="Congratulations!")
+
+        if botPick == "paper":
+            resultEmbed.add_field(name="You Lose!", value="Better luck next time")
+
+    
+    if userPick.lower() == "scissors":
+        if botPick == "paper":
+            resultEmbed.add_field(name="You Win!", value="Congratulations!")
+
+        if botPick == "rock":
+            resultEmbed.add_field(name="You Lose!", value="Better luck next time")
+
+
+    if userPick.lower() == "paper":
+        if botPick == "rock":
+            resultEmbed.add_field(name="You Win!", value="Congratulations!")
+
+        if botPick == "scissors":
+            resultEmbed.add_field(name="You Lose!", value="Better luck next time")
+
+
     await ctx.channel.send(embed=resultEmbed)
     
 
