@@ -86,15 +86,14 @@ async def wolframfull(ctx,*args):
     question = ' '.join(args)
     res = wolframClient.query(question)
     wolframEmbed = discord.Embed(title="Wolfram|Alpha API", description=" ", color=discord.Color.from_rgb(255,125,0))
-    if len(res.pods) > 0:
-        for pod in res.pods:
-            if pod.text:
-                #printPod
-                wolframEmbed.add_field(name=pod.title,value=pod.text,inline=False)
-            elif pod.img and imgCount == 0:
-                #printImgPod
-                wolframEmbed.set_image(url=pod.img)
-                imgCount = 1
+    for pod in res.pods:
+        if pod.text:
+            #printPod
+            wolframEmbed.add_field(name=pod.title,value=pod.text,inline=False)
+        elif pod.img and imgCount == 0:
+            #printImgPod
+            wolframEmbed.set_image(url=pod.img)
+            imgCount = 1
     await ctx.send(embed=wolframEmbed)
 #randomly chooses an attacker or defender from the respective lists
 @bot.command()
