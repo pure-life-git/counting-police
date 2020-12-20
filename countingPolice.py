@@ -59,6 +59,10 @@ def gameEntry(game):
     cur.execute(SQL,data)
     conn.commit()
 
+def printPod(channel, text, title):
+    
+def printImgPod():
+
 #sets bot status based on number of people with strikes
 @bot.event
 async def on_ready():
@@ -78,6 +82,24 @@ async def wolfram(ctx,*args):
     wolframEmbed = discord.Embed(title="Wolfram|Alpha API", description=" ", color=discord.Color.from_rgb(255,125,0))
     wolframEmbed.add_field(name="Result", value=next(response.results).text,inline=False)
     await ctx.channel.send(embed=wolframEmbed)
+
+#sends user input to the wolframalpha api and prints out a full answer
+@bot.command()
+async def wolframfull(ctx,*args):
+    imgCount = 0
+    question = ' '.join(args)
+    res = wolframClient.query(question)
+    wolframEmbed = discord.Embed(title="Wolfram|Alpha API", description=" ", color=discord.Color.from_rgb(255,125,0))
+    if len(res.pods) > 0:
+        for pod in res.pods:
+            if pod.text:
+                #printPod
+                wolframEmbed.add_field(name=pod.title,value=pod.text,inline=False)
+            elif pod.img and imgCount == 0:
+                #printImgPod
+                wolframEmbed.set_image(url=pod.img)
+                imgCount = 1
+    await ctx.send(embed=wolframEmbed)
 #randomly chooses an attacker or defender from the respective lists
 @bot.command()
 async def operator(ctx,arg1):
