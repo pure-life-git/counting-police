@@ -118,8 +118,9 @@ async def dice(ctx, *args):
         sum = 0
         for i in range(int(entry[0])):
             roll = random.randint(0,int(entry[1]))
+            print(roll)
             sum += roll
-    ctx.send(sum)
+    await ctx.send(sum)
 
 
 @bot.command()
