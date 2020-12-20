@@ -387,12 +387,12 @@ async def on_message(message):
                     if i[1] == 1:
                         await message.delete()
                         await message.channel.send(message.author.mention + ' entered ' + str(message.content) + ' and screwed up the count. This is their 2nd infraction.')
-                        SQL = "UPDATE striketable SET strikes = 2 WHERE name = %s;"
+                        SQL = "UPDATE striketable SET strikes = 2 WHERE name = '%s';"
                         cur.execute(SQL, (userID,))
                         conn.commit()
                         return
                     else:
-                        SQLtwo = "UPDATE striketable SET strikes = 3 WHERE name = %s;"
+                        SQLtwo = "UPDATE striketable SET strikes = 3 WHERE name = '%s';"
                         cur.execute(SQLtwo, (userID,))
                         conn.commit()
                         role = discord.utils.get(message.guild.roles,name='Counting Clown')
