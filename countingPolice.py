@@ -5,13 +5,16 @@ from discord.ext import commands
 import asyncio
 import psycopg2
 
+#initialize client and bot
 client = discord.Client()
 bot = commands.Bot(command_prefix = '.')
 
+#initializes connections to postgresql database
 DATABASE_URL = os.environ['DATABASE_URL']
 conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 cur = conn.cursor()
 
+#foot picture list for .finn
 forbiddenList = [
     "https://img.webmd.com/dtmcms/live/webmd/consumer_assets/site_images/articles/health_tools/ways_to_make_your_feet_feel_better_slideshow/493ss_thinkstock_rf_woman_stretching_feet.jpg",
     "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/gh-why-do-my-feet-hurt-toes-1594663599.png?crop=0.914xw:0.687xh;0.0864xw,0.110xh&resize=480:*",
@@ -20,6 +23,7 @@ forbiddenList = [
     "https://media.phillyvoice.com/media/images/09102019_feet_Pixabay.2e16d0ba.fill-735x490.jpg"
 ]
 
+#attacker list for .operator
 attackerList = [
     "Zero", "Ace", "Iana", "Kali", "Amaru", "Nøkk", "Gridlock", "Nomad",
     "Maverick", "Lion", "Finka", "Dokkaebi", "Zofia", "Ying", "Jackal",
@@ -27,31 +31,29 @@ attackerList = [
     "Thermite", "Montagne", "Twitch", "Blitz", "IQ", "Fuze", "Glaz"
 ]
 
+#defender list for .operator
 defenderList = [
     "Aruni", "Melusi", "Oryx", "Wamai", "Goyo", "Warden", "Mozzie", "Kaid",
     "Clash", "Maestro", "Alibi", "Vigil", "Ela", "Lesion", "Mira", "Echo",
     "Caveira", "Valkyrie", "Frost", "Mute", "Smoke", "Castle", "Pulse", "Doc",
     "Rook", "Jäger", "Bandit", "Tachanka", "Kapkan"
 ]
-#count = []
-#games = []
 
+#enters a message from the #counting channel into the postgresql DB
 def countEntry(num):
     SQL = "INSERT INTO countingtable (count) VALUES (%s);"
     data = (num,)
     cur.execute(SQL, data)
     conn.commit()
-    #print(cur.execute("SELECT * FROM countingtable"))
-    #cur.execute("SELECT countingtable FROM information_schema.tables WHERE table_schema = 'puclib'")
-    #for table in cur.fetchall():
-    #    print(table)
 
+#enters a game from any channel into the postgresql DB
 def gameEntry(game):
     SQL = """INSERT INTO gametable (games) VALUES (%s)"""
     data = (game,)
     cur.execute(SQL,data)
     conn.commit()
 
+#sets bot status based on number of people with strikes
 @bot.event
 async def on_ready():
     print(f'{bot.user.name} has connected to Discord!')
@@ -62,21 +64,27 @@ async def on_ready():
     presence = str(numCriminals) + " criminals"
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,name=presence))
 
+#randomly chooses an attacker or defender from the respective lists
 @bot.command()
 async def operator(ctx,arg1):
+    #checks if the user want an attacker or defender
     if arg1.lower() == "attacker":
-        op = random.randint(0, len(attackerList)-1)
-        await ctx.send(attackerList[op])
+        #sends a message with a random attacker
+        await ctx.send(random.choice(attackerList))
+        #adds an attacker reaction to the users message
         await ctx.message.add_reaction("⚔️")
         return
     if arg1.lower() == "defender":
-        op = random.randint(0, len(defenderList)-1)
-        await ctx.send(defenderList[op])
+        #sends a message with a random defender
+        await ctx.send(random.choice(defenderList))
+        #adds a defender reaction to the users message
         await ctx.message.add_reaction("🛡️")
         return
     else:
+        #only happens if the user passed something other than attacker or defender
         await ctx.send("Please enter either 'Attacker' or 'Defender'")
 
+#help command to explain each command for the bot
 @bot.command()
 async def gamehelp(ctx):
     helpEmbed = discord.Embed(title='Help', description = 'Help with the bot', color=discord.Color.blurple())
@@ -93,23 +101,28 @@ async def gamehelp(ctx):
     helpEmbed.add_field(name=".gamelist", value='Gamelist will print out a list of all the games you have added to the gamelist', inline=False)
     await ctx.send(embed=helpEmbed)
 
+#plays a game of rock paper scissorcs with the user
 @bot.command()
 async def rps(ctx, userPick):
+    #initializes a list with the possible choices the bot can make
     choices = [
         "rock",
         "paper",
         "scissors"
     ]
+    #checks if the users input is a valid choice
     if userPick.lower() not in choices:
         ctx.channel.send("Please enter either 'rock', 'paper' or 'scissors'")
         return
-    
+    #sets a 1 in 100 chance that the bot chooses gun and automatically wins. else the bot
+    #picks a random choice
     gunChance = random.randint(1,100)
     if  gunChance == 69:
         botPick = "gun"
     else:
         botPick = random.choice(choices)
 
+    #if the bot chose gun, then an embed is created and sent with the result
     if botPick == "gun":
         resultEmbed = discord.Embed(title="Rock Paper Scissors with {}".format(str(ctx.message.author)), description=" ", color=discord.Color.red())
         resultEmbed.add_field(name="Your Pick", value="{}".format(userPick), inline=False)
@@ -118,7 +131,7 @@ async def rps(ctx, userPick):
         await ctx.channel.send(embed=resultEmbed)
         return
 
-    
+    #checks for a draw
     if userPick.lower() == botPick:
         resultEmbed = discord.Embed(title="Rock Paper Scissors with {}".format(str(ctx.message.author)), description=" ", color=discord.Color.gold())
         resultEmbed.add_field(name="Your Pick", value="{}".format(userPick), inline=False)
@@ -127,7 +140,7 @@ async def rps(ctx, userPick):
         await ctx.channel.send(embed=resultEmbed)
         return
 
-    
+    #handles interactions if the user chooses rock
     if userPick.lower() == "rock":
         if botPick == "scissors":
             resultEmbed = discord.Embed(title="Rock Paper Scissors with {}".format(str(ctx.message.author)), description=" ", color=discord.Color.green())
@@ -145,7 +158,7 @@ async def rps(ctx, userPick):
             await ctx.channel.send(embed=resultEmbed)
             return
 
-    
+    #handles interactions if the user chooses scissors
     if userPick.lower() == "scissors":
         if botPick == "paper":
             resultEmbed = discord.Embed(title="Rock Paper Scissors with {}".format(str(ctx.message.author)), description=" ", color=discord.Color.green())
@@ -164,7 +177,7 @@ async def rps(ctx, userPick):
             await ctx.channel.send(embed=resultEmbed)
             return
 
-
+    #handles interactions if the user chooses paper
     if userPick.lower() == "paper":
         if botPick == "rock":
             resultEmbed = discord.Embed(title="Rock Paper Scissors with {}".format(str(ctx.message.author)), description=" ", color=discord.Color.green())
@@ -183,107 +196,104 @@ async def rps(ctx, userPick):
             await ctx.channel.send(embed=resultEmbed)
             return
 
-
-    
-    
-
+#chooses a random number whose bounds are the numbers the user passed
 @bot.command()
 async def decide(ctx,arg1,arg2):
     number = random.randint(int(arg1),int(arg2))
     await ctx.send(number)
 
+#sends a random picture from the forbiddenList directly to Finn
 @bot.command()
 async def finn(ctx):
-    link = forbiddenList[random.randint(0,len(forbiddenList)-1)]
-    finnEmbed = discord.Embed(title="Feet Pics", description="Here's some fuel, you weirdo.", type="rich", color=discord.color.dark_green())
+    link = random.choice(forbiddenList)
+    finnEmbed = discord.Embed(title="Feet Pics", description="Here's some fuel, you weirdo.", type="rich", color=discord.Color.dark_green())
     finnEmbed.set_image(url=link)
-    id = int(203300155762540544)
-    #user = client.get_user(id)#203300155762540544
-    #print(user)
-    finn = await ctx.message.guild.fetch_member(id)
+    id = int(203300155762540544) #sets id as Finn's userId
+    finn = await ctx.message.guild.fetch_member(id) #fetches Finn's user from his id
     await finn.send(embed=finnEmbed)
     await ctx.message.add_reaction("🦶")
 
+#common dice roller with parsing
 @bot.command()
 async def dice(ctx, *args):
+    #converts all the arguments the user passes into a list
     argsList = list(args)
     sum = 0
     rolls = []
     for i in range(len(argsList)):
-        entry = argsList[i].split('d')
+        entry = argsList[i].split('d') #splits the index of argsList into two numbers, splicing at 'd'
         print(entry)
-        for i in range(int(entry[0])):
-            roll = random.randint(1,int(entry[1]))
+        for i in range(int(entry[0])): #repeats the dice roll for a number of times equal to the first index of the split
+            roll = random.randint(1,int(entry[1])) #rolls a dice with the number of sides equal to the second index of the split
             rolls.append(roll)
             sum += roll
-    await ctx.send("Rolls: "+', '.join(map(str,rolls))+"\nSum: "+str(sum))
+    await ctx.send("Rolls: "+', '.join(map(str,rolls))+"\nSum: "+str(sum)) #sends a message containing the rolls and the sum of all the rolls
 
-
+#adds a game provided by the user to the gameList
 @bot.command()
 async def game(ctx, *, arg):
     gameLower = str(arg).lower()
-    cur.execute("SELECT * FROM gametable")
-    rawList = list(cur.fetchall())
+    cur.execute("SELECT * FROM gametable") #select every entry in the gametable from the DB 
+    rawList = list(cur.fetchall()) #makes a list with every entry
     games = []
-    for i in rawList:
-        games.append(i[0])
-    if gameLower in games:
+    for i in rawList: 
+        games.append(i[0]) #takes the list of tuples and appends the first index to a new list
+    if gameLower in games: #checks to see if the game is already in the list
         await ctx.send('That game is already in the list')
         return
-    gameEntry(gameLower)
-    #games.append(gameLower)
+    gameEntry(gameLower) #calls a function that adds the game to the sql table
     message = ctx.message
     await message.add_reaction('👍')
-    #await ctx.send('**Successfully added **' + str(arg) + '** to the Game List.**')
 
+#randomly chooses a game from the game list
 @bot.command()
 async def choosegame(ctx):
-    cur.execute("SELECT * FROM gametable")
-    rawList = list(cur.fetchall())
+    cur.execute("SELECT * FROM gametable") #selects all of the entries from the table
+    rawList = list(cur.fetchall()) # makes a list out of the selection
     numSQL = []
     for i in rawList:
-        numSQL.append(i[0])
-    num = random.randint(0, len(numSQL)-1)
-    await ctx.send(numSQL[num] + ' has been chosen by machine engineered randomness!**')
+        numSQL.append(i[0]) #takes the list of tuples and appends the first index to a new list
+    num = random.choice(numSQL) #chooses a 
+    await ctx.send(num + ' has been chosen by machine engineered randomness!') #sends a message with the result
 
+#clears game list
 @bot.command()
 async def gameclear(ctx):
-    #for i in range(len(games)):
-    #    games.pop()
-    cur.execute("DELETE FROM gametable")
+    cur.execute("DELETE FROM gametable") #deletes all entries from the game list
     conn.commit()
     message = ctx.message
     await message.add_reaction('👍')
-    #await ctx.send('The list of games has been successfully cleared')
 
+#lists all of the games in the gamelist
 @bot.command()
 async def gamelist(ctx):
-    cur.execute("SELECT * FROM gametable")
-    rawList = list(cur.fetchall())
+    cur.execute("SELECT * FROM gametable") #selects all entries from the game list
+    rawList = list(cur.fetchall()) #makes a list out of all the entries
     games = []
     for i in rawList:
-            games.append(i[0])
-    if len(games) != 0:
+            games.append(i[0]) #takes each tuple in the list and appends the first index to a new list
+    if len(games) != 0: #checks if the gamelist is empty
+        #creates a new embed and adds the contents of the gamelist in an ordered list to an embed field
         gamelistEmbed = discord.Embed(title="Game List", description="List of games entered", color=discord.Color.greyple())
-        gamelistEmbed.add_field(name="Games",value='\n'.join('**{}**: {}'.format(*k) for k in enumerate(games,1)))
-        await ctx.send(embed = gamelistEmbed)
+        gamelistEmbed.add_field(name="Games",value='\n'.join('{}: {}'.format(*k) for k in enumerate(games,1)))
+        await ctx.send(embed = gamelistEmbed) #sends the embed
     else:
+        #if the gamelist is empty, the embed is sent but with contents that let the user know the list is empty
         emptygamelistEmbed = discord.Embed(title="Game List", description="List of games entered", color=discord.Color.red())
         emptygamelistEmbed.add_field(name="No Games!", value="The game list is empty.", inline=False)
         await ctx.send(embed = emptygamelistEmbed)
 
+#removes a particular game from the gamelist
 @bot.command()
 async def gameremove(ctx,*,arg):
     gameLower = str(arg).lower()
-    cur.execute("SELECT * FROM gametable")
-
-    #games.remove(str(arg).lower())
+    cur.execute("SELECT * FROM gametable") #selects all the entries from the gamelist
     SQL = "DELETE FROM gametable WHERE games=%s;"
     cur.execute(SQL,(gameLower,))
     conn.commit()
     message = ctx.message
     await message.add_reaction('👍')
-    #await ctx.send(str(arg).lower()+'** was successfully removed from the list**')
+
 
 @bot.command()
 async def poll(ctx,*args):
@@ -363,23 +373,11 @@ async def on_message(message):
             await dad.add_reaction('👌')
         return
     else:
-        #print(count)
-        #if len(count) == 0:
-        #    count.append(int(message.content))
-        #    countEntry(int(message.content))
-        #    return
-
-        #correctNumber = count[len(count)-1]+1
         cur.execute("SELECT MAX(count) FROM countingtable;")
         correctNumberDB = list(cur.fetchone())
         correctNumberSQL = int(correctNumberDB[0])+1
-        #print('Correct Number: ',str(correctNumber))
         print('Correct Number in DB: ',str(correctNumberSQL))
-
-        
         if str(message.content).isnumeric() == False or int(message.content) != correctNumberSQL:
-            #await message.author.edit(roles='Counting Clown', reason='Ya done goofed the count')
-            #server = bot.get_guild(599808865093287956)
             cur.execute("SELECT * FROM striketable")
             strikeList = cur.fetchall()
             userID = message.author.id
@@ -413,21 +411,7 @@ async def on_message(message):
             print(numCriminals)
             presence = str(numCriminals) + " criminals"
             await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,name=presence))
-
-
-            #if userID not in strikeList:
-            #    cur.execute("INSERT INTO striketable (name, strikes) VALUES (%s, 1)")
-
-            #SQL = "INSERT IGNORE INTO striketable (name, strikes) VALUES (%s, %s)"
-            #cur.execute()
-            #role = discord.utils.get(message.guild.roles,name='Counting Clown')
-            #await message.author.add_roles(role)
-            #message.author.edit(discord.utils.get(message.guild.role, name = 'Counting Clown'))
-            #await message.delete()
-            #await message.channel.send(message.author.mention + ' entered ' + str(message.content) + ' and screwed up the count. Shame them!')
         else:
-            #count.append(int(message.content))
             countEntry(int(message.content))
-
 
 bot.run(os.environ['token'])
