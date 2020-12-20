@@ -4,6 +4,7 @@ import random
 from discord.ext import commands
 import asyncio
 import psycopg2
+import wolframalpha
 
 #initialize client and bot
 client = discord.Client()
@@ -14,6 +15,10 @@ bot.remove_command('help')
 DATABASE_URL = os.environ['DATABASE_URL']
 conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 cur = conn.cursor()
+
+#sets up wolfram api
+wolframID = 'PAX2TQ-2V94QU68XE'
+wolframClient = wolframalpha.Client(wolframID)
 
 #foot picture list for .finn
 forbiddenList = [
@@ -65,6 +70,14 @@ async def on_ready():
     presence = str(numCriminals) + " criminals"
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,name=presence))
 
+#sends user input to the wolframalpha api and prints out the answer
+@bot.command()
+async def wolfram(ctx,*args):
+    question = ' '.join(args)
+    response = client.query(question)
+    wolframEmbed = discord.Embed(title="Wolfram|Alpha API", description=" ", color=discord.Color.from_rgb(255,125,0))
+    wolframEmbed.add_field(name="Result", value=next(response.results).text,inline=False)
+    ctx.channel.send(embed=wolframEmbed)
 #randomly chooses an attacker or defender from the respective lists
 @bot.command()
 async def operator(ctx,arg1):
