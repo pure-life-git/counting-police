@@ -120,7 +120,7 @@ async def dice(ctx, *args):
             roll = random.randint(0,int(entry[1]))
             rolls.append(roll)
             sum += roll
-    await ctx.send("Rolls: "+', '.join(rolls)+"\nSum: "+str(sum))
+    await ctx.send("Rolls: "+', '.join(map(str,rolls))+"\nSum: "+str(sum))
 
 
 @bot.command()
