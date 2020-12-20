@@ -59,10 +59,6 @@ def gameEntry(game):
     cur.execute(SQL,data)
     conn.commit()
 
-def printPod(channel, text, title):
-    
-def printImgPod():
-
 #sets bot status based on number of people with strikes
 @bot.event
 async def on_ready():
