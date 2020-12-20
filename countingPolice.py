@@ -95,13 +95,14 @@ async def gamehelp(ctx):
 @bot.command()
 async def rps(ctx):
     botMessage = await ctx.send("React with what you choose")
-    reactions = [
-        "<:rock:790031654030278686>", 
-        "<:newspaper:790031761967022110>", 
-        "<:scissors:790031816656551937>"
-    ]
-    for i in reactions:
-        await botMessage.add_reaction(i)
+    #reactions = [
+    #    "<:rock:790031654030278686>", 
+    #    "<:newspaper:790031761967022110>", 
+    #    "<:scissors:790031816656551937>"
+    #]
+    #for i in reactions:
+    #    await botMessage.add_reaction(i)
+    await botMessage.add_reaction("<:rock:790031654030278686>")
     await asyncio.sleep(10)
     botMessage = await ctx.channel.fetch_message(botMessage.id)
     counts = {react.emoji: react.count for react in botMessage.reactions}
