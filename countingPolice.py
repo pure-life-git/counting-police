@@ -116,7 +116,6 @@ async def dice(ctx, *args):
     for i in range(len(argsList)):
         entry = argsList[i].split('d')
         print(entry)
-        sum = 0
         for i in range(int(entry[0])):
             roll = random.randint(0,int(entry[1]))
             rolls.append(roll)
