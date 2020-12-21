@@ -75,6 +75,12 @@ async def on_ready():
     presence = str(numCriminals) + " criminals"
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,name=presence))
 
+@bot.command()
+async def py(ctx, *args):
+    argsJoin = ' '.join(args)
+    answer = eval(argsJoin)
+    await ctx.send(answer)
+
 #sends user input to the wolframalpha api and prints out the answer
 @bot.command()
 async def wolfram(ctx,*args):
