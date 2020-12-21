@@ -78,7 +78,7 @@ async def on_ready():
 @bot.command()
 async def mute(ctx, mention, time=5):
     if ctx.message.author.id != 203282979265576960 or ctx.message.author.id != 288710564367171595:
-        ctx.send("You do not have permission to use this command.")
+        await ctx.send("You do not have permission to use this command.")
         return
     member = ctx.message.mentions[0]
     await member.edit(mute=True)
