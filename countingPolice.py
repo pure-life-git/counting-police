@@ -102,6 +102,17 @@ async def wolframfull(ctx,*args):
                 wolframImgEmbed.set_image(url=sub['img']['@src'])
                 await ctx.send(embed=wolframImgEmbed)
     await ctx.send(embed=wolframEmbed)
+
+@bot.command()
+async def doot(ctx):
+    user = ctx.message.author()
+    voice_channel = user.voice.voice_channel()
+    channel=None
+    if voice_channel != None:
+        channel = voice_channel.name
+        await client.voice_channel.connect()
+        await asyncio.sleep(5)
+        await client.voice_channel.disconnect()
 #randomly chooses an attacker or defender from the respective lists
 @bot.command()
 async def operator(ctx,arg1):
