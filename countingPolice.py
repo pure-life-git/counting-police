@@ -96,8 +96,9 @@ async def wolframfull(ctx,*args):
         if pod.text:
             #printPod
             wolframEmbed.add_field(name=pod.title,value=pod.text,inline=False)
-        elif pod.image:
-            await ctx.send("**"+pod.title+":**\n"+pod.image)
+        #elif pod.image:
+        #    await ctx.send("**"+pod.title+":**\n"+pod.image)
+    print(res.pods)
     await ctx.send(embed=wolframEmbed)
 #randomly chooses an attacker or defender from the respective lists
 @bot.command()
