@@ -63,7 +63,7 @@ ytdl_format_options = {
     'source_address': '0.0.0.0' # bind to ipv4 since ipv6 addresses cause issues sometimes
 }
 
-ytdl = youtube_dl.YoutuebDL(ytdl_format_options)
+ytdl = youtube_dl.YoutubeDL(ytdl_format_options)
 
 class YTDLSource(discord.PCMVolumeTransformer):
     def __init__(self, source, *, data, volume=0.5):
@@ -153,6 +153,7 @@ async def doot(ctx):
         channel = voice_channel.name
         voice = await voice_channel.connect()
         player = await YTDLSource.from_url('https://www.youtube.com/watch?v=WTWyosdkx44')
+        ctx.voice.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
         await asyncio.sleep(5)
         await voice.disconnect()
 
