@@ -108,7 +108,7 @@ async def wolfram(ctx,*args):
         wolframEmbed.add_field(name=pod.title,value=pod.text,inline=False)
     #wolframEmbed.add_field(name="Result", value=response.results.text,inline=False)
     if len(wolframEmbed.fields) == 0:
-        ctx.send("Wolfram|Alpha could not find any simple results for that query.")
+        await ctx.send("Wolfram|Alpha could not find any simple results for that query.")
         return
     else:
         await ctx.channel.send(embed=wolframEmbed)
