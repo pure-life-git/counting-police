@@ -20,6 +20,12 @@ cur = conn.cursor()
 wolframID = 'PAX2TQ-2V94QU68XE'
 wolframClient = wolframalpha.Client(wolframID)
 
+#list of mod ids
+modID = [
+    203282979265576960,
+    288710564367171595
+]
+
 #foot picture list for .finn
 forbiddenList = [
     "https://img.webmd.com/dtmcms/live/webmd/consumer_assets/site_images/articles/health_tools/ways_to_make_your_feet_feel_better_slideshow/493ss_thinkstock_rf_woman_stretching_feet.jpg",
@@ -77,7 +83,7 @@ async def on_ready():
 
 @bot.command()
 async def mute(ctx, mention, time=5):
-    if ctx.message.author.id != 203282979265576960 or ctx.message.author.id != 288710564367171595:
+    if int(ctx.message.author.id) not in modID:
         await ctx.send("You do not have permission to use this command.")
         return
     member = ctx.message.mentions[0]
