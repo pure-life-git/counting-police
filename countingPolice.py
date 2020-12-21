@@ -76,7 +76,7 @@ async def on_ready():
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,name=presence))
 
 @bot.command()
-async def mute(ctx, a:str):
+async def mute(ctx, a):
     member = a.mentions[0]
     await member.edit(mute=True)
     await ctx.send(f"{member} has been muted for 5 seconds")
@@ -98,7 +98,11 @@ async def wolfram(ctx,*args):
     for pod in response.results: #for each returned pod from the query, adds a new field to the answer embed
         wolframEmbed.add_field(name=pod.title,value=pod.text,inline=False)
     #wolframEmbed.add_field(name="Result", value=response.results.text,inline=False)
-    await ctx.channel.send(embed=wolframEmbed)
+    if len(wolframEmbed.fields) == 0:
+        ctx.send("Wolfram|Alpha could not find any simple results for that query.")
+        return
+    else:
+        await ctx.channel.send(embed=wolframEmbed)
 
 #sends user input to the wolframalpha api and prints out a full answer
 @bot.command()
