@@ -98,7 +98,9 @@ async def wolframfull(ctx,*args):
             wolframEmbed.add_field(name=pod.title,value=pod.text,inline=False)
         for sub in pod.subpods:
             if sub['img']['@src']:
-                await ctx.send("**"+pod.title+":**\n"+sub['img']['@src'])
+                wolframImgEmbed = discord.Embed(title=pod.title,description=" ", color=discord.Color.from_rgb(255,125,0))
+                wolframImgEmbed.set_image(url=sub['img']['@src'])
+                await ctx.send(embed=wolframImgEmbed)
     print(list(res.pods))
     await ctx.send(embed=wolframEmbed)
 #randomly chooses an attacker or defender from the respective lists
