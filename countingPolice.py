@@ -63,6 +63,10 @@ ytdl_format_options = {
     'source_address': '0.0.0.0' # bind to ipv4 since ipv6 addresses cause issues sometimes
 }
 
+discord.opus.load_opus()
+if not discord.opus.is_loaded():
+    print('Opus failed to load')
+
 ffmpeg_options = {
     'options': '-vn'
 }
