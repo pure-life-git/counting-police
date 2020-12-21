@@ -140,7 +140,7 @@ async def play(ctx,url: str):
         await voice.move_to(channel)
     else:
         voice = await channel.connect()
-        
+
     song_there = os.path.isfile("song.mp3")
     try:
         if song_there:
@@ -171,6 +171,7 @@ async def play(ctx,url: str):
     voice.play(discord.FFmpegPCMAudio("song.mp3"))
     voice.volume = 50
     voice.is_playing()
+    await voice.disconnect()
 
     
 
