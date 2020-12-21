@@ -1,7 +1,9 @@
 import discord
 import os
 import random
+from discord import voice_client
 from discord.ext import commands
+from discord.utils import get
 import asyncio
 import psycopg2
 import wolframalpha
@@ -103,6 +105,20 @@ async def wolframfull(ctx,*args):
                 wolframImgEmbed.set_image(url=sub['img']['@src'])
                 await ctx.send(embed=wolframImgEmbed)
     await ctx.send(embed=wolframEmbed)
+
+@bot.command()
+async def join(ctx):
+    global voice
+    channel = ctx.message.author.voice.channel
+    voice = get(bot.voice_clients, guild=ctx.guild)
+    if voice and voice.is_connected():
+        await voice.move_to(channel)
+    else:
+        voice = await channel.connect()
+        print(f"The bot has connected to {channel}\n")
+    
+    await ctx.send(f"Joined {channel}")
+    
 
 @bot.command()
 async def doot(ctx):
