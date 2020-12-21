@@ -121,7 +121,7 @@ async def join(ctx):
 
 @bot.command()
 async def leave(ctx):
-    channel = ctx.message.author.channel
+    channel = ctx.message.author.voice.channel
     voice = get(bot.voice_clients,guild=ctx.guild)
     if voice and voice.is_connected():
         await voice.disconnect()
