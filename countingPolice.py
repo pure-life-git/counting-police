@@ -174,6 +174,7 @@ async def play(ctx,url: str):
     voice.play(discord.FFmpegPCMAudio("song.mp3"))
     voice.volume = 50
     voice.is_playing()
+    await asyncio.sleep(int(duration))
     await voice.disconnect()
 
     
