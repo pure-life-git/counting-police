@@ -110,9 +110,9 @@ async def doot(ctx):
     channel=None
     if voice_channel != None:
         channel = voice_channel.name
-        await voice_channel.connect()
+        voice = await voice_channel.connect()
         await asyncio.sleep(5)
-        await voice_channel.disconnect()
+        await voice.disconnect()
 #randomly chooses an attacker or defender from the respective lists
 @bot.command()
 async def operator(ctx,arg1):
