@@ -119,6 +119,7 @@ async def join(ctx):
     
     await ctx.send(f"Joined {channel}")
 
+
 @bot.command()
 async def leave(ctx):
     channel = ctx.message.author.voice.channel
@@ -128,7 +129,41 @@ async def leave(ctx):
         print(f"The bot has left {channel}")
         await ctx.send(f"The bot has disconnected from {channel}")
     else:
-        await ctx.send("The bot is not connected to the channel")
+        await ctx.send("The bot is not connected to a voice channel")
+
+@bot.command()
+async def play(ctx,url: str):
+    song_there = os.path.isfile("song.mp3")
+    try:
+        if song_there:
+            os.remove("song.mp3")
+            print("Removed old song file")
+    except PermissionError:
+        print("Trying to delete song file, but it's being played")
+        await ctx.send("ERROR: Music playing")
+        return
+
+    voice = get(bot.voice_clients, guild=ctx.guild)
+
+    ydl_opts = {
+        'format': 'bestaudio/best',
+        'postprocessors': [{
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': 'mp3',
+            'preferredquality': '192',
+        }],
+    }
+
+    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+        print("Downloading...\n")
+        ydl.download([url])
+    for file in os.listdir("./"):
+        if file.endswith(".mp3"):
+            os.rename(file, "song.mp3")
+    voice.play(discord.FFmpegPCMAudio("song.mp3"))
+    voice.volume = 100
+    voice.is_playing()
+
     
 
 @bot.command()
