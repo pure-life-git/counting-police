@@ -163,6 +163,9 @@ async def play(ctx,url: str):
     }
 
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+        dictMeta = ydl.extract_info([url])
+        duration = dictMeta['duration']
+        print('duration:'+str(duration))
         print("Downloading...\n")
         ydl.download([url])
     for file in os.listdir("./"):
