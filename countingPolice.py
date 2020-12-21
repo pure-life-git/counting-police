@@ -157,7 +157,7 @@ async def doot(ctx):
         channel = voice_channel.name
         voice = await voice_channel.connect()
         player = await YTDLSource.from_url('https://www.youtube.com/watch?v=WTWyosdkx44')
-        ctx.voice.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
+        voice.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
         await asyncio.sleep(5)
         await voice.disconnect()
 
