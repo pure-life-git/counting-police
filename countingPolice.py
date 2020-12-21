@@ -5,6 +5,7 @@ from discord.ext import commands
 import asyncio
 import psycopg2
 import wolframalpha
+import youtube_dl
 
 #initialize client and bot
 client = discord.Client()
@@ -19,6 +20,9 @@ cur = conn.cursor()
 #sets up wolfram api
 wolframID = 'PAX2TQ-2V94QU68XE'
 wolframClient = wolframalpha.Client(wolframID)
+
+#suppress noise about console usage from errors
+youtube_dl.utils.bug_reports_message = lambda: ''
 
 #foot picture list for .finn
 forbiddenList = [
@@ -44,6 +48,43 @@ defenderList = [
     "Caveira", "Valkyrie", "Frost", "Mute", "Smoke", "Castle", "Pulse", "Doc",
     "Rook", "Jäger", "Bandit", "Tachanka", "Kapkan"
 ]
+
+ytdl_format_options = {
+    'format': 'bestaudio/best',
+    'outtmpl': '%(extractor)s-%(id)s-%(title)s.%(ext)s',
+    'restrictfilenames': True,
+    'noplaylist': True,
+    'nocheckcertificate': True,
+    'ignoreerrors': False,
+    'logtostderr': False,
+    'quiet': True,
+    'no_warnings': True,
+    'default_search': 'auto',
+    'source_address': '0.0.0.0' # bind to ipv4 since ipv6 addresses cause issues sometimes
+}
+
+ytdl = youtube_dl.YoutuebDL(ytdl_format_options)
+
+class YTDLSource(discord.PCMVolumeTransformer):
+    def __init__(self, source, *, data, volume=0.5):
+        super().__init__(source, volume)
+
+        self.data = data
+
+        self.title = data.get('title')
+        self.url = data.get('url')
+
+    @classmethod
+    async def from_url(cls, url, *, loop=None, stream=False):
+        loop = loop or asyncio.get_event_loop()
+        data = await loop.run_in_executor(None, lambda: ytdl.extract_info(url, download=not stream))
+
+        if 'entries' in data:
+            # take first item from a playlist
+            data = data['entries'][0]
+
+        filename = data['url'] if stream else ytdl.prepare_filename(data)
+        return cls(discord.FFmpegPCMAudio(filename, **ffmpeg_options), data=data)
 
 #enters a message from the #counting channel into the postgresql DB
 def countEntry(num):
@@ -111,8 +152,11 @@ async def doot(ctx):
     if voice_channel != None:
         channel = voice_channel.name
         voice = await voice_channel.connect()
+        player = await YTDLSource.from_url('https://www.youtube.com/watch?v=WTWyosdkx44')
         await asyncio.sleep(5)
         await voice.disconnect()
+
+
 #randomly chooses an attacker or defender from the respective lists
 @bot.command()
 async def operator(ctx,arg1):
