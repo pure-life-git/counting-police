@@ -161,7 +161,7 @@ async def play(ctx,url: str):
         if file.endswith(".mp3"):
             os.rename(file, "song.mp3")
     voice.play(discord.FFmpegPCMAudio("song.mp3"))
-    voice.volume = 100
+    voice.volume = 50
     voice.is_playing()
 
     
