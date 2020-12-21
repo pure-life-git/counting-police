@@ -76,6 +76,14 @@ async def on_ready():
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,name=presence))
 
 @bot.command()
+async def mute(ctx, a:str):
+    member = a.mentions[0]
+    await member.edit(mute=True)
+    await ctx.send(f"{member} has been muted for 5 seconds")
+    await asyncio.sleep(5)
+    await member.edit(mute=False)
+
+@bot.command()
 async def py(ctx, *args):
     argsJoin = ' '.join(args)
     answer = eval(argsJoin)
