@@ -168,19 +168,36 @@ async def play(ctx,url: str):
 
 @bot.command()
 async def doot(ctx):
-    server = ctx.guild
-    user = ctx.message.author
-    voice_channel = user.voice.channel
-    channel=None
-    if voice_channel != None:
-        channel = voice_channel.name
-        voice = await voice_channel.connect()
-        player = await voice.create_ytdl_player('https://www.youtube.com/watch?v=WTWyosdkx44')
-        player.start()
-        #await asyncio.sleep(5)
-        #await voice.disconnect()
-    else:
-        ctx.send("User is not in a voice channel")
+    song_there = os.path.isfile("doot.mp3")
+    try:
+        if song_there:
+            os.remove("doot.mp3")
+            print("Removed old song file")
+    except PermissionError:
+        print("Trying to delete song file, but it's being played")
+        await ctx.send("ERROR: Music playing")
+        return
+
+    voice = get(bot.voice_clients, guild=ctx.guild)
+
+    ydl_opts = {
+        'format': 'bestaudio/best',
+        'postprocessors': [{
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': 'mp3',
+            'preferredquality': '192',
+        }],
+    }
+
+    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+        print("Downloading...\n")
+        ydl.download('https://www.youtube.com/watch?v=WTWyosdkx44')
+    for file in os.listdir("./"):
+        if file.endswith(".mp3"):
+            os.rename(file, "doot.mp3")
+    voice.play(discord.FFmpegPCMAudio("doot.mp3"))
+    voice.volume = 50
+    voice.is_playing()
 
 
 #randomly chooses an attacker or defender from the respective lists
