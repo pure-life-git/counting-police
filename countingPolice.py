@@ -5,10 +5,13 @@ from discord.ext import commands
 import asyncio
 import psycopg2
 import wolframalpha
+from discord_slash import SlashCommand
+from discord_slash import SlashContext
 
 #initialize client and bot
 client = discord.Client()
-bot = commands.Bot(command_prefix = '.')
+bot = commands.Bot(command_prefix = '.', intents=discord.Intents.all())
+slash = SlashCommand(bot)
 bot.remove_command('help')
 
 #initializes connections to postgresql database
@@ -74,6 +77,11 @@ async def on_ready():
     print(numCriminals)
     presence = str(numCriminals) + " criminals"
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,name=presence))
+
+@slash.slash(name="test")
+async def _test(ctx:SlashContext):
+    embed = discord.Embed(title="embed test")
+    await ctx.send("test", embeds=[embed])
 
 @bot.command()
 async def mute(ctx):
