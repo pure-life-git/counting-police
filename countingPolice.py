@@ -105,7 +105,7 @@ async def wolframfull(ctx,*args):
 
 @bot.command()
 async def doot(ctx):
-    user = ctx.message.author()
+    user = ctx.message.author
     voice_channel = user.voice.voice_channel()
     channel=None
     if voice_channel != None:
