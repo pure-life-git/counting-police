@@ -5,13 +5,10 @@ from discord.ext import commands
 import asyncio
 import psycopg2
 import wolframalpha
-from discord_slash import SlashCommand
-from discord_slash import SlashContext
 
 #initialize client and bot
 client = discord.Client()
-bot = commands.Bot(command_prefix = '.', intents=discord.Intents.all())
-slash = SlashCommand(bot)
+bot = commands.Bot(command_prefix = '.')
 bot.remove_command('help')
 
 #initializes connections to postgresql database
@@ -78,17 +75,15 @@ async def on_ready():
     presence = str(numCriminals) + " criminals"
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,name=presence))
 
-@slash.slash(name="test")
-async def _test(ctx:SlashContext):
-    embed = discord.Embed(title="embed test")
-    await ctx.send("test", embeds=[embed])
-
 @bot.command()
-async def mute(ctx):
+async def mute(ctx, mention, time=5):
+    if ctx.message.author.id != 203282979265576960 or ctx.message.author.id != 288710564367171595:
+        ctx.send("You do not have permission to use this command.")
+        return
     member = ctx.message.mentions[0]
     await member.edit(mute=True)
     await ctx.send(f"{member} has been muted for 5 seconds")
-    await asyncio.sleep(5)
+    await asyncio.sleep(time)
     await member.edit(mute=False)
 
 @bot.command()
