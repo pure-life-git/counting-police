@@ -6,6 +6,9 @@ import asyncio
 import psycopg2
 import wolframalpha
 import youtube_dl
+import ctypes
+import ctypes.util
+
 
 #initialize client and bot
 client = discord.Client()
@@ -23,6 +26,19 @@ wolframClient = wolframalpha.Client(wolframID)
 
 #suppress noise about console usage from errors
 youtube_dl.utils.bug_reports_message = lambda: ''
+
+#sets up and loads the opus library
+print("ctypes - Find opus:")
+a = ctypes.util.find_library('opus')
+print(a)
+ 
+print("Discord - Load Opus:")
+b = discord.opus.load_opus(a)
+print(b)
+ 
+print("Discord - Is loaded:")
+c = discord.opus.is_loaded()
+print(c)
 
 #foot picture list for .finn
 forbiddenList = [
@@ -62,11 +78,6 @@ ytdl_format_options = {
     'default_search': 'auto',
     'source_address': '0.0.0.0' # bind to ipv4 since ipv6 addresses cause issues sometimes
 }
-
-
-if not discord.opus.is_loaded():
-    discord.opus.load_opus('opus')
-    print('Opus failed to load')
 
 ffmpeg_options = {
     'options': '-vn'
