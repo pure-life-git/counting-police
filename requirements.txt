@@ -1,5 +1,3 @@
 discord
 psycopg2
 wolframalpha
-pynacl
-youtube_dl

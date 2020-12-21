@@ -1,13 +1,10 @@
 import discord
 import os
 import random
-from discord import voice_client
 from discord.ext import commands
-from discord.utils import get
 import asyncio
 import psycopg2
 import wolframalpha
-import youtube_dl
 
 #initialize client and bot
 client = discord.Client()
@@ -105,113 +102,6 @@ async def wolframfull(ctx,*args):
                 wolframImgEmbed.set_image(url=sub['img']['@src'])
                 await ctx.send(embed=wolframImgEmbed)
     await ctx.send(embed=wolframEmbed)
-
-@bot.command()
-async def join(ctx):
-    global voice
-    channel = ctx.message.author.voice.channel
-    voice = get(bot.voice_clients, guild=ctx.guild)
-    if voice and voice.is_connected():
-        await voice.move_to(channel)
-    else:
-        voice = await channel.connect()
-        print(f"The bot has connected to {channel}\n")
-    
-    await ctx.send(f"Joined {channel}")
-
-
-@bot.command()
-async def leave(ctx):
-    channel = ctx.message.author.voice.channel
-    voice = get(bot.voice_clients,guild=ctx.guild)
-    if voice and voice.is_connected():
-        await voice.disconnect()
-        print(f"The bot has left {channel}")
-        await ctx.send(f"The bot has disconnected from {channel}")
-    else:
-        await ctx.send("The bot is not connected to a voice channel")
-
-@bot.command()
-async def play(ctx,url: str):
-    channel = ctx.message.author.voice.channel
-    voice = get(bot.voice_clients, guild=ctx.guild)
-
-    if voice and voice.is_connected():
-        await voice.move_to(channel)
-    else:
-        voice = await channel.connect()
-
-    song_there = os.path.isfile("song.mp3")
-    try:
-        if song_there:
-            os.remove("song.mp3")
-            print("Removed old song file")
-    except PermissionError:
-        print("Trying to delete song file, but it's being played")
-        await ctx.send("ERROR: Music playing")
-        return
-
-    
-
-    ydl_opts = {
-        'format': 'bestaudio/best',
-        'postprocessors': [{
-            'key': 'FFmpegExtractAudio',
-            'preferredcodec': 'mp3',
-            'preferredquality': '192',
-        }],
-    }
-
-    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-        dictMeta = ydl.extract_info(url)
-        duration = dictMeta['duration']
-        print('duration:'+str(duration))
-        print("Downloading...\n")
-        ydl.download([url])
-    for file in os.listdir("./"):
-        if file.endswith(".mp3"):
-            os.rename(file, "song.mp3")
-    voice.play(discord.FFmpegPCMAudio("song.mp3"))
-    voice.volume = 50
-    voice.is_playing()
-    await asyncio.sleep(int(duration)+5)
-    await voice.disconnect()
-
-    
-
-@bot.command()
-async def doot(ctx):
-    song_there = os.path.isfile("doot.mp3")
-    try:
-        if song_there:
-            os.remove("doot.mp3")
-            print("Removed old song file")
-    except PermissionError:
-        print("Trying to delete song file, but it's being played")
-        await ctx.send("ERROR: Music playing")
-        return
-
-    voice = get(bot.voice_clients, guild=ctx.guild)
-
-    ydl_opts = {
-        'format': 'bestaudio/best',
-        'postprocessors': [{
-            'key': 'FFmpegExtractAudio',
-            'preferredcodec': 'mp3',
-            'preferredquality': '192',
-        }],
-    }
-
-    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-        print("Downloading...\n")
-        ydl.download('https://www.youtube.com/watch?v=WTWyosdkx44')
-    for file in os.listdir("./"):
-        if file.endswith(".mp3"):
-            os.rename(file, "doot.mp3")
-    voice.play(discord.FFmpegPCMAudio("doot.mp3"))
-    voice.volume = 50
-    voice.is_playing()
-
 
 #randomly chooses an attacker or defender from the respective lists
 @bot.command()
