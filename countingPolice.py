@@ -78,10 +78,10 @@ async def on_ready():
 #sends user input to the wolframalpha api and prints out the answer
 @bot.command()
 async def wolfram(ctx,*args):
-    question = ' '.join(args)
-    response = wolframClient.query(question)
+    question = ' '.join(args) #joins the user args into a single string
+    response = wolframClient.query(question) #gets a query from the wolfram api using the question
     wolframEmbed = discord.Embed(title="Wolfram|Alpha API", description=" ", color=discord.Color.from_rgb(255,125,0))
-    for pod in response.results:
+    for pod in response.results: #for each returned pod from the query, adds a new field to the answer embed
         wolframEmbed.add_field(name=pod.title,value=pod.text,inline=False)
     #wolframEmbed.add_field(name="Result", value=response.results.text,inline=False)
     await ctx.channel.send(embed=wolframEmbed)
@@ -89,19 +89,18 @@ async def wolfram(ctx,*args):
 #sends user input to the wolframalpha api and prints out a full answer
 @bot.command()
 async def wolframfull(ctx,*args):
-    question = ' '.join(args)
-    res = wolframClient.query(question)
+    question = ' '.join(args) #joins all the user passed args into a single string
+    res = wolframClient.query(question) #sends the question to be queried from the wolfram api
     wolframEmbed = discord.Embed(title="Wolfram|Alpha API", description=" ", color=discord.Color.from_rgb(255,125,0))
     for pod in res.pods:
         if pod.text:
             #printPod
             wolframEmbed.add_field(name=pod.title,value=pod.text,inline=False)
-        for sub in pod.subpods:
-            if sub['img']['@src']:
+        for sub in pod.subpods: #checks to see if any of the returned queries subpods contain images
+            if sub['img']['@src']: #if there is an image, creates a new embed and adds the image
                 wolframImgEmbed = discord.Embed(title=pod.title,description=" ", color=discord.Color.from_rgb(255,125,0))
                 wolframImgEmbed.set_image(url=sub['img']['@src'])
                 await ctx.send(embed=wolframImgEmbed)
-    print(list(res.pods))
     await ctx.send(embed=wolframEmbed)
 #randomly chooses an attacker or defender from the respective lists
 @bot.command()
@@ -327,7 +326,7 @@ async def gamelist(ctx):
 async def gameremove(ctx,*,arg):
     gameLower = str(arg).lower()
     cur.execute("SELECT * FROM gametable") #selects all the entries from the gamelist
-    SQL = "DELETE FROM gametable WHERE games=%s;"
+    SQL = "DELETE FROM gametable WHERE games=%s;" #deletes the row in the game table with the game name
     cur.execute(SQL,(gameLower,))
     conn.commit()
     message = ctx.message
@@ -336,53 +335,57 @@ async def gameremove(ctx,*,arg):
 
 @bot.command()
 async def poll(ctx,*args):
-    timer = 120
+    timer = 120 #sets a default timer as 2 minutes
 
-    argsList = list(args)
+    argsList = list(args) #gets the list of args passed by the user
     if len(argsList) != 0:
-        if argsList[len(argsList)-1].isnumeric() == True:
-            timer = int(argsList[len(argsList)-1])
-            argsList.pop(len(argsList)-1)
+        if argsList[len(argsList)-1].isnumeric() == True: #checks if the last argument in the list is a number
+            timer = int(argsList[len(argsList)-1]) #sets the timer as the last argument in the list
+            argsList.pop(len(argsList)-1) #removes the number from the args
 
+    #creates a new embed for the poll
     embedVar = discord.Embed(title='Poll', description = ' '.join(argsList), color=discord.Color.blue())
     embedVar.add_field(name="Yes", value='<:white_check_mark:785597865081962528>', inline=False)
     embedVar.add_field(name="No", value='<:x:785598446983839784>', inline=False)
     m = await ctx.send(embed=embedVar)
+    #adds reaction to the poll embed
     await m.add_reaction('✅')
     await m.add_reaction('❌')
+    #sleeps for 2 minutes or whatever amount the user entered
     await asyncio.sleep(timer)
     m = await ctx.channel.fetch_message(m.id)
     print(m.reactions)
-    counts = {react.emoji: react.count for react in m.reactions}
+    counts = {react.emoji: react.count for react in m.reactions} #gets the amount of reactions as a dictionary
     print(counts)
-    yesResult = counts['✅']-1
+    yesResult = counts['✅']-1 #gets the amount of reactions for "yes" minus the bot's vote
     print('yesresult='+str(yesResult))
-    noResult = counts['❌']-1
+    noResult = counts['❌']-1 #gets the amount of reactions for "no" minus the bot's vote
     print('noresult='+str(noResult))
-    if noResult == 0 and yesResult == 0:
+    if noResult == 0 and yesResult == 0: #checks to see if no one voted
         resultsEmbed = discord.Embed(title="No Votes", description=' '.join(argsList), color=discord.Color.gold())
         resultsEmbed.add_field(name='No Votes Were Counted', value='No results to be shown', inline=False)
         await m.delete()
         await ctx.send(embed=resultsEmbed)
         return
-    yesPercent = yesResult/(yesResult+noResult)
-    noPercent = noResult/(yesResult+noResult)
+    yesPercent = yesResult/(yesResult+noResult) #calculates a percent of yes votes
+    noPercent = noResult/(yesResult+noResult) #calculates a percent of no votes
     resultsEmbed = discord.Embed(title='Results', description = ' '.join(argsList), color=discord.Color.gold())
     resultsEmbed.add_field(name='✅', value="{yes} votes - {yespercent:.0%}".format(yes=yesResult,yespercent=yesPercent), inline=False)
     resultsEmbed.add_field(name='❌', value='{no} votes - {nopercent:.0%}'.format(no=noResult,nopercent=noPercent), inline=False)
-    await m.delete()
-    await ctx.send(embed=resultsEmbed)
+    await m.delete() #deletes the original embed
+    await ctx.send(embed=resultsEmbed) #sends the results embed
 
 @bot.command()
 async def strikes(ctx):
-    if ctx.message.author.id == 203282979265576960:
+    if ctx.message.author.id == 203282979265576960: #checks to see if the userID matches Kyle's
         await ctx.message.add_reaction('💯')
         return
-    cur.execute("SELECT * FROM striketable")
-    fetch = cur.fetchall()
-    for i in fetch:
-        if int(i[0]) == ctx.message.author.id:
-            if i[1] == 1:
+    cur.execute("SELECT * FROM striketable") #selects all values in the striketable
+    fetch = cur.fetchall() #fetches all values in the striketable
+    for i in fetch: #for each value in the fetch tuple, check if the 
+        if int(i[0]) == ctx.message.author.id: #checks if the message authors userID is in the list of people with strikes
+            #if it is, it checks how many strikes the user has and adds a reaction to denote that
+            if i[1] == 1: 
                 await ctx.message.add_reaction('1️⃣')
                 return
             if i[1] == 2:
@@ -398,11 +401,12 @@ async def strikes(ctx):
 async def on_message(message):
     await bot.process_commands(message)
     
-    if message.author == bot.user:
+    if message.author == bot.user: #checks to see if the message author is the bot and returns
             return
     
     print('Message recieved: ', message.content, 'by', message.author, 'in '+ str(message.channel))
 
+    #if the message is from a channel other than counting, it checks to see if it can make a dad joke
     if str(message.channel) != 'counting':
         if message.content.lower().startswith('im') or str(message.content).lower().startswith("i'm"):
             dad = await message.channel.send('Hi ' + message.content.split(' ',1)[1] + ", I'm dad!")
@@ -412,45 +416,59 @@ async def on_message(message):
             await dad.add_reaction('👌')
         return
     else:
-        cur.execute("SELECT MAX(count) FROM countingtable;")
-        correctNumberDB = list(cur.fetchone())
-        correctNumberSQL = int(correctNumberDB[0])+1
+        cur.execute("SELECT MAX(count) FROM countingtable;") #gets the max value from the countingtable
+        correctNumberDB = list(cur.fetchone()) #fetches the value tuple and stores it in a variable
+        correctNumberSQL = int(correctNumberDB[0])+1 #get the actual int value and increases it by one to reflect the correct value
         print('Correct Number in DB: ',str(correctNumberSQL))
-        if str(message.content).isnumeric() == False or int(message.content) != correctNumberSQL:
-            cur.execute("SELECT * FROM striketable")
+        if str(message.content).isnumeric() == False or int(message.content) != correctNumberSQL: #checks to see if the message is not a number or is not the correct number
+            cur.execute("SELECT * FROM striketable") #selects all the values in the strikelist
             strikeList = cur.fetchall()
             userID = message.author.id
             for i in strikeList:
-                if i[0] == str(userID):
-                    if i[1] == 1:
+                if i[0] == str(userID): #checks to see if the user is already in the strikelist
+                    if i[1] == 1: #checks if they have one strike
                         await message.delete()
+                        #sends a message alerting everyone to the user's infraction
                         await message.channel.send(message.author.mention + ' entered ' + str(message.content) + ' and screwed up the count. This is their 2nd infraction.')
-                        SQL = "UPDATE striketable SET strikes = 2 WHERE name = '%s';"
+                        SQL = "UPDATE striketable SET strikes = 2 WHERE name = '%s';" #updates their strikes to reflect the new number
                         cur.execute(SQL, (userID,))
                         conn.commit()
                         return
-                    else:
-                        SQLtwo = "UPDATE striketable SET strikes = 3 WHERE name = '%s';"
+                    else: #if they don't have one strike and theyre already in the table, then they have two strikes
+                        SQLtwo = "UPDATE striketable SET strikes = 3 WHERE name = '%s';" #updates their strikes to reflect the new number
                         cur.execute(SQLtwo, (userID,))
                         conn.commit()
-                        role = discord.utils.get(message.guild.roles,name='Counting Clown')
-                        await message.author.add_roles(role)
-                        await message.delete()
+                        role = discord.utils.get(message.guild.roles,name='Counting Clown') #assigns the counting clown role to a variable
+                        await message.author.add_roles(role) #give the author the counting clown role
+                        await message.delete() #deletes the user's message
+                        #sends a message alerting everyone to the user's infraction
                         await message.channel.send(message.author.mention + ' entered ' + str(message.content) + ' and screwed up the count. This was their 3rd and final infraction.')
                         return
 
-            SQL = "INSERT INTO striketable (name, strikes) VALUES (%s, 1)"
+            #if we haven't returned by now, it means they are not in the table
+            SQL = "INSERT INTO striketable (name, strikes) VALUES (%s, 1)" #inserts their userid into the table
             cur.execute(SQL, (userID,))
             conn.commit()
-            await message.delete()
+            await message.delete() #deletes their message
+            #sends a message alerting everyone to the user's infraction
             await message.channel.send(message.author.mention + ' entered ' + str(message.content) + ' and screwed up the count. This is their 1st infraction.')
-            cur.execute("SELECT COUNT(name) FROM striketable;")
+            cur.execute("SELECT COUNT(name) FROM striketable;") #updates the status of the bot to match the new number of criminals
             numCriminalsTable = cur.fetchall()
             numCriminals = numCriminalsTable[0][0]
             print(numCriminals)
             presence = str(numCriminals) + " criminals"
             await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,name=presence))
         else:
+            #if the message was in the counting channel but was the right number, 
+            #then we just call the function that adds their number to the DB
             countEntry(int(message.content))
+            if int(message.content) == 1000:
+                await message.add_reaction("🎉")
+                await message.add_reaction("🎊")
+                guild = message.guild
+                await guild.create_role(name="1000", color=discord.Color.from_rgb(21,244,238))
+                oneThousandRole = discord.utils.get(message.guild.roles,name='1000')
+                await message.author.add_roles(oneThousandRole)
 
+#runs the bot using the discord bot token provided within Heroku
 bot.run(os.environ['token'])
