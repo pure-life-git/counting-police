@@ -82,10 +82,10 @@ async def on_ready():
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,name=presence))
 
 @bot.command()
-async def tts(ctx,*args):
-    argStr = ' '.join(args)
-    m = await ctx.send(argStr,tts=True)
-    await m.delete()
+async def multembed(ctx,*args):
+    oneEmbed = discord.Embed(title='Embed One')
+    twoEmbed = discord.Embed(title='Embed Two')
+    await ctx.send(embeds=[oneEmbed,twoEmbed])
 
 
 @bot.command()
