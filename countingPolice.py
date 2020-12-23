@@ -89,13 +89,27 @@ async def multembed(ctx,*args):
 
 
 @bot.command()
-async def mute(ctx, mention, time=5):
+async def mute(ctx, mention, time='5s'):
     if int(ctx.message.author.id) not in modID:
         await ctx.send("You do not have permission to use this command.")
         return
+    
+    multiplier = 0
+
+    if time[len(time)-1].lower() == 's':
+        multiplier = 1
+    if time[len(time)-1].lower() == 'm':
+        multiplier = 60
+    if time[len(time)-1].lower() == 'h':
+        multiplier = 3600
+    if time[len(time)-1].lower() == 'd':
+        multiplier = 86400
+    
+    time = time.split('s')[0] * multiplier
+
     member = ctx.message.mentions[0]
     await member.edit(mute=True)
-    await ctx.send(f"{member} has been muted for {time} seconds")
+    await ctx.send(f"{member} has been muted for {time}")
     await asyncio.sleep(time)
     await member.edit(mute=False)
 
