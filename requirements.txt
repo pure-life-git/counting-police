@@ -1,4 +1,3 @@
 discord
 psycopg2
 wolframalpha
-discord-py-slash-command

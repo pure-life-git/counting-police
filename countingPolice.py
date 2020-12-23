@@ -82,6 +82,13 @@ async def on_ready():
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,name=presence))
 
 @bot.command()
+async def tts(ctx,*args):
+    argStr = ' '.join(args)
+    m = ctx.send(argStr,tts=True)
+    await m.delete()
+
+
+@bot.command()
 async def mute(ctx, mention, time=5):
     if int(ctx.message.author.id) not in modID:
         await ctx.send("You do not have permission to use this command.")
