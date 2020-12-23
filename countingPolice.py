@@ -89,7 +89,7 @@ async def purge(ctx,amount: int):
     message = await ctx.history(limit=amount).flatten()
     counter = 0
     for m in message:
-        if m.author == client.user:
+        if m.author == bot.user:
             await m.delete()
             counter += 1
     await ctx.send(f'Deleted {counter} bot messages')
