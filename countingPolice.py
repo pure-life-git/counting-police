@@ -84,7 +84,7 @@ async def on_ready():
 @bot.command()
 async def tts(ctx,*args):
     argStr = ' '.join(args)
-    m = ctx.send(argStr,tts=True)
+    m = await ctx.send(argStr,tts=True)
     await m.delete()
 
 
