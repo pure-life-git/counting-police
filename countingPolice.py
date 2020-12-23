@@ -108,7 +108,8 @@ async def mute(ctx, mention, time='5s'):
     member = ctx.message.mentions[0]
     await member.edit(mute=True)
     await ctx.send(f"{member} has been muted for {time}")
-    time = int(time.split('s')[0]) * multiplier
+    time.pop()
+    time *= multiplier
     await asyncio.sleep(time)
     await member.edit(mute=False)
 
