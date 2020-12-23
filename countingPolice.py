@@ -194,7 +194,7 @@ async def help(ctx):
     helpEmbed.add_field(name=".choosegame", value='Choosegame will randomly choose a game from the Game List', inline=False)
     helpEmbed.add_field(name=".gameclear", value='Gameclear will clear the game list of all games', inline=False)
     helpEmbed.add_field(name=".gamelist", value='Gamelist will print out a list of all the games you have added to the gamelist', inline=False)
-    await ctx.send(embed=helpEmbed)
+    await ctx.author.send(embed=helpEmbed)
 
 #plays a game of rock paper scissorcs with the user
 @bot.command()
