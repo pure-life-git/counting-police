@@ -86,8 +86,13 @@ async def on_ready():
 
 @bot.command()
 async def purge(ctx,amount: int):
-    deleted = await ctx.channel.purge(limit=amount, check=is_me)
-    await ctx.send(f'Deleted {len(deleted)} bot messages')
+    message = await ctx.history(limit=amount).flatten()
+    counter = 0
+    for m in message:
+        if m.author == client.user:
+            await m.delete()
+            counter += 1
+    await ctx.send(f'Deleted {counter} bot messages')
 
 
 @bot.command()
