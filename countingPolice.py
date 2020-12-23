@@ -188,6 +188,7 @@ async def help(ctx):
     helpEmbed.add_field(name=".dice", value="Rolls dice in the format (# of dice)d(# of sides). You can even input multiple dice in one command.\nExample: '.dice 1d4 2d6' would roll 1 4 sided die and 2 6 sided die", inline=False)
     helpEmbed.add_field(name=".rps", value="Plays a game of rock paper scissors with you\nExample: .rps paper")
     helpEmbed.add_field(name=".operator", value="Chooses a random operator from Rainbow Six Siege. Enter either 'Attacker' or 'Defender'", inline=False)
+    helpEmbed.add_field(name=".purge", value='Deletes the bot messages within the last number of message specified by the user\nExample: .purge 3 would delete all the bot messages within the last 3 messasges')
     helpEmbed.add_field(name=".game", value='Game will add a game to the Game List. Simply type the command and then\nthe game you would like to add', inline=False)
     helpEmbed.add_field(name=".gameremove", value='Gameremove removes a game from the Game List. Simply type the command then\nthe game you would like to remove', inline=False)
     helpEmbed.add_field(name=".choosegame", value='Choosegame will randomly choose a game from the Game List', inline=False)
