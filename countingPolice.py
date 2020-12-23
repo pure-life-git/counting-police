@@ -32,7 +32,17 @@ forbiddenList = [
     "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/gh-why-do-my-feet-hurt-toes-1594663599.png?crop=0.914xw:0.687xh;0.0864xw,0.110xh&resize=480:*",
     "https://post.greatist.com/wp-content/uploads/2019/07/Feet_1200x628-facebook.jpg",
     "https://www.saga.co.uk/contentlibrary/saga/publishing/verticals/health-and-wellbeing/conditions/happyfeetshutterstock_297390392768x576.jpg",
-    "https://media.phillyvoice.com/media/images/09102019_feet_Pixabay.2e16d0ba.fill-735x490.jpg"
+    "https://media.phillyvoice.com/media/images/09102019_feet_Pixabay.2e16d0ba.fill-735x490.jpg",
+    "https://www.jeancoutu.com/globalassets/revamp/sante/conseils-sante/20160516-02-soin-pieds/soins_pieds_450.jpg",
+    "https://www.wuwm.com/sites/wuwm/files/styles/x_large/public/201911/AdobeStock_245471467.jpeg",
+    "https://cdn.aarp.net/content/dam/aarp/health/conditions_treatments/2019/05/1140-woman-rubbing-feet.jpg",
+    "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/1076/feet600-1502734322.jpg",
+    "https://st1.thehealthsite.com/wp-content/uploads/2015/09/foot-care-routine.jpg",
+    "https://cdn2.hubspot.net/hubfs/3355520/a-cold-feet-in-bed.jpg",
+    "https://www.unilad.co.uk/wp-content/uploads/2020/08/feet-2.jpg",
+    "https://www.treehugger.com/thmb/k1t1mI-e1Y_bPt53uWLIJn81coA=/1000x678/filters:no_upscale():max_bytes(150000):strip_icc()/__opt__aboutcom__coeus__resources__content_migration__mnn__images__2016__04__feet-in-sand-65c3ef0552924bedbe1e0837d8e964d7.jpg",
+    "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/skin-care-for-feet-royalty-free-image-639631390-1553460308.jpg",
+    "https://www.yourfootpalace.com/wp-content/uploads/morning-foot-stiffness.jpg"
 ]
 
 #attacker list for .operator
