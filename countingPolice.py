@@ -95,7 +95,7 @@ async def mute(ctx, mention, time='5s'):
         return
     
     multiplier = 0
-
+    
     if time[len(time)-1].lower() == 's':
         multiplier = 1
     if time[len(time)-1].lower() == 'm':
@@ -105,11 +105,10 @@ async def mute(ctx, mention, time='5s'):
     if time[len(time)-1].lower() == 'd':
         multiplier = 86400
     
-    time = time.split('s')[0] * multiplier
-
     member = ctx.message.mentions[0]
     await member.edit(mute=True)
     await ctx.send(f"{member} has been muted for {time}")
+    time = int(time.split('s')[0]) * multiplier
     await asyncio.sleep(time)
     await member.edit(mute=False)
 
