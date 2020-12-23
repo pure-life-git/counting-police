@@ -70,6 +70,9 @@ def gameEntry(game):
     cur.execute(SQL,data)
     conn.commit()
 
+def is_me(m):
+    return m.author == client.user
+
 #sets bot status based on number of people with strikes
 @bot.event
 async def on_ready():
@@ -82,10 +85,9 @@ async def on_ready():
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,name=presence))
 
 @bot.command()
-async def multembed(ctx,*args):
-    oneEmbed = discord.Embed(title='Embed One')
-    twoEmbed = discord.Embed(title='Embed Two')
-    await ctx.send(embeds=[oneEmbed,twoEmbed])
+async def purge(ctx,amount: int):
+    deleted = await ctx.channel.purge(limit=amount, check=is_me)
+    await ctx.send(f'Deleted {len(deleted)} bot messages')
 
 
 @bot.command()
