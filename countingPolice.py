@@ -96,15 +96,6 @@ async def on_ready():
     presence = str(numCriminals) + " criminals"
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,name=presence))
 
-##@bot.on_command_error(exception)
-async def on_command_error(ctx,error):
-    if CommandOnCooldown():
-        await ctx.message.delete()
-        resp = await ctx.send("That command is on cooldown for you")
-        await asyncio.sleep(5)
-        await resp.delete()
-        
-
 
 @bot.command()
 async def purge(ctx,amount: int):
@@ -154,6 +145,14 @@ async def py(ctx, *args):
     answer = eval(argsJoin)
     await ctx.send(answer)
 
+@py.error
+async def py_error(ctx,error):
+    if isinstance(error, commands.CommandOnCooldown):
+        await ctx.message.delete()
+        errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:2f}s')
+        await asyncio.sleep(5)
+        await errMess.delete()
+
 #sends user input to the wolframalpha api and prints out the answer
 @commands.cooldown(1, 20, commands.BucketType.user)
 @bot.command()
@@ -172,6 +171,14 @@ async def wolfram(ctx,*args):
             await ctx.channel.send(embed=wolframEmbed)
     except KeyError:
         await ctx.send("Something went wrong. Please try a different query.")
+
+@wolfram.error
+async def wolfram_error(ctx,error):
+    if isinstance(error,commands.CommandOnCooldown):
+        await ctx.message.delete()
+        errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.rety_after:2f}s')
+        await asyncio.sleep(5)
+        await errMess.delete
 
 #sends user input to the wolframalpha api and prints out a full answer
 @commands.cooldown(1, 120, commands.BucketType.user)
