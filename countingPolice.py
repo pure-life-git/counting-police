@@ -5,11 +5,13 @@ from discord.ext import commands
 import asyncio
 import psycopg2
 import wolframalpha
+from AntiSpam import AntiSpamHandler
 
 #initialize client and bot
 client = discord.Client()
 bot = commands.Bot(command_prefix = '.')
 bot.remove_command('help')
+bot.handler = AntiSpamHandler(bot)
 
 #initializes connections to postgresql database
 DATABASE_URL = os.environ['DATABASE_URL']
@@ -474,6 +476,7 @@ async def strikes(ctx):
 
 @bot.event
 async def on_message(message):
+    bot.handler.propagate(message)
     await bot.process_commands(message)
     
     if message.author == bot.user: #checks to see if the message author is the bot and returns
