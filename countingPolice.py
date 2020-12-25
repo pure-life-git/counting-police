@@ -12,7 +12,6 @@ import wolframalpha
 #initialize client and bot
 client = discord.Client()
 bot = commands.Bot(command_prefix = '.')
-bot.remove_command('help')
 
 #initializes connections to postgresql database
 DATABASE_URL = os.environ['DATABASE_URL']
@@ -98,7 +97,7 @@ async def on_ready():
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,name=presence))
 
 
-@bot.command()
+@bot.command(name = 'purge', description = 'Deletes the bot messages within the last number of message specified by the user (limit 50)')
 async def purge(ctx,amount: int):
     if amount > 50:
         await ctx.send("Fuck off dickbag.")
@@ -111,7 +110,7 @@ async def purge(ctx,amount: int):
     await ctx.send(f'Deleted {counter} bot messages')
 
 
-@bot.command()
+@bot.command(name = 'mute',help_command = None)
 async def mute(ctx, mention, time='5s'):
     if time[0] == '-' or time[0].isnumeric() == False:
         await ctx.send("Please enter a positive number")
@@ -140,7 +139,7 @@ async def mute(ctx, mention, time='5s'):
     await member.edit(mute=False)
 
 @commands.cooldown(1, 10, commands.BucketType.user)
-@bot.command()
+@bot.command(name = 'py', help_command = None)
 async def py(ctx, *args):
     argsJoin = ' '.join(args)
     answer = eval(argsJoin)
@@ -148,7 +147,7 @@ async def py(ctx, *args):
 
 #sends user input to the wolframalpha api and prints out the answer
 @commands.cooldown(1, 20, commands.BucketType.user)
-@bot.command()
+@bot.command(name = 'wolfram', description='Returns the simple answer to a query from Wolfram|Alpha')
 async def wolfram(ctx,*args):
     question = ' '.join(args) #joins the user args into a single string
     response = wolframClient.query(question) #gets a query from the wolfram api using the question
@@ -167,7 +166,7 @@ async def wolfram(ctx,*args):
 
 #sends user input to the wolframalpha api and prints out a full answer
 @commands.cooldown(1, 120, commands.BucketType.user)
-@bot.command()
+@bot.command(name = 'wolframfull', description = 'Returns the full answer to a query from Wolfram|Alpha')
 async def wolframfull(ctx,*args):
     question = ' '.join(args) #joins all the user passed args into a single string
     res = wolframClient.query(question) #sends the question to be queried from the wolfram api
@@ -185,7 +184,7 @@ async def wolframfull(ctx,*args):
 
 #randomly chooses an attacker or defender from the respective lists
 @commands.cooldown(1, 15, commands.BucketType.user)
-@bot.command()
+@bot.command(name = 'operator', description = 'Picks a random Rainbow Six Siege operator from either attack or defense')
 async def operator(ctx,arg1):
     #checks if the user want an attacker or defender
     if arg1.lower() == "attacker":
@@ -204,31 +203,9 @@ async def operator(ctx,arg1):
         #only happens if the user passed something other than attacker or defender
         await ctx.send("Please enter either 'Attacker' or 'Defender'")
 
-#help command to explain each command for the bot
-@commands.cooldown(1, 10, commands.BucketType.user)
-@bot.command()
-async def help(ctx):
-    helpEmbed = discord.Embed(title='Help', description = 'Help with the bot', color=discord.Color.blurple())
-    helpEmbed.add_field(name=".decide", value='Decide takes two arguments and generates a random number in the range of the two arguments', inline=False)
-    helpEmbed.add_field(name=".strikes", value='Lets you know how many strikes you have in the counting channel', inline=False)
-    helpEmbed.add_field(name=".finn", value="Sends a picture of feet to Finn",inline=False)
-    helpEmbed.add_field(name=".dice", value="Rolls dice in the format (# of dice)d(# of sides). You can even input multiple dice in one command.\nExample: '.dice 1d4 2d6' would roll 1 4 sided die and 2 6 sided die", inline=False)
-    helpEmbed.add_field(name=".rps", value="Plays a game of rock paper scissors with you\nExample: .rps paper")
-    helpEmbed.add_field(name=".operator", value="Chooses a random operator from Rainbow Six Siege. Enter either 'Attacker' or 'Defender'", inline=False)
-    helpEmbed.add_field(name=".purge", value='Deletes the bot messages within the last number of message specified by the user\nExample: .purge 3 would delete all the bot messages within the last 3 messasges')
-    helpEmbed.add_field(name=".game", value='Game will add a game to the Game List. Simply type the command and then\nthe game you would like to add', inline=False)
-    helpEmbed.add_field(name=".gameremove", value='Gameremove removes a game from the Game List. Simply type the command then\nthe game you would like to remove', inline=False)
-    helpEmbed.add_field(name=".choosegame", value='Choosegame will randomly choose a game from the Game List', inline=False)
-    helpEmbed.add_field(name=".gameclear", value='Gameclear will clear the game list of all games', inline=False)
-    helpEmbed.add_field(name=".gamelist", value='Gamelist will print out a list of all the games you have added to the gamelist', inline=False)
-    await ctx.author.send(embed=helpEmbed)
-    mess = await ctx.send("Check your DMs!")
-    await asyncio.sleep(10)
-    await mess.delete()
-
 #plays a game of rock paper scissorcs with the user
 @commands.cooldown(2, 15, commands.BucketType.user)
-@bot.command()
+@bot.command(name = 'rps', description = 'Plays a game of rock paper scissors with you')
 async def rps(ctx, userPick):
     #initializes a list with the possible choices the bot can make
     choices = [
@@ -324,17 +301,17 @@ async def rps(ctx, userPick):
 
 #chooses a random number whose bounds are the numbers the user passed
 @commands.cooldown(1, 10, commands.BucketType.user)
-@bot.command()
+@bot.command(name = 'decide', description = 'Picks a random number between two numbers')
 async def decide(ctx,arg1,arg2):
     number = random.randint(int(arg1),int(arg2))
     await ctx.send(number)
 
 #sends a random picture from the forbiddenList directly to Finn
 @commands.cooldown(1, 15, commands.BucketType.user)
-@bot.command()
+@bot.command(name = 'finn', description = 'Sends a feet pic to Finn')
 async def finn(ctx):
     link = random.choice(forbiddenList)
-    finnEmbed = discord.Embed(title="Feet Pics", description="Here's some fuel, you weirdo.", type="rich", color=discord.Color.dark_green())
+    finnEmbed = discord.Embed(title="Feet Pics", description="Kinda cringe.", type="rich", color=discord.Color.dark_green())
     finnEmbed.set_image(url=link)
     id = int(203300155762540544) #sets id as Finn's userId
     finn = await ctx.message.guild.fetch_member(id) #fetches Finn's user from his id
@@ -342,7 +319,7 @@ async def finn(ctx):
     await ctx.message.add_reaction("🦶")
 
 #common dice roller with parsing
-@bot.command()
+@bot.command(name = 'dice', description = 'Rolls dice for the user\nFormat: [# of dice]d[# of sides] Separate different dice with spaces')
 async def dice(ctx, *args):
     #converts all the arguments the user passes into a list
     argsList = list(args)
@@ -358,7 +335,7 @@ async def dice(ctx, *args):
     await ctx.send("Rolls: "+', '.join(map(str,rolls))+"\nSum: "+str(sum)) #sends a message containing the rolls and the sum of all the rolls
 
 #adds a game provided by the user to the gameList
-@bot.command()
+@bot.command(name = 'game', description = 'Adds a game to the game list')
 async def game(ctx, *, arg):
     gameLower = str(arg).lower()
     cur.execute("SELECT * FROM gametable") #select every entry in the gametable from the DB 
@@ -374,7 +351,7 @@ async def game(ctx, *, arg):
     await message.add_reaction('👍')
 
 #randomly chooses a game from the game list
-@bot.command()
+@bot.command(name = 'choosegame', description='Randomly chooses a game from the game list')
 async def choosegame(ctx):
     cur.execute("SELECT * FROM gametable") #selects all of the entries from the table
     rawList = list(cur.fetchall()) # makes a list out of the selection
@@ -385,7 +362,7 @@ async def choosegame(ctx):
     await ctx.send(num + ' has been chosen by machine engineered randomness!') #sends a message with the result
 
 #clears game list
-@bot.command()
+@bot.command(name = 'gameclear', description = 'Clears the game list')
 async def gameclear(ctx):
     cur.execute("DELETE FROM gametable") #deletes all entries from the game list
     conn.commit()
@@ -393,7 +370,7 @@ async def gameclear(ctx):
     await message.add_reaction('👍')
 
 #lists all of the games in the gamelist
-@bot.command()
+@bot.command(name = 'gamelist', description = 'Displays the game list')
 async def gamelist(ctx):
     cur.execute("SELECT * FROM gametable") #selects all entries from the game list
     rawList = list(cur.fetchall()) #makes a list out of all the entries
@@ -412,7 +389,7 @@ async def gamelist(ctx):
         await ctx.send(embed = emptygamelistEmbed)
 
 #removes a particular game from the gamelist
-@bot.command()
+@bot.command(name = 'gameremove', description = 'Removes a game from the game list')
 async def gameremove(ctx,*,arg):
     gameLower = str(arg).lower()
     cur.execute("SELECT * FROM gametable") #selects all the entries from the gamelist
@@ -422,8 +399,7 @@ async def gameremove(ctx,*,arg):
     message = ctx.message
     await message.add_reaction('👍')
 
-
-@bot.command()
+@bot.command(name = 'poll', description = 'Starts a poll. Default time is 120s')
 async def poll(ctx,*args):
     timer = 120 #sets a default timer as 2 minutes
 
@@ -466,7 +442,7 @@ async def poll(ctx,*args):
     await ctx.send(embed=resultsEmbed) #sends the results embed
 
 @commands.cooldown(1, 10, commands.BucketType.user)
-@bot.command()
+@bot.command(name = 'strikes', description = 'Reacts with the number of strikes the user has in the counting channel')
 async def strikes(ctx):
     if ctx.message.author.id == 203282979265576960: #checks to see if the userID matches Kyle's
         await ctx.message.add_reaction('💯')
