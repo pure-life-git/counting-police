@@ -503,6 +503,11 @@ async def strikes(ctx):
 
     await ctx.message.add_reaction('0️⃣')
 
+@commands.error()
+async def on_command_error(ctx,error):
+    if isinstance(error, commands.CommandOnCooldown):
+        print(vars(CommandOnCooldown))
+
 @bot.event
 async def on_message(message):
     await bot.process_commands(message)
