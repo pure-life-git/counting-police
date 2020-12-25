@@ -500,7 +500,7 @@ async def strikes(ctx):
 #        await asyncio.sleep(5)
 #        await errMess.delete
 
-@strikes.error()
+@strikes.error
 async def strike_error(ctx,error):
     if isinstance(error, commands.CommandOnCooldown):
         await ctx.message.delete()
