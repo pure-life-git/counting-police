@@ -4,6 +4,7 @@ import os
 import random
 from discord.ext import commands
 import asyncio
+from discord.ext.commands.core import Command
 from discord.ext.commands.errors import CommandOnCooldown
 import psycopg2
 import wolframalpha
@@ -145,14 +146,6 @@ async def py(ctx, *args):
     answer = eval(argsJoin)
     await ctx.send(answer)
 
-@py.error
-async def py_error(ctx,error):
-    if isinstance(error, commands.CommandOnCooldown):
-        await ctx.message.delete()
-        errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:2f}s')
-        await asyncio.sleep(5)
-        await errMess.delete()
-
 #sends user input to the wolframalpha api and prints out the answer
 @commands.cooldown(1, 20, commands.BucketType.user)
 @bot.command()
@@ -171,14 +164,6 @@ async def wolfram(ctx,*args):
             await ctx.channel.send(embed=wolframEmbed)
     except KeyError:
         await ctx.send("Something went wrong. Please try a different query.")
-
-@wolfram.error
-async def wolfram_error(ctx,error):
-    if isinstance(error,commands.CommandOnCooldown):
-        await ctx.message.delete()
-        errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.rety_after:2f}s')
-        await asyncio.sleep(5)
-        await errMess.delete
 
 #sends user input to the wolframalpha api and prints out a full answer
 @commands.cooldown(1, 120, commands.BucketType.user)
@@ -503,10 +488,13 @@ async def strikes(ctx):
 
     await ctx.message.add_reaction('0️⃣')
 
-@commands.error()
+@Command.error()
 async def on_command_error(ctx,error):
     if isinstance(error, commands.CommandOnCooldown):
-        print(vars(CommandOnCooldown))
+        await ctx.message.delete()
+        errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:2f}s')
+        await asyncio.sleep(5)
+        await errMess.delete
 
 @bot.event
 async def on_message(message):
