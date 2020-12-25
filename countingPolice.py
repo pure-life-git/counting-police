@@ -96,13 +96,13 @@ async def on_ready():
     presence = str(numCriminals) + " criminals"
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,name=presence))
 
-@bot.on_command_error(exception)
-async def on_command_error(ctx,error):
-    if error == CommandOnCooldown:
-        await ctx.message.delete()
-        resp = await ctx.send("That command is on cooldown for you")
-        await asyncio.sleep(5)
-        await resp.delete()
+##@bot.on_command_error(exception)
+#async def on_command_error(ctx,error):
+    #if error == CommandOnCooldown:
+    #    await ctx.message.delete()
+    #    resp = await ctx.send("That command is on cooldown for you")
+    #    await asyncio.sleep(5)
+    #    await resp.delete()
         
 
 
