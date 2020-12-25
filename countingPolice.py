@@ -97,12 +97,12 @@ async def on_ready():
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,name=presence))
 
 ##@bot.on_command_error(exception)
-#async def on_command_error(ctx,error):
-    #if error == CommandOnCooldown:
-    #    await ctx.message.delete()
-    #    resp = await ctx.send("That command is on cooldown for you")
-    #    await asyncio.sleep(5)
-    #    await resp.delete()
+async def on_command_error(ctx,error):
+    if CommandOnCooldown():
+        await ctx.message.delete()
+        resp = await ctx.send("That command is on cooldown for you")
+        await asyncio.sleep(5)
+        await resp.delete()
         
 
 
@@ -161,14 +161,17 @@ async def wolfram(ctx,*args):
     question = ' '.join(args) #joins the user args into a single string
     response = wolframClient.query(question) #gets a query from the wolfram api using the question
     wolframEmbed = discord.Embed(title="Wolfram|Alpha API", description=" ", color=discord.Color.from_rgb(255,125,0))
-    for pod in response.results: #for each returned pod from the query, adds a new field to the answer embed
-        wolframEmbed.add_field(name=pod.title,value=pod.text,inline=False)
-    #wolframEmbed.add_field(name="Result", value=response.results.text,inline=False)
-    if len(wolframEmbed.fields) == 0:
-        await ctx.send("Wolfram|Alpha could not find any simple results for that query.")
-        return
-    else:
-        await ctx.channel.send(embed=wolframEmbed)
+    try:
+        for pod in response.results: #for each returned pod from the query, adds a new field to the answer embed
+            wolframEmbed.add_field(name=pod.title,value=pod.text,inline=False)
+        #wolframEmbed.add_field(name="Result", value=response.results.text,inline=False)
+        if len(wolframEmbed.fields) == 0:
+            await ctx.send("Wolfram|Alpha could not find any simple results for that query.")
+            return
+        else:
+            await ctx.channel.send(embed=wolframEmbed)
+    except KeyError:
+        await ctx.send("Something went wrong. Please try a different query.")
 
 #sends user input to the wolframalpha api and prints out a full answer
 @commands.cooldown(1, 120, commands.BucketType.user)
