@@ -488,7 +488,7 @@ async def strikes(ctx):
 
     await ctx.message.add_reaction('0️⃣')
 
-@Command.error()
+@Command.error(strikes,finn,decide,rps,help,operator,wolframfull,wolfram,py)
 async def on_command_error(ctx,error):
     if isinstance(error, commands.CommandOnCooldown):
         await ctx.message.delete()
