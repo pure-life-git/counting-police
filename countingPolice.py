@@ -484,6 +484,10 @@ async def on_message(message):
         if message.content.lower().startswith('i am'):
             dad = await message.channel.send('Hi ' + message.content.lower().split('i am ',1)[1] + ", I'm dad!")
             await dad.add_reaction('👌')
+        contentList = str(message.content).split(' ')
+        for i in contentList:
+            if i.lower().endsWith('er'):
+                await message.channel.send('Please use the hard r sparingly!')
         return
     else:
         cur.execute("SELECT MAX(count) FROM countingtable;") #gets the max value from the countingtable
