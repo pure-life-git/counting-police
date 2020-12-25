@@ -613,5 +613,5 @@ async def on_message(message):
                 await message.author.add_roles(oneThousandRole)
 
 #runs the bot using the discord bot token provided within Heroku
-#bot.add_cog(gameCommands)
+bot.add_cog(gameCommands(bot))
 bot.run(os.environ['token'])
