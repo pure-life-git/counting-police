@@ -492,65 +492,8 @@ async def strikes(ctx):
 #--------------------------------------------------------------------------------------------------------------------------------------#
 #-- ITS ERROR TIME PogU ---------------------------------------------------------------------------------------------------------------#
 
-@py.error
-async def py_error(ctx,error):
-    if isinstance(error, commands.CommandOnCooldown):
-        await ctx.message.delete()
-        errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:.2f}s')
-        await asyncio.sleep(5)
-        await errMess.delete()
-
-@wolfram.error
-async def wolfram_error(ctx,error):
-    if isinstance(error, commands.CommandOnCooldown):
-        await ctx.message.delete()
-        errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:.2f}s')
-        await asyncio.sleep(5)
-        await errMess.delete()
-
-@wolframfull.error
-async def wolframfull_error(ctx,error):
-    if isinstance(error, commands.CommandOnCooldown):
-        await ctx.message.delete()
-        errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:.2f}s')
-        await asyncio.sleep(5)
-        await errMess.delete()
-
-@operator.error
-async def operator_error(ctx,error):
-    if isinstance(error, commands.CommandOnCooldown):
-        await ctx.message.delete()
-        errMess = await ctx.send(f'You are on cooldowwn for this command. Try again in {error.retry_after:.2f}s')
-        await asyncio.sleep(5)
-        await errMess.delete()
-
-@rps.error
-async def rps_error(ctx,error):
-    if isinstance(error, commands.CommandOnCooldown):
-        await ctx.message.delete()
-        errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:.2f}s')
-        await asyncio.sleep(5)
-        await errMess.delete()
-
-@decide.error
-async def decide_error(ctx,error):
+async def on_command_error(self,ctx,error):
     if isinstance(error,commands.CommandOnCooldown):
-        await ctx.message.delete()
-        errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:.2f}s')
-        await asyncio.sleep(5)
-        await errMess.delete()
-
-@finn.error
-async def finn_error(ctx,error):
-    if isinstance(error,commands.CommandOnCooldown):
-        await ctx.message.delete()
-        errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:.2f}s')
-        await asyncio.sleep(5)
-        await errMess.delete()
-
-@strikes.error
-async def strike_error(ctx,error):
-    if isinstance(error, commands.CommandOnCooldown):
         await ctx.message.delete()
         errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:.2f}s')
         await asyncio.sleep(5)
