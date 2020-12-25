@@ -96,6 +96,8 @@ async def on_ready():
 
 @bot.command()
 async def purge(ctx,amount: int):
+    if amount > 50:
+        await ctx.send("Fuck off dickbag.")
     message = await ctx.history(limit=amount).flatten()
     counter = 0
     for m in message:
