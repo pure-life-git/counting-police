@@ -109,6 +109,7 @@ async def purge(ctx,amount: int):
 async def mute(ctx, mention, time='5s'):
     if time[0] == '-' or time[0].isnumeric() == False:
         await ctx.send("Please enter a positive number")
+        return
     if int(ctx.message.author.id) not in modID:
         await ctx.send("You do not have permission to use this command.")
         return
