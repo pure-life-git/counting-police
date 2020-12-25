@@ -486,7 +486,7 @@ async def on_message(message):
             await dad.add_reaction('👌')
         contentList = str(message.content).split(' ')
         for i in contentList:
-            if i.lower().endsWith('er'):
+            if i.lower().endswith('er'):
                 await message.channel.send('Please use the hard r sparingly!')
         return
     else:
