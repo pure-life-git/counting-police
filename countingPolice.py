@@ -11,7 +11,7 @@ import wolframalpha
 
 #initialize client and bot
 client = discord.Client()
-bot = commands.Bot(command_prefix = '.')
+bot = commands.Bot(command_prefix = '.', description = 'Help for the H Welding Machine Bot')
 
 #initializes connections to postgresql database
 DATABASE_URL = os.environ['DATABASE_URL']
@@ -85,6 +85,36 @@ def gameEntry(game):
 def is_me(m):
     return m.author == client.user
 
+class gameCommands(commands.Cog):
+    """These commands deal with the game feature of the bot"""
+    #sends user input to the wolframalpha api and prints out the answer
+    @commands.cooldown(1, 20, commands.BucketType.user)
+    @bot.command(name = 'wolfram', description='Returns the simple answer to a query from Wolfram|Alpha')
+    async def wolfram(ctx,*args):
+        question = ' '.join(args) #joins the user args into a single string
+        response = wolframClient.query(question) #gets a query from the wolfram api using the question
+        wolframEmbed = discord.Embed(title="Wolfram|Alpha API", description=" ", color=discord.Color.from_rgb(255,125,0))
+        try:
+            for pod in response.results: #for each returned pod from the query, adds a new field to the answer embed
+                wolframEmbed.add_field(name=pod.title,value=pod.text,inline=False)
+            #wolframEmbed.add_field(name="Result", value=response.results.text,inline=False)
+            if len(wolframEmbed.fields) == 0:
+                await ctx.send("Wolfram|Alpha could not find any simple results for that query.")
+                return
+            else:
+                await ctx.channel.send(embed=wolframEmbed)
+        except KeyError:
+            await ctx.send("Something went wrong. Please try a different query.")
+    
+    @wolfram.error
+    async def wolfram_error(ctx,error):
+        if isinstance(error, commands.CommandOnCooldown):
+            await ctx.message.delete()
+            errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:.2f}s')
+            await asyncio.sleep(5)
+            await errMess.delete()
+
+
 #sets bot status based on number of people with strikes
 @bot.event
 async def on_ready():
@@ -145,24 +175,6 @@ async def py(ctx, *args):
     answer = eval(argsJoin)
     await ctx.send(answer)
 
-#sends user input to the wolframalpha api and prints out the answer
-@commands.cooldown(1, 20, commands.BucketType.user)
-@bot.command(name = 'wolfram', description='Returns the simple answer to a query from Wolfram|Alpha')
-async def wolfram(ctx,*args):
-    question = ' '.join(args) #joins the user args into a single string
-    response = wolframClient.query(question) #gets a query from the wolfram api using the question
-    wolframEmbed = discord.Embed(title="Wolfram|Alpha API", description=" ", color=discord.Color.from_rgb(255,125,0))
-    try:
-        for pod in response.results: #for each returned pod from the query, adds a new field to the answer embed
-            wolframEmbed.add_field(name=pod.title,value=pod.text,inline=False)
-        #wolframEmbed.add_field(name="Result", value=response.results.text,inline=False)
-        if len(wolframEmbed.fields) == 0:
-            await ctx.send("Wolfram|Alpha could not find any simple results for that query.")
-            return
-        else:
-            await ctx.channel.send(embed=wolframEmbed)
-    except KeyError:
-        await ctx.send("Something went wrong. Please try a different query.")
 
 #sends user input to the wolframalpha api and prints out a full answer
 @commands.cooldown(1, 120, commands.BucketType.user)
@@ -476,14 +488,6 @@ async def py_error(ctx,error):
         await asyncio.sleep(5)
         await errMess.delete()
 
-@wolfram.error
-async def wolfram_error(ctx,error):
-    if isinstance(error, commands.CommandOnCooldown):
-        await ctx.message.delete()
-        errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:.2f}s')
-        await asyncio.sleep(5)
-        await errMess.delete()
-
 @wolframfull.error
 async def wolframfull_error(ctx,error):
     if isinstance(error, commands.CommandOnCooldown):
@@ -609,4 +613,5 @@ async def on_message(message):
                 await message.author.add_roles(oneThousandRole)
 
 #runs the bot using the discord bot token provided within Heroku
+bot.add_cog(gameCommands)
 bot.run(os.environ['token'])
