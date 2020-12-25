@@ -492,14 +492,6 @@ async def strikes(ctx):
 #--------------------------------------------------------------------------------------------------------------------------------------#
 # ITS ERROR TIME PogU -----------------------------------------------------------------------------------------------------------------#
 
-@Command.error
-async def on_command_error(ctx,error):
-    if isinstance(error, commands.CommandOnCooldown):
-        await ctx.message.delete()
-        errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:2f}s')
-        await asyncio.sleep(5)
-        await errMess.delete
-
 @strikes.error
 async def strike_error(ctx,error):
     if isinstance(error, commands.CommandOnCooldown):
