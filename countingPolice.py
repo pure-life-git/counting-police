@@ -3,6 +3,7 @@ import os
 import random
 from discord.ext import commands
 import asyncio
+from discord.ext.commands.errors import CommandOnCooldown
 import psycopg2
 import wolframalpha
 
@@ -94,6 +95,16 @@ async def on_ready():
     presence = str(numCriminals) + " criminals"
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,name=presence))
 
+@bot.on_command_error
+async def on_command_error(ctx,error):
+    if error == CommandOnCooldown:
+        await ctx.message.delete()
+        resp = await ctx.send("That command is on cooldown for you")
+        await asyncio.sleep(5)
+        await resp.delete()
+        
+
+
 @bot.command()
 async def purge(ctx,amount: int):
     if amount > 50:
@@ -135,6 +146,7 @@ async def mute(ctx, mention, time='5s'):
     await asyncio.sleep(time)
     await member.edit(mute=False)
 
+@commands.cooldown(1, 10, commands.BucketType.user)
 @bot.command()
 async def py(ctx, *args):
     argsJoin = ' '.join(args)
@@ -142,6 +154,7 @@ async def py(ctx, *args):
     await ctx.send(answer)
 
 #sends user input to the wolframalpha api and prints out the answer
+@commands.cooldown(1, 20, commands.BucketType.user)
 @bot.command()
 async def wolfram(ctx,*args):
     question = ' '.join(args) #joins the user args into a single string
@@ -157,6 +170,7 @@ async def wolfram(ctx,*args):
         await ctx.channel.send(embed=wolframEmbed)
 
 #sends user input to the wolframalpha api and prints out a full answer
+@commands.cooldown(1, 120, commands.BucketType.user)
 @bot.command()
 async def wolframfull(ctx,*args):
     question = ' '.join(args) #joins all the user passed args into a single string
@@ -174,6 +188,7 @@ async def wolframfull(ctx,*args):
     await ctx.send(embed=wolframEmbed)
 
 #randomly chooses an attacker or defender from the respective lists
+@commands.cooldown(1, 15, commands.BucketType.user)
 @bot.command()
 async def operator(ctx,arg1):
     #checks if the user want an attacker or defender
@@ -194,6 +209,7 @@ async def operator(ctx,arg1):
         await ctx.send("Please enter either 'Attacker' or 'Defender'")
 
 #help command to explain each command for the bot
+@commands.cooldown(1, 10, commands.BucketType.user)
 @bot.command()
 async def help(ctx):
     helpEmbed = discord.Embed(title='Help', description = 'Help with the bot', color=discord.Color.blurple())
@@ -215,6 +231,7 @@ async def help(ctx):
     await mess.delete()
 
 #plays a game of rock paper scissorcs with the user
+@commands.cooldown(2, 15, commands.BucketType.user)
 @bot.command()
 async def rps(ctx, userPick):
     #initializes a list with the possible choices the bot can make
@@ -310,12 +327,14 @@ async def rps(ctx, userPick):
             return
 
 #chooses a random number whose bounds are the numbers the user passed
+@commands.cooldown(1, 10, commands.BucketType.user)
 @bot.command()
 async def decide(ctx,arg1,arg2):
     number = random.randint(int(arg1),int(arg2))
     await ctx.send(number)
 
 #sends a random picture from the forbiddenList directly to Finn
+@commands.cooldown(1, 15, commands.BucketType.user)
 @bot.command()
 async def finn(ctx):
     link = random.choice(forbiddenList)
@@ -450,6 +469,7 @@ async def poll(ctx,*args):
     await m.delete() #deletes the original embed
     await ctx.send(embed=resultsEmbed) #sends the results embed
 
+@commands.cooldown(1, 10, commands.BucketType.user)
 @bot.command()
 async def strikes(ctx):
     if ctx.message.author.id == 203282979265576960: #checks to see if the userID matches Kyle's
