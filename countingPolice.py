@@ -153,7 +153,10 @@ async def on_ready():
 
 @bot.group(name='game', invoke_without_command=True)
 async def game(ctx):
+    gameInfo = discord.Embed(Title = 'Game Subcommands', description = 'Subcommands for game')
+    gameInfo.add_field(name = 'Subcommands:', value = "* add\n* remove\n* clear\n* choose\n* clear")
     await ctx.send("Valid subcommands: add, remove, clear, list, choose")
+    await ctx.send(embed=gameInfo)
 
 
 #adds a game provided by the user to the gameList
