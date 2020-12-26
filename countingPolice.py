@@ -737,13 +737,5 @@ async def on_message(message):
 
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
-
-class testing(commands.Cog):
-    @bot.command()
-    async def hello(ctx):
-        """Says Hello"""
-        await ctx.send("Hello there!")
-
 #runs the bot using the discord bot token provided within Heroku
-bot.add_cog(testing(bot))
 bot.run(os.environ['token'])
