@@ -8,7 +8,6 @@ import os
 import random
 from discord.ext import commands
 import asyncio
-from discord.ext.commands.core import Command
 from discord.ext.commands.errors import CommandOnCooldown
 import psycopg2
 import wolframalpha
