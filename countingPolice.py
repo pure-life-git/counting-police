@@ -609,7 +609,7 @@ async def on_message(message):
     print('Message recieved: ', message.content, 'by', message.author, 'in '+ str(message.channel))
 
     #if the message is from a channel other than counting, it checks to see if it can make a dad joke
-    if str(message.channel) != 'counting' and str(message.channel) != 'quotes' and str(message.channel) != 'jukebox':
+    if str(message.channel) != 'counting':
         if message.content.lower().startswith('im') or str(message.content).lower().startswith("i'm"):
             dad = await message.channel.send('Hi ' + message.content.split(' ',1)[1] + ", I'm dad!")
             await dad.add_reaction('👌')
