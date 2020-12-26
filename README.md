@@ -9,7 +9,7 @@ The main feature of this bot is its ability to monitor a counting channel.
 3. If you accumulate three strikes, your typing priviledges in the counting channel will be revoked and you will be the role 'Counting Clown'
 # To-Do
 - [x] Make a README
-- [ ] Find a way to implement voice in some capacity
+- [ ] Implement subcommands for the game system
 - [ ] Make the bot able to detect if someone edits or deletes their message and reprimand them for it
 - [ ] Come up with other cool features
 # Feature List
