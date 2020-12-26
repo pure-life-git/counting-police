@@ -22,6 +22,10 @@ cur = conn.cursor()
 wolframID = 'PAX2TQ-2V94QU68XE'
 wolframClient = wolframalpha.Client(wolframID)
 
+#--------------------------------------------------------------------------------------------------------------------------------------#
+#-- GLOBAL VARIABLE/LIST TIME ---------------------------------------------------------------------------------------------------------#
+
+
 #list of mod ids
 modID = [
     203282979265576960,
@@ -63,6 +67,12 @@ defenderList = [
     "Rook", "Jäger", "Bandit", "Tachanka", "Kapkan"
 ]
 
+
+#-- NO MORE GLOBAL LISTS widePeepoSad -------------------------------------------------------------------------------------------------#
+#--------------------------------------------------------------------------------------------------------------------------------------#
+#-- FUNCTION TIME EASY CLAP -----------------------------------------------------------------------------------------------------------#
+
+
 #enters a message from the #counting channel into the postgresql DB
 def countEntry(num):
     SQL = "INSERT INTO countingtable (count) VALUES (%s);"
@@ -82,37 +92,10 @@ def gameEntry(game):
     cur.execute(SQL,data)
     conn.commit()
 
-def is_me(m):
-    return m.author == client.user
 
-class gameCommands(commands.Cog):
-    """These commands deal with the game feature of the bot"""
-    #sends user input to the wolframalpha api and prints out the answer
-    @commands.cooldown(1, 20, commands.BucketType.user)
-    @bot.command(name = 'wolfram', description='Returns the simple answer to a query from Wolfram|Alpha')
-    async def wolfram(ctx,*args):
-        question = ' '.join(args) #joins the user args into a single string
-        response = wolframClient.query(question) #gets a query from the wolfram api using the question
-        wolframEmbed = discord.Embed(title="Wolfram|Alpha API", description=" ", color=discord.Color.from_rgb(255,125,0))
-        try:
-            for pod in response.results: #for each returned pod from the query, adds a new field to the answer embed
-                wolframEmbed.add_field(name=pod.title,value=pod.text,inline=False)
-            #wolframEmbed.add_field(name="Result", value=response.results.text,inline=False)
-            if len(wolframEmbed.fields) == 0:
-                await ctx.send("Wolfram|Alpha could not find any simple results for that query.")
-                return
-            else:
-                await ctx.channel.send(embed=wolframEmbed)
-        except KeyError:
-            await ctx.send("Something went wrong. Please try a different query.")
-    
-    @wolfram.error
-    async def wolfram_error(ctx,error):
-        if isinstance(error, commands.CommandOnCooldown):
-            await ctx.message.delete()
-            errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:.2f}s')
-            await asyncio.sleep(5)
-            await errMess.delete()
+#-- NO MORE FUNCTION TIME LMAO --------------------------------------------------------------------------------------------------------#
+#--------------------------------------------------------------------------------------------------------------------------------------#
+#-- ON READY TIME ---------------------------------------------------------------------------------------------------------------------#
 
 
 #sets bot status based on number of people with strikes
@@ -127,93 +110,85 @@ async def on_ready():
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,name=presence))
 
 
-@bot.command(name = 'purge', description = 'Deletes the bot messages within the last number of message specified by the user (limit 50)')
-async def purge(ctx,amount: int):
-    if amount > 50:
-        await ctx.send("Fuck off dickbag.")
-    message = await ctx.history(limit=amount).flatten()
-    counter = 0
-    for m in message:
-        if m.author == bot.user:
-            await m.delete()
-            counter += 1
-    await ctx.send(f'Deleted {counter} bot messages')
+#-- NO MORE ON READY peepoSad ---------------------------------------------------------------------------------------------------------#
+#--------------------------------------------------------------------------------------------------------------------------------------#
+#-- GAME COMMANDS PogO ----------------------------------------------------------------------------------------------------------------#
 
 
-@bot.command(name = 'mute',help_command = None)
-async def mute(ctx, mention, time='5s'):
-    if time[0] == '-' or time[0].isnumeric() == False:
-        await ctx.send("Please enter a positive number")
+#adds a game provided by the user to the gameList
+@bot.command(name = 'game', description = 'Adds a game to the game list')
+async def game(ctx, *, arg):
+    gameLower = str(arg).lower()
+    cur.execute("SELECT * FROM gametable") #select every entry in the gametable from the DB 
+    rawList = list(cur.fetchall()) #makes a list with every entry
+    games = []
+    for i in rawList: 
+        games.append(i[0]) #takes the list of tuples and appends the first index to a new list
+    if gameLower in games: #checks to see if the game is already in the list
+        await ctx.send('That game is already in the list')
         return
-    if int(ctx.message.author.id) not in modID:
-        await ctx.send("You do not have permission to use this command.")
-        return
-    
-    multiplier = 0
-    
-    if time[len(time)-1].lower() == 's':
-        multiplier = 1
-    if time[len(time)-1].lower() == 'm':
-        multiplier = 60
-    if time[len(time)-1].lower() == 'h':
-        multiplier = 3600
-    if time[len(time)-1].lower() == 'd':
-        multiplier = 86400
-    
-    member = ctx.message.mentions[0]
-    await member.edit(mute=True)
-    await ctx.send(f"{member} has been muted for {time}")
-    time = int(time[:-1])
-    time *= multiplier
-    await asyncio.sleep(time)
-    await member.edit(mute=False)
-
-@commands.cooldown(1, 10, commands.BucketType.user)
-@bot.command(name = 'py', help_command = None)
-async def py(ctx, *args):
-    argsJoin = ' '.join(args)
-    answer = eval(argsJoin)
-    await ctx.send(answer)
+    gameEntry(gameLower) #calls a function that adds the game to the sql table
+    message = ctx.message
+    await message.add_reaction('👍')
 
 
-#sends user input to the wolframalpha api and prints out a full answer
-@commands.cooldown(1, 120, commands.BucketType.user)
-@bot.command(name = 'wolframfull', description = 'Returns the full answer to a query from Wolfram|Alpha')
-async def wolframfull(ctx,*args):
-    question = ' '.join(args) #joins all the user passed args into a single string
-    res = wolframClient.query(question) #sends the question to be queried from the wolfram api
-    wolframEmbed = discord.Embed(title="Wolfram|Alpha API", description=" ", color=discord.Color.from_rgb(255,125,0))
-    for pod in res.pods:
-        if pod.text:
-            #printPod
-            wolframEmbed.add_field(name=pod.title,value=pod.text,inline=False)
-        for sub in pod.subpods: #checks to see if any of the returned queries subpods contain images
-            if sub['img']['@src']: #if there is an image, creates a new embed and adds the image
-                wolframImgEmbed = discord.Embed(title=pod.title,description=" ", color=discord.Color.from_rgb(255,125,0))
-                wolframImgEmbed.set_image(url=sub['img']['@src'])
-                await ctx.send(embed=wolframImgEmbed)
-    await ctx.send(embed=wolframEmbed)
+#randomly chooses a game from the game list
+@bot.command(name = 'choosegame', description='Randomly chooses a game from the game list')
+async def choosegame(ctx):
+    cur.execute("SELECT * FROM gametable") #selects all of the entries from the table
+    rawList = list(cur.fetchall()) # makes a list out of the selection
+    numSQL = []
+    for i in rawList:
+        numSQL.append(i[0]) #takes the list of tuples and appends the first index to a new list
+    num = random.choice(numSQL) #chooses a 
+    await ctx.send(num + ' has been chosen by machine engineered randomness!') #sends a message with the result
 
-#randomly chooses an attacker or defender from the respective lists
-@commands.cooldown(1, 15, commands.BucketType.user)
-@bot.command(name = 'operator', description = 'Picks a random Rainbow Six Siege operator from either attack or defense')
-async def operator(ctx,arg1):
-    #checks if the user want an attacker or defender
-    if arg1.lower() == "attacker":
-        #sends a message with a random attacker
-        await ctx.send(random.choice(attackerList))
-        #adds an attacker reaction to the users message
-        await ctx.message.add_reaction("⚔️")
-        return
-    if arg1.lower() == "defender":
-        #sends a message with a random defender
-        await ctx.send(random.choice(defenderList))
-        #adds a defender reaction to the users message
-        await ctx.message.add_reaction("🛡️")
-        return
+
+#clears game list
+@bot.command(name = 'gameclear', description = 'Clears the game list')
+async def gameclear(ctx):
+    cur.execute("DELETE FROM gametable") #deletes all entries from the game list
+    conn.commit()
+    message = ctx.message
+    await message.add_reaction('👍')
+
+
+#lists all of the games in the gamelist
+@bot.command(name = 'gamelist', description = 'Displays the game list')
+async def gamelist(ctx):
+    cur.execute("SELECT * FROM gametable") #selects all entries from the game list
+    rawList = list(cur.fetchall()) #makes a list out of all the entries
+    games = []
+    for i in rawList:
+            games.append(i[0]) #takes each tuple in the list and appends the first index to a new list
+    if len(games) != 0: #checks if the gamelist is empty
+        #creates a new embed and adds the contents of the gamelist in an ordered list to an embed field
+        gamelistEmbed = discord.Embed(title="Game List", description="List of games entered", color=discord.Color.greyple())
+        gamelistEmbed.add_field(name="Games",value='\n'.join('{}: {}'.format(*k) for k in enumerate(games,1)))
+        await ctx.send(embed = gamelistEmbed) #sends the embed
     else:
-        #only happens if the user passed something other than attacker or defender
-        await ctx.send("Please enter either 'Attacker' or 'Defender'")
+        #if the gamelist is empty, the embed is sent but with contents that let the user know the list is empty
+        emptygamelistEmbed = discord.Embed(title="Game List", description="List of games entered", color=discord.Color.red())
+        emptygamelistEmbed.add_field(name="No Games!", value="The game list is empty.", inline=False)
+        await ctx.send(embed = emptygamelistEmbed)
+
+
+#removes a particular game from the gamelist
+@bot.command(name = 'gameremove', description = 'Removes a game from the game list')
+async def gameremove(ctx,*,arg):
+    gameLower = str(arg).lower()
+    cur.execute("SELECT * FROM gametable") #selects all the entries from the gamelist
+    SQL = "DELETE FROM gametable WHERE games=%s;" #deletes the row in the game table with the game name
+    cur.execute(SQL,(gameLower,))
+    conn.commit()
+    message = ctx.message
+    await message.add_reaction('👍')
+
+
+#-- END GAME COMMANDS -----------------------------------------------------------------------------------------------------------------#
+#--------------------------------------------------------------------------------------------------------------------------------------#
+#-- SILLY COMMANDS --------------------------------------------------------------------------------------------------------------------#
+
 
 #plays a game of rock paper scissorcs with the user
 @commands.cooldown(2, 15, commands.BucketType.user)
@@ -311,12 +286,53 @@ async def rps(ctx, userPick):
             await ctx.channel.send(embed=resultEmbed)
             return
 
-#chooses a random number whose bounds are the numbers the user passed
+
 @commands.cooldown(1, 10, commands.BucketType.user)
-@bot.command(name = 'decide', description = 'Picks a random number between two numbers')
-async def decide(ctx,arg1,arg2):
-    number = random.randint(int(arg1),int(arg2))
-    await ctx.send(number)
+@bot.command(name = 'py', help_command = None)
+async def py(ctx, *args):
+    argsJoin = ' '.join(args)
+    answer = eval(argsJoin)
+    await ctx.send(answer)
+
+
+#sends user input to the wolframalpha api and prints out the answer
+@commands.cooldown(1, 20, commands.BucketType.user)
+@bot.command(name = 'wolfram', description='Returns the simple answer to a query from Wolfram|Alpha')
+async def wolfram(ctx,*args):
+    question = ' '.join(args) #joins the user args into a single string
+    response = wolframClient.query(question) #gets a query from the wolfram api using the question
+    wolframEmbed = discord.Embed(title="Wolfram|Alpha API", description=" ", color=discord.Color.from_rgb(255,125,0))
+    try:
+        for pod in response.results: #for each returned pod from the query, adds a new field to the answer embed
+            wolframEmbed.add_field(name=pod.title,value=pod.text,inline=False)
+        #wolframEmbed.add_field(name="Result", value=response.results.text,inline=False)
+        if len(wolframEmbed.fields) == 0:
+            await ctx.send("Wolfram|Alpha could not find any simple results for that query.")
+            return
+        else:
+            await ctx.channel.send(embed=wolframEmbed)
+    except KeyError:
+        await ctx.send("Something went wrong. Please try a different query.")
+
+
+#sends user input to the wolframalpha api and prints out a full answer
+@commands.cooldown(1, 120, commands.BucketType.user)
+@bot.command(name = 'wolframfull', description = 'Returns the full answer to a query from Wolfram|Alpha')
+async def wolframfull(ctx,*args):
+    question = ' '.join(args) #joins all the user passed args into a single string
+    res = wolframClient.query(question) #sends the question to be queried from the wolfram api
+    wolframEmbed = discord.Embed(title="Wolfram|Alpha API", description=" ", color=discord.Color.from_rgb(255,125,0))
+    for pod in res.pods:
+        if pod.text:
+            #printPod
+            wolframEmbed.add_field(name=pod.title,value=pod.text,inline=False)
+        for sub in pod.subpods: #checks to see if any of the returned queries subpods contain images
+            if sub['img']['@src']: #if there is an image, creates a new embed and adds the image
+                wolframImgEmbed = discord.Embed(title=pod.title,description=" ", color=discord.Color.from_rgb(255,125,0))
+                wolframImgEmbed.set_image(url=sub['img']['@src'])
+                await ctx.send(embed=wolframImgEmbed)
+    await ctx.send(embed=wolframEmbed)
+
 
 #sends a random picture from the forbiddenList directly to Finn
 @commands.cooldown(1, 15, commands.BucketType.user)
@@ -330,87 +346,8 @@ async def finn(ctx):
     await finn.send(embed=finnEmbed)
     await ctx.message.add_reaction("🦶")
 
-#common dice roller with parsing
-@bot.command(name = 'dice', description = 'Rolls dice for the user\nFormat: [# of dice]d[# of sides] Separate different dice with spaces')
-async def dice(ctx, *args):
-    #converts all the arguments the user passes into a list
-    argsList = list(args)
-    sum = 0
-    rolls = []
-    for i in range(len(argsList)):
-        entry = argsList[i].split('d') #splits the index of argsList into two numbers, splicing at 'd'
-        print(entry)
-        for i in range(int(entry[0])): #repeats the dice roll for a number of times equal to the first index of the split
-            roll = random.randint(1,int(entry[1])) #rolls a dice with the number of sides equal to the second index of the split
-            rolls.append(roll)
-            sum += roll
-    await ctx.send("Rolls: "+', '.join(map(str,rolls))+"\nSum: "+str(sum)) #sends a message containing the rolls and the sum of all the rolls
 
-#adds a game provided by the user to the gameList
-@bot.command(name = 'game', description = 'Adds a game to the game list')
-async def game(ctx, *, arg):
-    gameLower = str(arg).lower()
-    cur.execute("SELECT * FROM gametable") #select every entry in the gametable from the DB 
-    rawList = list(cur.fetchall()) #makes a list with every entry
-    games = []
-    for i in rawList: 
-        games.append(i[0]) #takes the list of tuples and appends the first index to a new list
-    if gameLower in games: #checks to see if the game is already in the list
-        await ctx.send('That game is already in the list')
-        return
-    gameEntry(gameLower) #calls a function that adds the game to the sql table
-    message = ctx.message
-    await message.add_reaction('👍')
-
-#randomly chooses a game from the game list
-@bot.command(name = 'choosegame', description='Randomly chooses a game from the game list')
-async def choosegame(ctx):
-    cur.execute("SELECT * FROM gametable") #selects all of the entries from the table
-    rawList = list(cur.fetchall()) # makes a list out of the selection
-    numSQL = []
-    for i in rawList:
-        numSQL.append(i[0]) #takes the list of tuples and appends the first index to a new list
-    num = random.choice(numSQL) #chooses a 
-    await ctx.send(num + ' has been chosen by machine engineered randomness!') #sends a message with the result
-
-#clears game list
-@bot.command(name = 'gameclear', description = 'Clears the game list')
-async def gameclear(ctx):
-    cur.execute("DELETE FROM gametable") #deletes all entries from the game list
-    conn.commit()
-    message = ctx.message
-    await message.add_reaction('👍')
-
-#lists all of the games in the gamelist
-@bot.command(name = 'gamelist', description = 'Displays the game list')
-async def gamelist(ctx):
-    cur.execute("SELECT * FROM gametable") #selects all entries from the game list
-    rawList = list(cur.fetchall()) #makes a list out of all the entries
-    games = []
-    for i in rawList:
-            games.append(i[0]) #takes each tuple in the list and appends the first index to a new list
-    if len(games) != 0: #checks if the gamelist is empty
-        #creates a new embed and adds the contents of the gamelist in an ordered list to an embed field
-        gamelistEmbed = discord.Embed(title="Game List", description="List of games entered", color=discord.Color.greyple())
-        gamelistEmbed.add_field(name="Games",value='\n'.join('{}: {}'.format(*k) for k in enumerate(games,1)))
-        await ctx.send(embed = gamelistEmbed) #sends the embed
-    else:
-        #if the gamelist is empty, the embed is sent but with contents that let the user know the list is empty
-        emptygamelistEmbed = discord.Embed(title="Game List", description="List of games entered", color=discord.Color.red())
-        emptygamelistEmbed.add_field(name="No Games!", value="The game list is empty.", inline=False)
-        await ctx.send(embed = emptygamelistEmbed)
-
-#removes a particular game from the gamelist
-@bot.command(name = 'gameremove', description = 'Removes a game from the game list')
-async def gameremove(ctx,*,arg):
-    gameLower = str(arg).lower()
-    cur.execute("SELECT * FROM gametable") #selects all the entries from the gamelist
-    SQL = "DELETE FROM gametable WHERE games=%s;" #deletes the row in the game table with the game name
-    cur.execute(SQL,(gameLower,))
-    conn.commit()
-    message = ctx.message
-    await message.add_reaction('👍')
-
+#starts a poll with reaction-based voting
 @bot.command(name = 'poll', description = 'Starts a poll. Default time is 120s')
 async def poll(ctx,*args):
     timer = 120 #sets a default timer as 2 minutes
@@ -453,6 +390,57 @@ async def poll(ctx,*args):
     await m.delete() #deletes the original embed
     await ctx.send(embed=resultsEmbed) #sends the results embed
 
+
+#-- END SILLY COMMANDS ----------------------------------------------------------------------------------------------------------------#
+#--------------------------------------------------------------------------------------------------------------------------------------#
+#-- MODERATION COMMANDS ---------------------------------------------------------------------------------------------------------------#
+
+
+#deletes the bot messages in the last n number of messages
+@bot.command(name = 'purge', description = 'Deletes the bot messages within the last number of message specified by the user (limit 50)')
+async def purge(ctx,amount: int):
+    if amount > 50: #checks to see if the request is stupid (i.e. made by parker)
+        await ctx.send("Fuck off dickbag.")
+    message = await ctx.history(limit=amount).flatten() #flattens a list of the recent messages
+    counter = 0
+    for m in message:
+        if m.author == bot.user:
+            await m.delete() #while iterating throught the list, if the message was sent by the bot it deletes it
+            counter += 1 #keeps track of how many messages the bot deleted
+    await ctx.send(f'Deleted {counter} bot messages') #prints out a message letting the user know how many message were deleted
+
+
+#mutes a member of the server for a specified amount of time
+@bot.command(name = 'mute',help_command = None)
+async def mute(ctx, mention, time='5s'):
+    if time[0] == '-' or time[0].isnumeric() == False:
+        await ctx.send("Please enter a positive number") #sanitizes input
+        return
+    if int(ctx.message.author.id) not in modID:
+        await ctx.send("You do not have permission to use this command.") #only mods can use this command
+        return
+    
+    multiplier = 0
+    
+    if time[len(time)-1].lower() == 's': #
+        multiplier = 1                   #   
+    if time[len(time)-1].lower() == 'm': #   this set of ifs checks to see
+        multiplier = 60                  #   what unit of time the user 
+    if time[len(time)-1].lower() == 'h': #   would like to use: seconds,
+        multiplier = 3600                #   minutes, hours, or days
+    if time[len(time)-1].lower() == 'd': #
+        multiplier = 86400               #
+    
+    member = ctx.message.mentions[0]
+    await member.edit(mute=True)
+    await ctx.send(f"{member} has been muted for {time}") #sends a confirmation message to the user
+    time = int(time[:-1])
+    time *= multiplier
+    await asyncio.sleep(time) #sleeps for the duration of time
+    await member.edit(mute=False) #unmutes after the duration of time
+
+
+#lets the user check how many strikes they have
 @commands.cooldown(1, 10, commands.BucketType.user)
 @bot.command(name = 'strikes', description = 'Reacts with the number of strikes the user has in the counting channel')
 async def strikes(ctx):
@@ -477,8 +465,64 @@ async def strikes(ctx):
     await ctx.message.add_reaction('0️⃣')
 
 
+#-- END MODERATION COMMANDS -----------------------------------------------------------------------------------------------------------#
 #--------------------------------------------------------------------------------------------------------------------------------------#
-#-- ITS ERROR TIME PogU ---------------------------------------------------------------------------------------------------------------#
+#-- RANDOM CHOICE COMMANDS ------------------------------------------------------------------------------------------------------------#
+
+
+#randomly chooses an attacker or defender from the respective lists
+@commands.cooldown(1, 15, commands.BucketType.user)
+@bot.command(name = 'operator', description = 'Picks a random Rainbow Six Siege operator from either attack or defense')
+async def operator(ctx,arg1):
+    #checks if the user want an attacker or defender
+    if arg1.lower() == "attacker":
+        #sends a message with a random attacker
+        await ctx.send(random.choice(attackerList))
+        #adds an attacker reaction to the users message
+        await ctx.message.add_reaction("⚔️")
+        return
+    if arg1.lower() == "defender":
+        #sends a message with a random defender
+        await ctx.send(random.choice(defenderList))
+        #adds a defender reaction to the users message
+        await ctx.message.add_reaction("🛡️")
+        return
+    else:
+        #only happens if the user passed something other than attacker or defender
+        await ctx.send("Please enter either 'Attacker' or 'Defender'")
+
+
+#chooses a random number whose bounds are the numbers the user passed
+@commands.cooldown(1, 10, commands.BucketType.user)
+@bot.command(name = 'decide', description = 'Picks a random number between two numbers')
+async def decide(ctx,arg1,arg2):
+    number = random.randint(int(arg1),int(arg2))
+    await ctx.send(number)
+
+
+#common dice roller with parsing
+@bot.command(name = 'dice', description = 'Rolls dice for the user\nFormat: [# of dice]d[# of sides] Separate different dice with spaces')
+async def dice(ctx, *args):
+    #converts all the arguments the user passes into a list
+    argsList = list(args)
+    sum = 0
+    rolls = []
+    for i in range(len(argsList)):
+        entry = argsList[i].split('d') #splits the index of argsList into two numbers, splicing at 'd'
+        print(entry)
+        for i in range(int(entry[0])): #repeats the dice roll for a number of times equal to the first index of the split
+            roll = random.randint(1,int(entry[1])) #rolls a dice with the number of sides equal to the second index of the split
+            rolls.append(roll)
+            sum += roll
+    await ctx.send("Rolls: "+', '.join(map(str,rolls))+"\nSum: "+str(sum)) #sends a message containing the rolls and the sum of all the rolls
+
+
+
+
+#-- END RANDOM CHOICE COMMANDS --------------------------------------------------------------------------------------------------------#
+#--------------------------------------------------------------------------------------------------------------------------------------#
+#-- ERROR HANDLING --------------------------------------------------------------------------------------------------------------------#
+
 
 @py.error
 async def py_error(ctx,error):
@@ -488,6 +532,16 @@ async def py_error(ctx,error):
         await asyncio.sleep(5)
         await errMess.delete()
 
+
+@wolfram.error
+async def wolfram_error(ctx,error):
+    if isinstance(error, commands.CommandOnCooldown):
+        await ctx.message.delete()
+        errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:.2f}s')
+        await asyncio.sleep(5)
+        await errMess.delete()
+
+
 @wolframfull.error
 async def wolframfull_error(ctx,error):
     if isinstance(error, commands.CommandOnCooldown):
@@ -495,6 +549,7 @@ async def wolframfull_error(ctx,error):
         errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:.2f}s')
         await asyncio.sleep(5)
         await errMess.delete()
+
 
 @operator.error
 async def operator_error(ctx,error):
@@ -504,6 +559,7 @@ async def operator_error(ctx,error):
         await asyncio.sleep(5)
         await errMess.delete()
 
+
 @rps.error
 async def rps_error(ctx,error):
     if isinstance(error, commands.CommandOnCooldown):
@@ -511,6 +567,7 @@ async def rps_error(ctx,error):
         errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:.2f}s')
         await asyncio.sleep(5)
         await errMess.delete()
+
 
 @decide.error
 async def decide_error(ctx,error):
@@ -520,6 +577,7 @@ async def decide_error(ctx,error):
         await asyncio.sleep(5)
         await errMess.delete()
 
+
 @finn.error
 async def finn_error(ctx,error):
     if isinstance(error,commands.CommandOnCooldown):
@@ -527,6 +585,7 @@ async def finn_error(ctx,error):
         errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:.2f}s')
         await asyncio.sleep(5)
         await errMess.delete()
+
 
 @strikes.error
 async def strike_error(ctx,error):
@@ -536,8 +595,11 @@ async def strike_error(ctx,error):
         await asyncio.sleep(5)
         await errMess.delete()
 
-#-- NO MORE ERRORS Sadge --------------------------------------------------------------------------------------------------------------#
+
+#-- END ERROR HANDLING ----------------------------------------------------------------------------------------------------------------#
 #--------------------------------------------------------------------------------------------------------------------------------------#
+#-- ON_MESSAGE EVENTS -----------------------------------------------------------------------------------------------------------------#
+
 
 @bot.event
 async def on_message(message):
@@ -612,6 +674,9 @@ async def on_message(message):
                 oneThousandRole = discord.utils.get(message.guild.roles,name='1000')
                 await message.author.add_roles(oneThousandRole)
 
+
+#-- END ON_MESSAGE EVENTS -------------------------------------------------------------------------------------------------------------#
+#--------------------------------------------------------------------------------------------------------------------------------------#
+
 #runs the bot using the discord bot token provided within Heroku
-#bot.add_cog(gameCommands(bot))
 bot.run(os.environ['token'])
