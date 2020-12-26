@@ -126,9 +126,14 @@ async def on_ready():
 #-- GAME COMMANDS PogO ----------------------------------------------------------------------------------------------------------------#
 
 
+@bot.group(name='game')
+async def game(ctx):
+    await ctx.send("Valid subcommands: add, remove, clear, list, choose")
+
+
 #adds a game provided by the user to the gameList
-@bot.command(name = 'game', description = 'Adds a game to the game list')
-async def game(ctx, *, arg):
+@game.command(name = 'add', description = 'Adds a game to the game list')
+async def add(ctx, *, arg):
     gameLower = str(arg).lower()
     cur.execute("SELECT * FROM gametable") #select every entry in the gametable from the DB 
     rawList = list(cur.fetchall()) #makes a list with every entry
