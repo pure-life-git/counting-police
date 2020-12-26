@@ -170,8 +170,8 @@ async def clear(ctx):
 
 
 #lists all of the games in the gamelist
-@game.command(name = 'list', description = 'Displays the game list')
-async def list(ctx):
+@game.command(name = 'list', description = 'Displays the game list', aliases="list")
+async def gamelist(ctx):
     cur.execute("SELECT * FROM gametable") #selects all entries from the game list
     rawList = list(cur.fetchall()) #makes a list out of all the entries
     games = []
