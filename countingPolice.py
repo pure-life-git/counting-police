@@ -126,7 +126,7 @@ async def on_ready():
 #-- GAME COMMANDS PogO ----------------------------------------------------------------------------------------------------------------#
 
 
-@bot.group(name='game')
+@bot.group(name='game', invoke_without_command=True)
 async def game(ctx):
     await ctx.send("Valid subcommands: add, remove, clear, list, choose")
 
