@@ -149,8 +149,8 @@ async def add(ctx, *, arg):
 
 
 #randomly chooses a game from the game list
-@bot.command(name = 'choosegame', description='Randomly chooses a game from the game list')
-async def choosegame(ctx):
+@game.command(name = 'choose', description='Randomly chooses a game from the game list')
+async def choose(ctx):
     cur.execute("SELECT * FROM gametable") #selects all of the entries from the table
     rawList = list(cur.fetchall()) # makes a list out of the selection
     numSQL = []
@@ -161,8 +161,8 @@ async def choosegame(ctx):
 
 
 #clears game list
-@bot.command(name = 'gameclear', description = 'Clears the game list')
-async def gameclear(ctx):
+@game.command(name = 'clear', description = 'Clears the game list')
+async def clear(ctx):
     cur.execute("DELETE FROM gametable") #deletes all entries from the game list
     conn.commit()
     message = ctx.message
@@ -170,8 +170,8 @@ async def gameclear(ctx):
 
 
 #lists all of the games in the gamelist
-@bot.command(name = 'gamelist', description = 'Displays the game list')
-async def gamelist(ctx):
+@game.command(name = 'list', description = 'Displays the game list')
+async def list(ctx):
     cur.execute("SELECT * FROM gametable") #selects all entries from the game list
     rawList = list(cur.fetchall()) #makes a list out of all the entries
     games = []
@@ -190,8 +190,8 @@ async def gamelist(ctx):
 
 
 #removes a particular game from the gamelist
-@bot.command(name = 'gameremove', description = 'Removes a game from the game list')
-async def gameremove(ctx,*,arg):
+@game.command(name = 'remove', description = 'Removes a game from the game list')
+async def remove(ctx,*,arg):
     gameLower = str(arg).lower()
     cur.execute("SELECT * FROM gametable") #selects all the entries from the gamelist
     SQL = "DELETE FROM gametable WHERE games=%s;" #deletes the row in the game table with the game name
