@@ -739,7 +739,7 @@ async def on_message(message):
 #--------------------------------------------------------------------------------------------------------------------------------------#
 
 class testing(commands.Cog):
-    @commands.command()
+    @bot.command()
     async def hello(ctx):
         """Says Hello"""
         await ctx.send("Hello there!")
