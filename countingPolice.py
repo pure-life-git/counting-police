@@ -765,7 +765,7 @@ async def strike_error(ctx,error):
 
 @tictactoe.error
 async def tictactoe_error(ctx,error):
-    if isinstance(error, TimeoutError):
+    if isinstance(error, asyncio.TimeoutError):
         await ctx.send("The challenge has expired")
         return
 
