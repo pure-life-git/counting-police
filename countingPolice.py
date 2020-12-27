@@ -549,7 +549,7 @@ async def operator(ctx,arg1):
 #chooses a random number whose bounds are the numbers the user passed
 @commands.cooldown(1, 10, commands.BucketType.user)
 @bot.command(name = 'decide', description = 'Picks a random number between two numbers')
-async def decide(ctx,arg1,arg2):
+async def decide(ctx,arg1: int,arg2: int):
     number = random.randint(int(arg1),int(arg2))
     await ctx.send(number)
 
