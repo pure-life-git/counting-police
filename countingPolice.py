@@ -397,11 +397,7 @@ async def tictactoe(ctx):
 
     plays = [(playerOne,'x'), (playerTwo, 'o')]
     challMsg = await ctx.send(f"{playerOne} has challenged {playerTwo} to a game of Tic Tac Toe! Do you accept? Y/N")
-    msg = await client.wait_for('message', check = lambda message: message.author == playerTwo)
-    #except TimeoutError:
-        #await ctx.send("The challenge has expired")
-        #await challMsg.delete()
-        #return
+    msg = await client.wait_for('message', check = lambda message: message.author == playerTwo, timeout = 30)
     if msg.content.lower() == 'n':
         await ctx.send('Challenge denied')
         return
@@ -766,6 +762,12 @@ async def strike_error(ctx,error):
         errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:.2f}s')
         await asyncio.sleep(5)
         await errMess.delete()
+
+@tictactoe.error
+async def tictactoe_error(ctx,error):
+    if isinstance(error, TimeoutError):
+        await ctx.send("The challenge has expired")
+        return
 
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
