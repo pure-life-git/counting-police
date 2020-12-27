@@ -564,7 +564,7 @@ async def dice(ctx, *args):
         return
     
     for i in argsList:
-        matched = re.match("[0-9]d[0-9]+$")
+        matched = re.match("[0-9]d[0-9]+$", i)
         is_match = bool(matched)
         if is_match == False:
             await ctx.send("Please enter a valid die")
