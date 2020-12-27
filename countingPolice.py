@@ -550,6 +550,8 @@ async def operator(ctx,arg1):
 @commands.cooldown(1, 10, commands.BucketType.user)
 @bot.command(name = 'decide', description = 'Picks a random number between two numbers')
 async def decide(ctx,arg1: int,arg2: int):
+    print(isinstance(arg1, int))
+    print(isinstance(arg2,int))
     if isinstance(arg1, int) == False or isinstance(arg2,int) == False:
         await ctx.send("Please enter whole numbers")
         return
