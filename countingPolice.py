@@ -402,7 +402,7 @@ async def tictactoe(ctx):
         return user == playerOne
     challMsg = await ctx.send(f"{playerOne} has challenged {playerTwo} to a game of Tic Tac Toe! Do you accept? Y/N")
     try:
-        msg = await bot.wait_for('message', check=checkTwo, timeout=30)
+        msg = await bot.wait_for('message')
     except TimeoutError:
         await ctx.send("The challenge has expired")
         await challMsg.delete()
@@ -415,7 +415,7 @@ async def tictactoe(ctx):
         if moves % 2 == 0:
             mover = plays[0][0]
             move = plays[0][1]
-            mess = await bot.wait_for('message', check=checkOne)
+            mess = await bot.wait_for('message')
             if mess.content.lower() == 'end':
                 game = False
                 break
@@ -430,7 +430,7 @@ async def tictactoe(ctx):
         else:
             mover = plays[1][0]
             move = plays[1][1]
-            mess = await bot.wait_for('message', check=checkTwo)
+            mess = await bot.wait_for('message')
             if mess.content.lower() == 'end':
                 game = False
                 break
