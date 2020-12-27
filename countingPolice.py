@@ -557,7 +557,7 @@ async def decide(ctx,arg1,arg2):
         number = random.randint(int(arg1),int(arg2))
         await ctx.send(number)
     except CommandOnCooldown:
-        raise CommandOnCooldown
+        pass
 
 
 #common dice roller with parsing
