@@ -400,8 +400,13 @@ async def tictactoe(ctx):
         return user == playerTwo
     def checkOne(user):
         return user == playerOne
-    await ctx.send(f"{playerOne} has challenged {playerTwo} to a game of Tic Tac Toe! Do you accept? Y/N")
-    msg = await bot.wait_for('message', check=checkTwo, timeout=30)
+    challMsg = await ctx.send(f"{playerOne} has challenged {playerTwo} to a game of Tic Tac Toe! Do you accept? Y/N")
+    try:
+        msg = await bot.wait_for('message', check=checkTwo, timeout=30)
+    except TimeoutError:
+        await ctx.send("The challenge has expired")
+        await challMsg.delete()
+        return
     if msg.content.lower() == 'n':
         await ctx.send('Challenge denied')
         return
