@@ -397,7 +397,7 @@ async def tictactoe(ctx):
 
     plays = [(playerOne,'x'), (playerTwo, 'o')]
     challMsg = await ctx.send(f"{playerOne} has challenged {playerTwo} to a game of Tic Tac Toe! Do you accept? Y/N")
-    msg = await bot.wait_for('message')
+    msg = await client.wait_for('message', check = lambda message: message.author == playerTwo)
     #except TimeoutError:
         #await ctx.send("The challenge has expired")
         #await challMsg.delete()
