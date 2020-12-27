@@ -10,6 +10,7 @@
 from logging import exception
 import discord
 import os
+import re
 import random
 from discord.ext import commands
 import asyncio
@@ -558,6 +559,16 @@ async def decide(ctx,arg1,arg2):
 async def dice(ctx, *args):
     #converts all the arguments the user passes into a list
     argsList = list(args)
+    if len(argsList) == 0:
+        await ctx.send("Please enter dice to roll")
+        return
+    
+    for i in argsList:
+        matched = re.match("[0-9]d[0-9]+$")
+        is_match = bool(matched)
+        if is_match == False:
+            await ctx.send("Please enter a valid die")
+            return
     sum = 0
     rolls = []
     for i in range(len(argsList)):
