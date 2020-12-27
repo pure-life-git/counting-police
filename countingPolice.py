@@ -380,6 +380,106 @@ async def wolframfull(ctx,*args):
     await ctx.send(embed=wolframEmbed)
 
 
+@bot.command(name = "tictactoe", description = "*WIP* Challenge another player to a game of tic-tac-toe")
+async def tictactoe(ctx):
+    game = True
+    moves = 0
+    board = {
+        '1': ' ', '2': ' ', '3': ' ',
+        '4': ' ', '5': ' ', '6': ' ',
+        '7': ' ', '8': ' ', '9': ' '
+    }
+    keys = board.keys()
+    def printBoard(board):
+        return(f"{board['1']}|{board['2']}|{board['3']}\n-+-+-\n{board['4']}|{board['5']}|{board['6']}\n-+-+-\n{board['7']}|{board['8']}|{board['9']}")
+    playerOne = ctx.message.author
+    playerTwo = ctx.message.mentions[0]
+
+    plays = [(playerOne,'x'), (playerTwo, 'o')]
+    def checkTwo(user):
+        return user == playerTwo
+    def checkOne(user):
+        return user == playerOne
+    await ctx.send(f"{playerOne} has challenged {playerTwo} to a game of Tic Tac Toe! Do you accept? Y/N")
+    msg = await bot.wait_for('message', check=checkTwo, timeout=30)
+    if msg.content.lower() == 'n':
+        await ctx.send('Challenge denied')
+        return
+
+    while game == True:
+        if moves % 2 == 0:
+            mover = plays[0][0]
+            move = plays[0][1]
+            mess = await bot.wait_for('message', check=checkOne)
+            if mess.content.lower() == 'end':
+                game = False
+                break
+            elif mess.content.lower() not in keys:
+                await ctx.send("That is not a valid input. Please enter a number 1-9")
+                continue
+            elif board[mess.content] != ' ':
+                await ctx.send("That space if full. Please pick a free space")
+            else:
+                board[mess.content] = move
+                moves += 1
+        else:
+            mover = plays[1][0]
+            move = plays[1][1]
+            mess = await bot.wait_for('message', check=checkTwo)
+            if mess.content.lower() == 'end':
+                game = False
+                break
+            elif mess.content.lower() not in keys:
+                await ctx.send("That is not a valid input. Please enter a number 1-9")
+                continue
+            elif board[mess.content] != ' ':
+                await ctx.send("That space if full. Please pick a free space")
+            else:
+                board[mess.content] = move
+                moves += 1
+        
+        await ctx.send(printBoard(board))
+        
+        if moves >=5:
+            if board['1'] == board['2'] == board['3'] != ' ':
+                await ctx.send(f"{mover} has won the gamein {moves} moves!")
+                game = False
+                return
+            elif board['4'] == board['5'] == board['6'] != ' ':
+                await ctx.send(f"{mover} has won the game in {moves} moves!")
+                game = False
+                return
+            elif board['7'] == board['8'] == board['9'] != ' ':
+                await ctx.send(f"{mover} has won the game in {moves} moves!")
+                game = False
+                return
+            elif board['1'] == board['4'] == board['7'] != ' ':
+                await ctx.send(f"{mover} has won the game in {moves} moves!")
+                game = False
+                return
+            elif board['2'] == board['5'] == board['8'] != ' ':
+                await ctx.send(f"{mover} has won the game in {moves} moves!")
+                game = False
+                return
+            elif board['3'] == board['6'] == board['9'] != ' ':
+                await ctx.send(f"{mover} has won the game in {moves} moves!")
+                game = False
+                return
+            elif board['1'] == board['5'] == board['9'] != ' ':
+                await ctx.send(f"{mover} has won the game in {moves} moves!")
+                game = False
+                return
+            elif board['3'] == board['5'] == board['7'] != ' ':
+                await ctx.send(f"{mover} has won the game in {moves} moves!")
+                game = False
+                return
+                
+            
+
+    
+
+
+
 #sends a random picture from the forbiddenList directly to Finn
 @commands.cooldown(1, 15, commands.BucketType.user)
 @bot.command(name = 'finn', description = 'Sends a feet pic to Finn')
