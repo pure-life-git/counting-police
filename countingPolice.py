@@ -443,7 +443,7 @@ async def tictactoe(ctx, self):
                 board[mess.content] = move
                 moves += 1
         
-        await ctx.send(printBoard(board))
+        boardMess = await ctx.send(printBoard(board))
         
         if moves >=5:
             if board['1'] == board['2'] == board['3'] != ' ':
@@ -478,6 +478,11 @@ async def tictactoe(ctx, self):
                 await ctx.send(f"{mover} has won the game in {moves} moves!")
                 game = False
                 return
+        
+        if moves == 9:
+            await ctx.send("The game is a draw.")
+            game = False
+            return
                 
             
 
