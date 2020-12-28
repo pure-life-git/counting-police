@@ -398,13 +398,17 @@ async def tictactoe(ctx):
     plays = [(playerOne,'x'), (playerTwo, 'o')]
     challMsg = await ctx.send(f"{playerOne} has challenged {playerTwo} to a game of Tic Tac Toe! Do you accept? Y/N")
     try:
-        msg = await bot.wait_for('message', timeout = 30)
+        msg = await client.wait_for('message', check = lambda m: m.author == playerTwo, timeout = 30.0)
+        if msg.content.lower() == 'y':
+            await ctx.send("Challenge accepted!")
+            await challMsg.delete()
+        else:
+            await ctx.send('Challenge declined.')
+            await challMsg.delete()
+            return
     except asyncio.TimeoutError:
         await challMsg.delete()
-        await ctx.send("Challenge declined")
-        return
-    if msg.content.lower() == 'n':
-        await ctx.send('Challenge denied')
+        await ctx.send("Challenge timed out.")
         return
 
     while game == True:
