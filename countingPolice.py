@@ -466,22 +466,27 @@ async def tictactoe(ctx, self):
             elif board['1'] == board['4'] == board['7'] != ' ':
                 await ctx.send(f"{mover.name} has won the game in {moves} moves!")
                 game = False
+                await ctx.send(printBoard(board))
                 return
             elif board['2'] == board['5'] == board['8'] != ' ':
                 await ctx.send(f"{mover.name} has won the game in {moves} moves!")
                 game = False
+                await ctx.send(printBoard(board))
                 return
             elif board['3'] == board['6'] == board['9'] != ' ':
                 await ctx.send(f"{mover.name} has won the game in {moves} moves!")
                 game = False
+                await ctx.send(printBoard(board))
                 return
             elif board['1'] == board['5'] == board['9'] != ' ':
                 await ctx.send(f"{mover.name} has won the game in {moves} moves!")
                 game = False
+                await ctx.send(printBoard(board))
                 return
             elif board['3'] == board['5'] == board['7'] != ' ':
                 await ctx.send(f"{mover.name} has won the game in {moves} moves!")
                 game = False
+                await ctx.send(printBoard(board))
                 return
         
         await ctx.send(printBoard(board))
