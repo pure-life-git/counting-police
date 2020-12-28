@@ -29,7 +29,7 @@ import wolframalpha
 
 
 #initialize client and bot
-client = discord.Client()
+#client = discord.Client()
 bot = commands.Bot(command_prefix = '.', description = 'Help for the H Welding Machine Bot')
 
 #initializes connections to postgresql database
@@ -398,7 +398,7 @@ async def tictactoe(ctx, self):
     plays = [(playerOne,'x'), (playerTwo, 'o')]
     challMsg = await ctx.send(f"{playerOne} has challenged {playerTwo} to a game of Tic Tac Toe! Do you accept? Y/N")
     try:
-        msg = await self.wait_for('message', check = lambda m: m.author == playerTwo, timeout = 30.0)
+        msg = await bot.wait_for('message', check = lambda m: m.author == playerTwo, timeout = 30.0)
         if msg.content.lower() == 'y':
             await ctx.send("Challenge accepted!")
             await challMsg.delete()
