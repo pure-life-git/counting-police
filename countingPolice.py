@@ -380,7 +380,11 @@ async def wolframfull(ctx,*args):
     await ctx.send(embed=wolframEmbed)
 
 
-@bot.command(name = "tictactoe", description = "*WIP* Challenge another player to a game of tic-tac-toe")
+@bot.command(
+    name = "tictactoe", 
+    brief = "Challenge another player to a game of tic-tac-toe", 
+    description = "Simply type the command and then mention someone to start a game with them. To choose your space, treat the board as a numbered grid 1-9 starting at the top left."
+    )
 async def tictactoe(ctx, self):
     game = True
     moves = 0
@@ -396,11 +400,11 @@ async def tictactoe(ctx, self):
     playerTwo = ctx.message.mentions[0]
 
     plays = [(playerOne,'x'), (playerTwo, 'o')]
-    challMsg = await ctx.send(f"{playerOne} has challenged {playerTwo} to a game of Tic Tac Toe! Do you accept? Y/N")
+    challMsg = await ctx.send(f"{playerOne.name} has challenged {playerTwo.name} to a game of Tic Tac Toe! Do you accept? Y/N")
     try:
         msg = await bot.wait_for('message', check = lambda m: m.author == playerTwo, timeout = 30.0)
         if msg.content.lower() == 'y':
-            await ctx.send("Challenge accepted!")
+            await ctx.send(f"Challenge accepted! {playerOne.name} goes first.")
             await challMsg.delete()
         else:
             await ctx.send('Challenge declined.')
@@ -447,35 +451,35 @@ async def tictactoe(ctx, self):
         
         if moves >=5:
             if board['1'] == board['2'] == board['3'] != ' ':
-                await ctx.send(f"{mover} has won the gamein {moves} moves!")
+                await ctx.send(f"{mover.name} has won the gamein {moves} moves!")
                 game = False
                 return
             elif board['4'] == board['5'] == board['6'] != ' ':
-                await ctx.send(f"{mover} has won the game in {moves} moves!")
+                await ctx.send(f"{mover.name} has won the game in {moves} moves!")
                 game = False
                 return
             elif board['7'] == board['8'] == board['9'] != ' ':
-                await ctx.send(f"{mover} has won the game in {moves} moves!")
+                await ctx.send(f"{mover.name} has won the game in {moves} moves!")
                 game = False
                 return
             elif board['1'] == board['4'] == board['7'] != ' ':
-                await ctx.send(f"{mover} has won the game in {moves} moves!")
+                await ctx.send(f"{mover.name} has won the game in {moves} moves!")
                 game = False
                 return
             elif board['2'] == board['5'] == board['8'] != ' ':
-                await ctx.send(f"{mover} has won the game in {moves} moves!")
+                await ctx.send(f"{mover.name} has won the game in {moves} moves!")
                 game = False
                 return
             elif board['3'] == board['6'] == board['9'] != ' ':
-                await ctx.send(f"{mover} has won the game in {moves} moves!")
+                await ctx.send(f"{mover.name} has won the game in {moves} moves!")
                 game = False
                 return
             elif board['1'] == board['5'] == board['9'] != ' ':
-                await ctx.send(f"{mover} has won the game in {moves} moves!")
+                await ctx.send(f"{mover.name} has won the game in {moves} moves!")
                 game = False
                 return
             elif board['3'] == board['5'] == board['7'] != ' ':
-                await ctx.send(f"{mover} has won the game in {moves} moves!")
+                await ctx.send(f"{mover.name} has won the game in {moves} moves!")
                 game = False
                 return
         
