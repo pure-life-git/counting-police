@@ -395,7 +395,7 @@ async def tictactoe(ctx, self):
     }
     keys = board.keys()
     def printBoard(board):
-        return(f"``` {board['1']} | {board['2']} | {board['3']} \n---+---+---\n {board['4']} | {board['5']} | {board['6']} \n---+---+---\n {board['7']} | {board['8']} | {board['9']} ```")
+        return(f"` {board['1']} | {board['2']} | {board['3']} `\n`---+---+---`\n` {board['4']} | {board['5']} | {board['6']} `\n`---+---+---`\n` {board['7']} | {board['8']} | {board['9']} `")
     playerOne = ctx.message.author
     playerTwo = ctx.message.mentions[0]
 
@@ -447,20 +447,21 @@ async def tictactoe(ctx, self):
                 board[mess.content] = move
                 moves += 1
         
-        boardMess = await ctx.send(printBoard(board))
-        
         if moves >=5:
             if board['1'] == board['2'] == board['3'] != ' ':
                 await ctx.send(f"{mover.name} has won the gamein {moves} moves!")
                 game = False
+                await ctx.send(f"~~` {board['1']} | {board['2']} | {board['3']} `~~\n`---+---+---`\n` {board['4']} | {board['5']} | {board['6']} `\n`---+---+---`\n` {board['7']} | {board['8']} | {board['9']} `")
                 return
             elif board['4'] == board['5'] == board['6'] != ' ':
                 await ctx.send(f"{mover.name} has won the game in {moves} moves!")
                 game = False
+                await ctx.send(f"` {board['1']} | {board['2']} | {board['3']} `\n`---+---+---`\n~~` {board['4']} | {board['5']} | {board['6']} `~~\n`---+---+---`\n` {board['7']} | {board['8']} | {board['9']} `")
                 return
             elif board['7'] == board['8'] == board['9'] != ' ':
                 await ctx.send(f"{mover.name} has won the game in {moves} moves!")
                 game = False
+                await ctx.send(f"` {board['1']} | {board['2']} | {board['3']} `\n`---+---+---`\n` {board['4']} | {board['5']} | {board['6']} `\n`---+---+---`\n~~` {board['7']} | {board['8']} | {board['9']} `~~")
                 return
             elif board['1'] == board['4'] == board['7'] != ' ':
                 await ctx.send(f"{mover.name} has won the game in {moves} moves!")
@@ -483,6 +484,7 @@ async def tictactoe(ctx, self):
                 game = False
                 return
         
+        await ctx.send(printBoard(board))
         if moves == 9:
             await ctx.send("The game is a draw.")
             game = False
