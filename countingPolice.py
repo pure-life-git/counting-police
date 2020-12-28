@@ -380,6 +380,7 @@ async def wolframfull(ctx,*args):
     await ctx.send(embed=wolframEmbed)
 
 
+@commands.cooldown(1, 30, commands.BucketType.user)
 @bot.command(
     name = "tictactoe", 
     brief = "Challenge another player to a game of tic-tac-toe", 
@@ -785,9 +786,11 @@ async def strike_error(ctx,error):
 
 @tictactoe.error
 async def tictactoe_error(ctx,error):
-    if isinstance(error, asyncio.TimeoutError):
-        await ctx.send("The challenge has expired")
-        return
+    if isinstance(error, commands.CommandOnCooldown):
+        await ctx.message.delete()
+        errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:.2f}s')
+        await asyncio.sleep(5)
+        await errMess.delete()
 
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
