@@ -9,23 +9,28 @@ The main feature of this bot is its ability to monitor a counting channel.
 3. If you accumulate three strikes, your typing priviledges in the counting channel will be revoked and you will be the role 'Counting Clown'
 # To-Do
 - [x] Make a README
-- [ ] Implement subcommands for the game system
+- [x] Implement subcommands for the game system
+- [x] Make a user-interactive game
 - [ ] Make the bot able to detect if someone edits or deletes their message and reprimand them for it
 - [ ] Come up with other cool features
 # Feature List
 * .help - displays help for all the commands
 ## Game List 
-* .game [game] - adds a game to the Game List
-* .gamelist - iterates through and prints out the Game List
-* .gameremove [game] - removes a specific game from the Game List
-* .gameclear - clears the Game List
-* .choosegame - chooses a random game from the Game List
+* .game add[game] - adds a game to the Game List
+* .game remove [game] - removes a specific game from the Game List
+* .game clear - clears the Game List
+* .game list - iterates through and prints out the Game List
+* .choose game - chooses a random game from the Game List
+## Moderation Commands
+* .mute [user mention] [amount of time] - server mutes the mentioned user for the specified amount of time
+* .purge [# of messages] - deletes the bot messages within the specified number of messages
 ## Other Features
 * .poll [option 1] [option 2] [# of seconds] - creates a poll with two options that will defaulty run for 120 seconds unless otherwise specified
 * .wolfram [query] - returns a simple query from Wolfram|Alpha
 * .wolframfull [query] - returns a full query w/ images from Wolfram|Alpha
 * .operator [attacker/defender] - returns a random operator from Rainbow Six Siege basesd on whether the user is attacking or defending
 * .rps [rock/paper/scissors] - plays a game of rock paper scissors with the user. There is a 1 in 100 chance the bot picks gun and automatically wins
+* .tictactoe [user mention] - challenges another user on the server to a game of tic-tac-toe
 * .decide [num1] [num2] - generates a random number between the two user-inputted numbers
 * .dice - rolls dice using a dice parser Example: .dice 1d4 2d6 would roll 1 4 sided die and 2 six sided die and print out the rolls and the total sum
 * .strikes - lets the user know how many strikes they have in the counting channel
