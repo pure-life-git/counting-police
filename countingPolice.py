@@ -494,11 +494,6 @@ async def tictactoe(ctx, self):
             await ctx.send("The game is a draw.")
             game = False
             return
-                
-            
-
-    
-
 
 
 #sends a random picture from the forbiddenList directly to Finn
