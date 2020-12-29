@@ -598,11 +598,11 @@ async def blackjack(ctx, bet: int):
                 if total(playerHand) == 21:
                     await ctx.send("Congratulations! You got a blackjack.")
                     game = False
-                    break
+                    return
                 elif total(playerHand) > 21:
                     await ctx.send("You busted! Good luck next time.")
                     game = False
-                    break
+                    return
                 else:
                     continue
 
