@@ -562,6 +562,72 @@ async def tictactoe(ctx):
             return #returns the function
 
 
+#sends a random picture from the forbiddenList directly to Finn
+@commands.cooldown(1, 15, commands.BucketType.user)
+@bot.command(name = 'finn', description = 'Sends a feet pic to Finn')
+async def finn(ctx):
+    link = random.choice(forbiddenList)
+    finnEmbed = discord.Embed(title="Feet Pics", description="Kinda cringe.", type="rich", color=discord.Color.dark_green())
+    finnEmbed.set_image(url=link)
+    id = int(203300155762540544) #sets id as Finn's userId
+    finn = await ctx.message.guild.fetch_member(id) #fetches Finn's user from his id
+    await finn.send(embed=finnEmbed)
+    await ctx.message.add_reaction("🦶")
+
+
+#starts a poll with reaction-based voting
+@bot.command(name = 'poll', description = 'Starts a poll. Default time is 120s')
+async def poll(ctx,*args):
+    timer = 120 #sets a default timer as 2 minutes
+
+    argsList = list(args) #gets the list of args passed by the user
+    if len(argsList) != 0:
+        if argsList[len(argsList)-1].isnumeric() == True: #checks if the last argument in the list is a number
+            timer = int(argsList[len(argsList)-1]) #sets the timer as the last argument in the list
+            argsList.pop(len(argsList)-1) #removes the number from the args
+
+    #creates a new embed for the poll
+    embedVar = discord.Embed(title='Poll', description = ' '.join(argsList), color=discord.Color.blue())
+    embedVar.add_field(name="Yes", value='<:white_check_mark:785597865081962528>', inline=False)
+    embedVar.add_field(name="No", value='<:x:785598446983839784>', inline=False)
+    m = await ctx.send(embed=embedVar)
+    #adds reaction to the poll embed
+    await m.add_reaction('✅')
+    await m.add_reaction('❌')
+    #sleeps for 2 minutes or whatever amount the user entered
+    await asyncio.sleep(timer)
+    m = await ctx.channel.fetch_message(m.id)
+    print(m.reactions)
+    counts = {react.emoji: react.count for react in m.reactions} #gets the amount of reactions as a dictionary
+    print(counts)
+    yesResult = counts['✅']-1 #gets the amount of reactions for "yes" minus the bot's vote
+    print('yesresult='+str(yesResult))
+    noResult = counts['❌']-1 #gets the amount of reactions for "no" minus the bot's vote
+    print('noresult='+str(noResult))
+    if noResult == 0 and yesResult == 0: #checks to see if no one voted
+        resultsEmbed = discord.Embed(title="No Votes", description=' '.join(argsList), color=discord.Color.gold())
+        resultsEmbed.add_field(name='No Votes Were Counted', value='No results to be shown', inline=False)
+        await m.delete()
+        await ctx.send(embed=resultsEmbed)
+        return
+    yesPercent = yesResult/(yesResult+noResult) #calculates a percent of yes votes
+    noPercent = noResult/(yesResult+noResult) #calculates a percent of no votes
+    resultsEmbed = discord.Embed(title='Results', description = ' '.join(argsList), color=discord.Color.gold())
+    resultsEmbed.add_field(name='✅', value="{yes} votes - {yespercent:.0%}".format(yes=yesResult,yespercent=yesPercent), inline=False)
+    resultsEmbed.add_field(name='❌', value='{no} votes - {nopercent:.0%}'.format(no=noResult,nopercent=noPercent), inline=False)
+    await m.delete() #deletes the original embed
+    await ctx.send(embed=resultsEmbed) #sends the results embed
+
+
+#--------------------------------------------------------------------------------------------------------------------------------------#
+#   _____            __  __  ____   _       _____  _   _   _____ 
+#  / ____|    /\    |  \/  ||  _ \ | |     |_   _|| \ | | / ____|
+# | |  __    /  \   | \  / || |_) || |       | |  |  \| || |  __ 
+# | | |_ |  / /\ \  | |\/| ||  _ < | |       | |  | . ` || | |_ |
+# | |__| | / ____ \ | |  | || |_) || |____  _| |_ | |\  || |__| |
+#  \_____|/_/    \_\|_|  |_||____/ |______||_____||_| \_| \_____|                                                                
+                                                                
+
 #lets the user see how many points they have to gamble
 @commands.cooldown(1, 15, commands.BucketType.user)
 @bot.command(name = 'points', description = "Tells the user how many points they have for gambling")
@@ -656,62 +722,40 @@ async def blackjack(ctx, bet: int):
         else:
             dealerHand = hit(dealerHand, deck) #dealer hits
             await ctx.send(f'Dealer Hand: {", ".join(map(str,dealerHand))}\nTotal: {total(dealerHand)}') #tells the user the new dealer's hand
- 
-#sends a random picture from the forbiddenList directly to Finn
-@commands.cooldown(1, 15, commands.BucketType.user)
-@bot.command(name = 'finn', description = 'Sends a feet pic to Finn')
-async def finn(ctx):
-    link = random.choice(forbiddenList)
-    finnEmbed = discord.Embed(title="Feet Pics", description="Kinda cringe.", type="rich", color=discord.Color.dark_green())
-    finnEmbed.set_image(url=link)
-    id = int(203300155762540544) #sets id as Finn's userId
-    finn = await ctx.message.guild.fetch_member(id) #fetches Finn's user from his id
-    await finn.send(embed=finnEmbed)
-    await ctx.message.add_reaction("🦶")
 
 
-#starts a poll with reaction-based voting
-@bot.command(name = 'poll', description = 'Starts a poll. Default time is 120s')
-async def poll(ctx,*args):
-    timer = 120 #sets a default timer as 2 minutes
+@bot.command(name = "roulette", description = "Lets the user place bets on a game of roulette")
+async def roulette(ctx, guess: str, bet: int):
+    winConds = []
+    red = [
+        32, 19, 21, 25, 34, 27, 36, 30,
+        23, 5, 16, 1, 14, 9, 18, 7, 12, 3
+    ]
+    black = [
+        15, 4, 2, 17, 6, 13, 11, 8, 10, 
+        24, 33, 20, 31, 22, 29, 28, 35, 26
+    ]
 
-    argsList = list(args) #gets the list of args passed by the user
-    if len(argsList) != 0:
-        if argsList[len(argsList)-1].isnumeric() == True: #checks if the last argument in the list is a number
-            timer = int(argsList[len(argsList)-1]) #sets the timer as the last argument in the list
-            argsList.pop(len(argsList)-1) #removes the number from the args
-
-    #creates a new embed for the poll
-    embedVar = discord.Embed(title='Poll', description = ' '.join(argsList), color=discord.Color.blue())
-    embedVar.add_field(name="Yes", value='<:white_check_mark:785597865081962528>', inline=False)
-    embedVar.add_field(name="No", value='<:x:785598446983839784>', inline=False)
-    m = await ctx.send(embed=embedVar)
-    #adds reaction to the poll embed
-    await m.add_reaction('✅')
-    await m.add_reaction('❌')
-    #sleeps for 2 minutes or whatever amount the user entered
-    await asyncio.sleep(timer)
-    m = await ctx.channel.fetch_message(m.id)
-    print(m.reactions)
-    counts = {react.emoji: react.count for react in m.reactions} #gets the amount of reactions as a dictionary
-    print(counts)
-    yesResult = counts['✅']-1 #gets the amount of reactions for "yes" minus the bot's vote
-    print('yesresult='+str(yesResult))
-    noResult = counts['❌']-1 #gets the amount of reactions for "no" minus the bot's vote
-    print('noresult='+str(noResult))
-    if noResult == 0 and yesResult == 0: #checks to see if no one voted
-        resultsEmbed = discord.Embed(title="No Votes", description=' '.join(argsList), color=discord.Color.gold())
-        resultsEmbed.add_field(name='No Votes Were Counted', value='No results to be shown', inline=False)
-        await m.delete()
-        await ctx.send(embed=resultsEmbed)
-        return
-    yesPercent = yesResult/(yesResult+noResult) #calculates a percent of yes votes
-    noPercent = noResult/(yesResult+noResult) #calculates a percent of no votes
-    resultsEmbed = discord.Embed(title='Results', description = ' '.join(argsList), color=discord.Color.gold())
-    resultsEmbed.add_field(name='✅', value="{yes} votes - {yespercent:.0%}".format(yes=yesResult,yespercent=yesPercent), inline=False)
-    resultsEmbed.add_field(name='❌', value='{no} votes - {nopercent:.0%}'.format(no=noResult,nopercent=noPercent), inline=False)
-    await m.delete() #deletes the original embed
-    await ctx.send(embed=resultsEmbed) #sends the results embed
+    roll = random.randint(0,36)
+    await ctx.send(f'Roll: {roll}')
+    
+    if roll in red:
+        winConds.append('red')
+    if roll in black:
+        winConds.append('black')
+    if roll % 2 == 0:
+        winConds.append('even')
+    if roll % 2 != 0:
+        winConds.append('odd')
+    if roll <= 18:
+        winConds.append('low')
+    if roll >= 19:
+        winConds.append('high')
+    
+    if guess.lower() in winConds:
+        await ctx.send('You win! Congratulations.')
+    else:
+        await ctx.send('You lose! Better luck next time.')
 
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
