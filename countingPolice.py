@@ -561,14 +561,18 @@ async def tictactoe(ctx):
             game = False #sets the game to false
             return #returns the function
 
+
+#lets the user see how many points they have to gamble
 @commands.cooldown(1, 15, commands.BucketType.user)
 @bot.command(name = 'points', description = "Tells the user how many points they have for gambling")
 async def points(ctx):
-    SQL = f"SELECT pointnumber FROM points WHERE id = {ctx.author.id};"
+    SQL = f"SELECT pointnumber FROM points WHERE id = {ctx.author.id};" #gets the point value from the DB
     cur.execute(SQL)
     numPoints = cur.fetchone()
-    await ctx.send(f'You have {numPoints[0]} points.')
+    await ctx.send(f'You have {numPoints[0]} points.') #sends a message with the point value
 
+
+#lets the user play blackjack and gamble their points
 @bot.command(name = "blackjack", description = "Allows the user to play a game of blackjack and bet their points")
 async def blackjack(ctx, bet: int):
     game = True
@@ -579,62 +583,76 @@ async def blackjack(ctx, bet: int):
     cur.execute(SQL)
     points = cur.fetchone()[0]
 
-    if bet > points:
+    if bet > points: #checks if the user has enough points to place the bet
         await ctx.send("You do not have enough point to bet that much.")
         return
+    
+    SQL = f"UPDATE points SET pointnumber = {points-bet} WHERE id = {player.id};" #subtracts the points from their "account"
+    cur.execute(SQL)
+    conn.commit()
 
-    deck = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14] * 4
-    playerHand = deal(deck)
-    dealerHand = deal(deck)
-    await ctx.send(f"The dealer is showing a {dealerHand[0]}.")
+    deck = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14] * 4 #initializes the deck as a list
+    playerHand = deal(deck) #deals cards to the player
+    dealerHand = deal(deck) #deals cards to the dealer
+    await ctx.send(f"The dealer is showing a {dealerHand[0]}.") #tells the user what the dealer is showing
+
     while game == True:    
-        msg = await ctx.send(f"Your Hand: {playerHand}\nTotal: {total(playerHand)}")
-        await ctx.send("Would you like to [H]it, [S]tand, or [Q]uit")
+        msg = await ctx.send(f"Your Hand: {', '.join(map(str,playerHand))}\nTotal: {total(playerHand)}") #tells the user what their hand is
+        await ctx.send("Would you like to [H]it, [S]tand, or [Q]uit") #asks the user for their input
         try:
-            move = await bot.wait_for('message', check = lambda m: m.author == ctx.author)
-            if move.content.lower() == "h":
-                playerHand = hit(playerHand, deck)
-                await ctx.send(f"Your Hand: {playerHand}\nTotal: {total(playerHand)}")
-                if total(playerHand) == 21:
+            move = await bot.wait_for('message', check = lambda m: m.author == ctx.author) #waits for the message from the user
+            if move.content.lower() == "h"or move.content.lower() == "hit": #checks if they want to hit
+                playerHand = hit(playerHand, deck) #calls the hit function
+                await ctx.send(f"Your Hand: {', '.join(map(str,playerHand))}\nTotal: {total(playerHand)}") #sends the players hand
+                if total(playerHand) == 21: #checks for blackjack
                     await ctx.send("Congratulations! You got a blackjack.")
                     game = False
+                    SQL = f"UPDATE points SET pointnumber = {points+bet+bet} WHERE id = {player.id}" #adds the bet*2 to the users "account"
+                    cur.execute(SQL)
+                    conn.commit()
                     return
-                elif total(playerHand) > 21:
+
+                elif total(playerHand) > 21: #checks for user bust
                     await ctx.send("You busted! Good luck next time.")
                     game = False
                     return
+
                 else:
                     continue
 
-            elif move.content.lower() == "s":
+            elif move.content.lower() == "s" or move.content.lower() == "stand": #checks if they want to stand
                 game = False
                 break
 
-            else:
+            else: #else they quit the game
                 await ctx.send(move)
                 game = False
                 await ctx.send("You quit.")
                 return
-        except asyncio.TimeoutError:
+
+        except asyncio.TimeoutError: #check for TimeoutError
             await ctx.send("The game timed out")
             return
     
-    while dealer == True:
-        if total(dealerHand) == 21:
+    while dealer == True: #loop for dealer moves
+        if total(dealerHand) == 21: #checks for blackjack
             await ctx.send("The dealer got a blackjack! Good luck next time.")
             dealer = False
             return
-        elif total(dealerHand) > total(playerHand):
+        elif total(dealerHand) > total(playerHand): #checks for greater hand
             await ctx.send("The dealer had a greater hand. Good luck next time.")
             dealer = False
             return
-        elif total(dealerHand) > 21:
+        elif total(dealerHand) > 21: #checks for dealer bust
             await ctx.send("The dealer busted! Congratulations.")
             dealer = False
+            SQL = f"UPDATE points SET pointnumber = {points+bet+bet} WHERE id = {player.id}" #adds double the bet to the user's account
+            cur.execute(SQL)
+            conn.commit()
             return
         else:
-            dealerHand = hit(dealerHand, deck)
-            await ctx.send(f'Dealer Hand: {dealerHand}\nTotal: {total(dealerHand)}')
+            dealerHand = hit(dealerHand, deck) #dealer hits
+            await ctx.send(f'Dealer Hand: {", ".join(map(str,dealerHand))}\nTotal: {total(dealerHand)}') #tells the user the new dealer's hand
  
 #sends a random picture from the forbiddenList directly to Finn
 @commands.cooldown(1, 15, commands.BucketType.user)
