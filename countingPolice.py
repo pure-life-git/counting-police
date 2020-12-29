@@ -380,122 +380,149 @@ async def wolframfull(ctx,*args):
     await ctx.send(embed=wolframEmbed)
 
 
+#facilitates a tic-tac-toe game between two users
 @commands.cooldown(1, 30, commands.BucketType.user)
 @bot.command(
     name = "tictactoe", 
     brief = "Challenge another player to a game of tic-tac-toe", 
     description = "Simply type the command and then mention someone to start a game with them. To choose your space, treat the board as a numbered grid 1-9 starting at the top left."
     )
-async def tictactoe(ctx, self):
-    game = True
-    moves = 0
-    board = {
-        '1': ' ', '2': ' ', '3': ' ',
-        '4': ' ', '5': ' ', '6': ' ',
-        '7': ' ', '8': ' ', '9': ' '
+async def tictactoe(ctx):
+    game = True #this var keeps track of if the game is still being played
+    moves = 0 #move counter
+    
+    board = { #establishes a dictionary containing the values at each space of the board 1-9
+        '1': ' ', '2': ' ', '3': ' ', #first row
+        '4': ' ', '5': ' ', '6': ' ', #second row
+        '7': ' ', '8': ' ', '9': ' '  #third row
     }
-    keys = board.keys()
-    def printBoard(board):
+
+    keys = board.keys() #this is our list of valid inputs for the users
+
+    def printBoard(board): #this function prints the board in its current state
         return(f"` {board['1']} | {board['2']} | {board['3']} `\n`---+---+---`\n` {board['4']} | {board['5']} | {board['6']} `\n`---+---+---`\n` {board['7']} | {board['8']} | {board['9']} `")
-    playerOne = ctx.message.author
-    playerTwo = ctx.message.mentions[0]
+    
+    playerOne = ctx.message.author #sets player one as the person who initiated the challenge
+    playerTwo = ctx.message.mentions[0] #sets player two as the person player one mentioned in their challenge
 
-    plays = [(playerOne,'x'), (playerTwo, 'o')]
-    challMsg = await ctx.send(f"{playerOne.name} has challenged {playerTwo.name} to a game of Tic Tac Toe! Do you accept? Y/N")
+    plays = [(playerOne,'x'), (playerTwo, 'o')] #gives each player a move set
+
+    challMsg = await ctx.send(f"{playerOne.name} has challenged {playerTwo.name} to a game of Tic Tac Toe! Do you accept? Y/N") #sends the challenge message
     try:
-        msg = await bot.wait_for('message', check = lambda m: m.author == playerTwo, timeout = 30.0)
+        msg = await bot.wait_for('message', check = lambda m: m.author == playerTwo, timeout = 30.0) #waits for a message from player two
         if msg.content.lower() == 'y':
-            await ctx.send(f"Challenge accepted! {playerOne.name} goes first.")
-            await challMsg.delete()
+            await ctx.send(f"Challenge accepted! {playerOne.name} goes first.") #if player two messaged "y" then the challenge is accepted
+            await challMsg.delete() #deletes the challenge message that the bot sent
         else:
-            await ctx.send('Challenge declined.')
-            await challMsg.delete()
+            await ctx.send('Challenge declined.') #if player two messaged anything other than "y", the challenge is declined and the command is returned
+            await challMsg.delete() #deletes the challenge message that the bot sent
             return
-    except asyncio.TimeoutError:
-        await challMsg.delete()
-        await ctx.send("Challenge timed out.")
-        return
 
-    while game == True:
-        if moves % 2 == 0:
-            mover = plays[0][0]
-            move = plays[0][1]
-            mess = await bot.wait_for('message')
-            if mess.content.lower() == 'end':
+    except asyncio.TimeoutError: #if the program raises a TimeoutError from asyncio, then the challenge times out
+        await challMsg.delete() #deletes the challenge message that the bot sent
+        await ctx.send("Challenge timed out.") #lets the user know that the challenge timed out
+        return #returns the function
+
+    while game == True: #checks if the game has ended
+        
+        if moves % 2 == 0: #check if its player one's turn
+            mover = plays[0][0] #sets who is moving
+            move = plays[0][1] #sets what piece they use
+            mess = await bot.wait_for('message', check = lambda m: m.author == mover) #waits for the player's move
+
+            if mess.content.lower() == 'end': #checks if the user wants to end the game
                 game = False
                 break
-            elif mess.content.lower() not in keys:
+
+            elif mess.content.lower() not in keys: #checks if the space is a valid space on the board
                 await ctx.send("That is not a valid input. Please enter a number 1-9")
                 continue
-            elif board[mess.content] != ' ':
+
+            elif board[mess.content] != ' ': #checks if the space is full on the board
                 await ctx.send("That space if full. Please pick a free space")
-            else:
+                continue
+            else: #if none of the checks have triggered, then we set the board space to the player's piece and add one to the move count
                 board[mess.content] = move
                 moves += 1
-        else:
-            mover = plays[1][0]
-            move = plays[1][1]
-            mess = await bot.wait_for('message')
-            if mess.content.lower() == 'end':
+        else: #else it's player two's turn
+            mover = plays[1][0] #sets who is moving
+            move = plays[1][1] #sets what piece they use
+            mess = await bot.wait_for('message', check = lambda m: m.author == mover) #waits for the player's move
+
+            if mess.content.lower() == 'end': #checks if the user wants to end the game
                 game = False
                 break
-            elif mess.content.lower() not in keys:
+
+            elif mess.content.lower() not in keys: #checks if the space is a valid space on the baord
                 await ctx.send("That is not a valid input. Please enter a number 1-9")
                 continue
-            elif board[mess.content] != ' ':
-                await ctx.send("That space if full. Please pick a free space")
-            else:
+
+            elif board[mess.content] != ' ': #checks if the space is full on the board
+                await ctx.send("That space if full. Please pick a free space") 
+                continue
+
+            else: #if none of the checks have triggered, then we set the board space to the player's piece and add one to the move count
                 board[mess.content] = move
                 moves += 1
         
+        #Win Conditions
         if moves >=5:
-            if board['1'] == board['2'] == board['3'] != ' ':
-                await ctx.send(f"{mover.name} has won the gamein {moves} moves!")
+            if board['1'] == board['2'] == board['3'] != ' ': #3 across the top
+                await ctx.send(f"{mover.name} has won the gamein {moves} moves!") #formats the string with the player name and number of moves
                 game = False
                 await ctx.send(f"~~` {board['1']} | {board['2']} | {board['3']} `~~\n`---+---+---`\n` {board['4']} | {board['5']} | {board['6']} `\n`---+---+---`\n` {board['7']} | {board['8']} | {board['9']} `")
+                 #prints out the winning board with strikethrough
                 return
-            elif board['4'] == board['5'] == board['6'] != ' ':
-                await ctx.send(f"{mover.name} has won the game in {moves} moves!")
+
+            elif board['4'] == board['5'] == board['6'] != ' ': #3 across the middle
+                await ctx.send(f"{mover.name} has won the game in {moves} moves!") #formats the string with the player name and number of moves
                 game = False
                 await ctx.send(f"` {board['1']} | {board['2']} | {board['3']} `\n`---+---+---`\n~~` {board['4']} | {board['5']} | {board['6']} `~~\n`---+---+---`\n` {board['7']} | {board['8']} | {board['9']} `")
+                 #prints out the winning board with strikethrough
                 return
-            elif board['7'] == board['8'] == board['9'] != ' ':
-                await ctx.send(f"{mover.name} has won the game in {moves} moves!")
+
+            elif board['7'] == board['8'] == board['9'] != ' ': #3 across the bottom
+                await ctx.send(f"{mover.name} has won the game in {moves} moves!") #formats the string with the player name and number of moves
                 game = False
                 await ctx.send(f"` {board['1']} | {board['2']} | {board['3']} `\n`---+---+---`\n` {board['4']} | {board['5']} | {board['6']} `\n`---+---+---`\n~~` {board['7']} | {board['8']} | {board['9']} `~~")
+                 #prints out the winning board with strikethrough
                 return
-            elif board['1'] == board['4'] == board['7'] != ' ':
-                await ctx.send(f"{mover.name} has won the game in {moves} moves!")
+
+            elif board['1'] == board['4'] == board['7'] != ' ': #3 down the right
+                await ctx.send(f"{mover.name} has won the game in {moves} moves!") #formats the string with the player name and number of moves
                 game = False
-                await ctx.send(printBoard(board))
+                await ctx.send(printBoard(board)) #prints out the winning board
                 return
-            elif board['2'] == board['5'] == board['8'] != ' ':
-                await ctx.send(f"{mover.name} has won the game in {moves} moves!")
+
+            elif board['2'] == board['5'] == board['8'] != ' ': #3 down the middle
+                await ctx.send(f"{mover.name} has won the game in {moves} moves!") #formats the string with the player name and number of moves
                 game = False
-                await ctx.send(printBoard(board))
+                await ctx.send(printBoard(board)) #prints out the winning board
                 return
-            elif board['3'] == board['6'] == board['9'] != ' ':
-                await ctx.send(f"{mover.name} has won the game in {moves} moves!")
+
+            elif board['3'] == board['6'] == board['9'] != ' ': #3 down the right
+                await ctx.send(f"{mover.name} has won the game in {moves} moves!") #formats the string with the player name and number of moves
                 game = False
-                await ctx.send(printBoard(board))
+                await ctx.send(printBoard(board)) #prints out the winning board
                 return
-            elif board['1'] == board['5'] == board['9'] != ' ':
-                await ctx.send(f"{mover.name} has won the game in {moves} moves!")
+
+            elif board['1'] == board['5'] == board['9'] != ' ': #3 from top left to bottom right
+                await ctx.send(f"{mover.name} has won the game in {moves} moves!") #formats the string with the player name and number of moves
                 game = False
-                await ctx.send(printBoard(board))
+                await ctx.send(printBoard(board)) #prints out the winning board
                 return
-            elif board['3'] == board['5'] == board['7'] != ' ':
-                await ctx.send(f"{mover.name} has won the game in {moves} moves!")
+
+            elif board['3'] == board['5'] == board['7'] != ' ': #3 from top right to bottom left
+                await ctx.send(f"{mover.name} has won the game in {moves} moves!") #formats the string with the player name and number of moves
                 game = False
-                await ctx.send(printBoard(board))
+                await ctx.send(printBoard(board)) #prints out the winning board
                 return
         
         await ctx.send(printBoard(board))
-        if moves == 9:
-            await ctx.send("The game is a draw.")
-            game = False
-            return
-
+        if moves == 9: #checks to see if the game is a draw
+            await ctx.send("The game is a draw.") #sends a message to the channel letting the players know it's a draw
+            game = False #sets the game to false
+            return #returns the function
 
 #sends a random picture from the forbiddenList directly to Finn
 @commands.cooldown(1, 15, commands.BucketType.user)
