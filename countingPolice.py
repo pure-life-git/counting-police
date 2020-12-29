@@ -103,7 +103,7 @@ defenderList = [
                                                                       
 
 #enters a message from the #counting channel into the postgresql DB
-def countEntry(num):
+def countEntry(num, user):
     SQL = "INSERT INTO countingtable (count) VALUES (%s);"
     data = (num,)
     cur.execute(SQL, data)
@@ -113,6 +113,14 @@ def countEntry(num):
         dataTwo = (num-1,)
         cur.execute(SQLtwo, dataTwo)
         conn.commit()
+    SQL = f"SELECT pointnumber FROM points WHERE id = {user.id};"
+    cur.execute(SQL)
+    points = cur.fetchone()
+
+    SQL = f"UPDATE points SET pointnumber = {points+10} WHERE id = {user.id};"
+    cur.execute(SQL)
+    conn.commit()
+
 
 #enters a game from any channel into the postgresql DB
 def gameEntry(game):
@@ -1091,7 +1099,7 @@ async def on_message(message):
         else:
             #if the message was in the counting channel but was the right number, 
             #then we just call the function that adds their number to the DB
-            countEntry(int(message.content))
+            countEntry(int(message.content), message.author)
             if int(message.content) == 1000:
                 await message.add_reaction("🎉")
                 await message.add_reaction("🎊")
