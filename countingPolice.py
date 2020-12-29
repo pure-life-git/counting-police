@@ -572,11 +572,7 @@ async def points(ctx):
 @bot.command(name = "blackjack", description = "Allows the user to play a game of blackjack and bet their points")
 async def blackjack(ctx, bet: int):
     game = True
-    choice = {
-        "🇭",
-        "🇸",
-        "🇶"
-    }
+
     #prints the results for blackjack
     def print_results(dealer_hand, player_hand):
         return((f"The dealer has a {dealer_hand} with a total of {total(dealer_hand)}."),(f"The player has a {player_hand} with a total of {total(player_hand)}"))
@@ -595,10 +591,9 @@ async def blackjack(ctx, bet: int):
     await ctx.send(f"The dealer is showing a {dealerHand[0]}.")
     while game == True:    
         msg = await ctx.send(f"You have {playerHand} for a total of {total(playerHand)}.")
-        for reaction in choice:
-            await msg.add_reaction(reaction)
+        await ctx.send("Would you like to [H]it, [S]tand, or [Q]uit")
         try:
-            move = await bot.wait_for('on_reaction_add', check = lambda r: r in choice)
+            move = await bot.wait_for('message', check = lambda m: m.author == ctx.author)
             if move == "🇭":
                 await ctx.send(move)
                 hit(playerHand, deck)
