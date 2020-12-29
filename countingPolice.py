@@ -812,7 +812,7 @@ async def slots(ctx):
     wheelOne = random.choice(items)
     wheelTwo = random.choice(items)
     wheelThree = random.choice(items)
-    await ctx.send(f"`[-|-|-]`\n`[{wheelOne}|{wheelTwo}|{wheelThree}]`\n`[-|-|-]`")
+    await ctx.send(f"`[🟥|🟥|🟥]`\n`-------`\n`[{wheelOne}|{wheelTwo}|{wheelThree}]`\n`-------`\n`[🟥|🟥|🟥]`")
     if wheelOne == wheelTwo == wheelThree:
         if wheelOne == '🍒':
             await ctx.send("Congratulations! You won 20 points.")
@@ -850,9 +850,9 @@ async def slots(ctx):
             cur.execute(SQL)
             conn.commit()
             return
-        else:
-            await ctx.send("You didn't win. Good luck next time.")
-            return
+    else:
+        await ctx.send("You didn't win. Good luck next time.")
+        return
     
 
 
