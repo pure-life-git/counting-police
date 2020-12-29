@@ -524,6 +524,14 @@ async def tictactoe(ctx):
             game = False #sets the game to false
             return #returns the function
 
+@commands.cooldown(1, 15, commands.BucketType.user)
+@bot.command(name = 'points', description = "Tells the user how many points they have for gambling")
+async def points(ctx):
+    SQL = f"SELECT pointnumber FROM points WHERE id = {ctx.author.id};"
+    cur.execute(SQL)
+    numPoints = cur.fetchone()
+    await ctx.send(f'You have {numPoints} points.')
+
 #sends a random picture from the forbiddenList directly to Finn
 @commands.cooldown(1, 15, commands.BucketType.user)
 @bot.command(name = 'finn', description = 'Sends a feet pic to Finn')
