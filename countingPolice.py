@@ -639,7 +639,7 @@ async def points(ctx):
 
 
 #lets the user play blackjack and gamble their points
-@bot.command(name = "blackjack", description = "Allows the user to play a game of blackjack and bet their points")
+@bot.command(name = "blackjack", brief = "Allows the user to bet their points on a game of blackjack", description = "Type the command and then the amount of points you would like to bet")
 async def blackjack(ctx, bet: int):
     game = True
     dealer = True
@@ -724,8 +724,22 @@ async def blackjack(ctx, bet: int):
             await ctx.send(f'Dealer Hand: {", ".join(map(str,dealerHand))}\nTotal: {total(dealerHand)}') #tells the user the new dealer's hand
 
 
-@bot.command(name = "roulette", description = "Lets the user place bets on a game of roulette")
+#lets the user place bets on a game of roulette
+@bot.command(name = "roulette", brief = "Lets the user place bets on a game of roulette", description = "Type the command, what you're betting on (red, black, even, odd, low, high) and then the amount of points to bet.")
 async def roulette(ctx, guess: str, bet: int):
+    player = ctx.author
+    SQL = f"SELECT pointnumber FROM points WHERE id = {player.id};"
+    cur.execute(SQL)
+    points = cur.fetchone()[0]
+
+    if bet > points: #checks if the user has enough points to place the bet
+        await ctx.send("You do not have enough point to bet that much.")
+        return
+    
+    SQL = f"UPDATE points SET pointnumber = {points-bet} WHERE id = {player.id};" #subtracts the points from their "account"
+    cur.execute(SQL)
+    conn.commit()
+
     winConds = []
     red = [
         32, 19, 21, 25, 34, 27, 36, 30,
@@ -754,8 +768,13 @@ async def roulette(ctx, guess: str, bet: int):
     
     if guess.lower() in winConds:
         await ctx.send('You win! Congratulations.')
+        SQL = f"UPDATE points SET pointnumber = {points+bet} WHERE id = {player.id}" #adds the bet*2 to the users "account"
+        cur.execute(SQL)
+        conn.commit()
+        return
     else:
         await ctx.send('You lose! Better luck next time.')
+        return
 
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
