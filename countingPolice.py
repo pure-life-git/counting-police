@@ -639,10 +639,7 @@ async def blackjack(ctx, bet: int):
             await ctx.send("The dealer got a blackjack! Good luck next time.")
             dealer = False
             return
-        elif total(dealerHand) > total(playerHand): #checks for greater hand
-            await ctx.send("The dealer had a greater hand. Good luck next time.")
-            dealer = False
-            return
+            
         elif total(dealerHand) > 21: #checks for dealer bust
             await ctx.send("The dealer busted! Congratulations.")
             dealer = False
@@ -650,6 +647,12 @@ async def blackjack(ctx, bet: int):
             cur.execute(SQL)
             conn.commit()
             return
+
+        elif total(dealerHand) > total(playerHand): #checks for greater hand
+            await ctx.send("The dealer had a greater hand. Good luck next time.")
+            dealer = False
+            return
+        
         else:
             dealerHand = hit(dealerHand, deck) #dealer hits
             await ctx.send(f'Dealer Hand: {", ".join(map(str,dealerHand))}\nTotal: {total(dealerHand)}') #tells the user the new dealer's hand
