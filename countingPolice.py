@@ -611,13 +611,7 @@ async def blackjack(ctx, bet: int):
                 game = False
                 await ctx.send("You quit.")
                 return
-        
-
-        
-
-    
-
-
+ 
 #sends a random picture from the forbiddenList directly to Finn
 @commands.cooldown(1, 15, commands.BucketType.user)
 @bot.command(name = 'finn', description = 'Sends a feet pic to Finn')
