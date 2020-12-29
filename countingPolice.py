@@ -658,7 +658,7 @@ async def blackjack(ctx, bet: int):
     points = cur.fetchone()[0]
 
     if bet > points: #checks if the user has enough points to place the bet
-        await ctx.send("You do not have enough point to bet that much.")
+        await ctx.send("You do not have enough points to bet that much.")
         return
     
     SQL = f"UPDATE points SET pointnumber = {points-bet} WHERE id = {player.id};" #subtracts the points from their "account"
@@ -741,7 +741,7 @@ async def roulette(ctx, guess: str, bet: int):
     points = cur.fetchone()[0]
 
     if bet > points: #checks if the user has enough points to place the bet
-        await ctx.send("You do not have enough point to bet that much.")
+        await ctx.send("You do not have enough points to bet that much.")
         return
     
     SQL = f"UPDATE points SET pointnumber = {points-bet} WHERE id = {player.id};" #subtracts the points from their "account"
@@ -783,6 +783,77 @@ async def roulette(ctx, guess: str, bet: int):
     else:
         await ctx.send('You lose! Better luck next time.')
         return
+
+
+@bot.command(name = "slots", brief = "Lets the user spin a slot machine", description = "To play, all you need are 10 points. Then simply type the command and cross your fingers. Payouts are as follows:\n- 🍒🍒🍒: 20 points\n- 🍊🍊🍊: 35 points\n- 🍋🍋🍋: 50 points\n- 🍑🍑🍑: 75 points\n- 🔔🔔🔔: 150 points\n- 7️7️7️: JACKPOT 250 points")
+async def slots(ctx):
+    player = ctx.author
+    SQL = f"SELECT pointnumber FROM points WHERE id = {player.id};"
+    cur.execute(SQL)
+    points = cur.fetchone()[0]
+
+    if 10 > points: #checks if the user has enough points to play
+        await ctx.send("You do not have enough points to play.")
+        return
+    
+    SQL = f"UPDATE points SET pointnumber = {points-10} WHERE id = {player.id};" #subtracts the points from their "account"
+    cur.execute(SQL)
+    conn.commit()
+
+    items = [
+        '🍒','🍒', '🍒', '🍒', '🍒', '🍒', '🍒', '🍒', '🍒',
+         '🍊', '🍊', '🍊', '🍊', '🍊', '🍊', '🍊',
+          '🍋', '🍋', '🍋', '🍋', '🍋',
+           '🍑', '🍑', '🍑',
+            '🔔', '🔔',
+             '7️'
+    ]
+
+    wheelOne = random.choice(items)
+    wheelTwo = random.choice(items)
+    wheelThree = random.choice(items)
+    await ctx.send(f"`[-|-|-]`\n`[{wheelOne}|{wheelTwo}|{wheelThree}]`\n`[-|-|-]`")
+    if wheelOne == wheelTwo == wheelThree:
+        if wheelOne == '🍒':
+            await ctx.send("Congratulations! You won 20 points.")
+            SQL = f"UPDATE points SET pointnumber = {points+20} WHERE id = {player.id};"
+            cur.execute(SQL)
+            conn.commit()
+            return
+        elif wheelOne == '🍊':
+            await ctx.send("Congratulations! You won 35 points.")
+            SQL = f"UPDATE points SET pointnumber = {points+35} WHERE id = {player.id};"
+            cur.execute(SQL)
+            conn.commit()
+            return
+        elif wheelOne == '🍋':
+            await ctx.send("Congratulations! You won 50 points.")
+            SQL = f"UPDATE points SET pointnumber = {points+50} WHERE id = {player.id};"
+            cur.execute(SQL)
+            conn.commit()
+            return
+        elif wheelOne == '🍑':
+            await ctx.send("Congratulations! You won 75 points.")
+            SQL = f"UPDATE points SET pointnumber = {points+75} WHERE id = {player.id};"
+            cur.execute(SQL)
+            conn.commit()
+            return
+        elif wheelOne == '🔔':
+            await ctx.send("Congratulations! You won 150 points.")
+            SQL = f"UPDATE points SET pointnumber = {points+150} WHERE id = {player.id};"
+            cur.execute(SQL)
+            conn.commit()
+            return
+        elif wheelOne == '7️':
+            await ctx.send("Congratulations! You won the jackpot of 250 points.")
+            SQL = f"UPDATE points SET pointnumber = {points+250} WHERE id = {player.id};"
+            cur.execute(SQL)
+            conn.commit()
+            return
+        else:
+            await ctx.send("You didn't win. Good luck next time.")
+            return
+    
 
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
