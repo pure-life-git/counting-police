@@ -633,7 +633,7 @@ async def blackjack(ctx, bet: int):
             dealer = False
             return
         else:
-            dealerHand = hit(dealerHand)
+            dealerHand = hit(dealerHand, deck)
             await ctx.send(f'Dealer Hand: {dealerHand}\nTotal: {total(dealerHand)}')
  
 #sends a random picture from the forbiddenList directly to Finn
