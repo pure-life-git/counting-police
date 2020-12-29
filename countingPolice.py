@@ -607,7 +607,7 @@ async def blackjack(ctx, bet: int):
                 if total(playerHand) == 21: #checks for blackjack
                     await ctx.send("Congratulations! You got a blackjack.")
                     game = False
-                    SQL = f"UPDATE points SET pointnumber = {points+bet+bet} WHERE id = {player.id}" #adds the bet*2 to the users "account"
+                    SQL = f"UPDATE points SET pointnumber = {points+bet} WHERE id = {player.id}" #adds the bet*2 to the users "account"
                     cur.execute(SQL)
                     conn.commit()
                     return
@@ -639,11 +639,11 @@ async def blackjack(ctx, bet: int):
             await ctx.send("The dealer got a blackjack! Good luck next time.")
             dealer = False
             return
-            
+
         elif total(dealerHand) > 21: #checks for dealer bust
             await ctx.send("The dealer busted! Congratulations.")
             dealer = False
-            SQL = f"UPDATE points SET pointnumber = {points+bet+bet} WHERE id = {player.id}" #adds double the bet to the user's account
+            SQL = f"UPDATE points SET pointnumber = {points+bet} WHERE id = {player.id}" #adds double the bet to the user's account
             cur.execute(SQL)
             conn.commit()
             return
