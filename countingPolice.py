@@ -530,7 +530,7 @@ async def points(ctx):
     SQL = f"SELECT pointnumber FROM points WHERE id = {ctx.author.id};"
     cur.execute(SQL)
     numPoints = cur.fetchone()
-    await ctx.send(f'You have {numPoints} points.')
+    await ctx.send(f'You have {numPoints[0]} points.')
 
 #sends a random picture from the forbiddenList directly to Finn
 @commands.cooldown(1, 15, commands.BucketType.user)
