@@ -611,6 +611,9 @@ async def blackjack(ctx, bet: int):
                 game = False
                 await ctx.send("You quit.")
                 return
+        except asyncio.TimeoutError:
+            await ctx.send("The game timed out")
+            return
  
 #sends a random picture from the forbiddenList directly to Finn
 @commands.cooldown(1, 15, commands.BucketType.user)
