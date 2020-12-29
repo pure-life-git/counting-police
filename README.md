@@ -11,6 +11,7 @@ The main feature of this bot is its ability to monitor a counting channel.
 - [x] Make a README
 - [x] Implement subcommands for the game system
 - [x] Make a user-interactive game
+- [ ] Make a gambling system with different games
 - [ ] Make the bot able to detect if someone edits or deletes their message and reprimand them for it
 - [ ] Come up with other cool features
 # Feature List
