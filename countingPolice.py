@@ -573,9 +573,9 @@ async def points(ctx):
 async def blackjack(ctx, bet: int):
     game = True
     choice = {
-        "regional_indicator_h:793389063960657971",
-        "regional_indicator_s:793389082716930078",
-        "regional_indicator_q:793389099653922834"
+        "🇭",
+        "🇸",
+        "🇶"
     }
     #prints the results for blackjack
     def print_results(dealer_hand, player_hand):
