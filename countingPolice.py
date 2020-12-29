@@ -812,7 +812,7 @@ async def slots(ctx):
     wheelOne = random.choice(items)
     wheelTwo = random.choice(items)
     wheelThree = random.choice(items)
-    await ctx.send(f"`[🟥|🟥|🟥]`\n`-------`\n`[{wheelOne}|{wheelTwo}|{wheelThree}]`\n`-------`\n`[🟥|🟥|🟥]`")
+    await ctx.send(f"`[🟥|🟥|🟥]`\n`-----------`\n`[{wheelOne}|{wheelTwo}|{wheelThree}]`\n`-----------`\n`[🟥|🟥|🟥]`")
     if wheelOne == wheelTwo == wheelThree:
         if wheelOne == '🍒':
             await ctx.send("Congratulations! You won 20 points.")
