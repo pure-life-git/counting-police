@@ -597,8 +597,23 @@ async def blackjack(ctx, bet: int):
         msg = await ctx.send(f"You have {playerHand} for a total of {total(playerHand)}.")
         for reaction in choice:
             await msg.add_reaction(reaction)
-        move = await bot.wait_for('on_reaction_add', check = lambda r: r in choice)
-        print(move)
+        try:
+            move = await bot.wait_for('on_reaction_add', check = lambda r: r in choice)
+            if move == "🇭":
+                await ctx.send(move)
+                hit(playerHand, deck)
+            elif move == "🇸":
+                await ctx.send(move)
+                game = False
+                break
+            else:
+                await ctx.send(move)
+                game = False
+                await ctx.send("You quit.")
+                return
+        
+
+        
 
     
 
