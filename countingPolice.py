@@ -117,7 +117,7 @@ def countEntry(num, user):
     cur.execute(SQL)
     points = cur.fetchone()
 
-    SQL = f"UPDATE points SET pointnumber = {points+10} WHERE id = {user.id};"
+    SQL = f"UPDATE points SET pointnumber = {points[0]+10} WHERE id = {user.id};"
     cur.execute(SQL)
     conn.commit()
 
