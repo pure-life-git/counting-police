@@ -594,7 +594,7 @@ async def blackjack(ctx, bet: int):
             move = await bot.wait_for('message', check = lambda m: m.author == ctx.author)
             if move.content.lower() == "h":
                 playerHand = hit(playerHand, deck)
-                await ctx.send(f"You have {playerHand} for a total of {total(playerHand)}.")
+                await ctx.send(f"Your Hand: {playerHand}\nTotal: {total(playerHand)}")
                 if total(playerHand) == 21:
                     await ctx.send("Congratulations! You got a blackjack.")
                     game = False
