@@ -572,35 +572,44 @@ async def points(ctx):
 @bot.command(name = "blackjack", description = "Allows the user to play a game of blackjack and bet their points")
 async def blackjack(ctx, bet: int):
     game = True
-
-    #prints the results for blackjack
-    def print_results(dealer_hand, player_hand):
-        return((f"The dealer has a {dealer_hand} with a total of {total(dealer_hand)}."),(f"The player has a {player_hand} with a total of {total(player_hand)}"))
-        
-
+    dealer = True
     player = ctx.author
+
     SQL = f"SELECT pointnumber FROM points WHERE id = {player.id};"
     cur.execute(SQL)
     points = cur.fetchone()[0]
+
     if bet > points:
         await ctx.send("You do not have enough point to bet that much.")
         return
+
     deck = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14] * 4
     playerHand = deal(deck)
     dealerHand = deal(deck)
     await ctx.send(f"The dealer is showing a {dealerHand[0]}.")
     while game == True:    
-        msg = await ctx.send(f"You have {playerHand} for a total of {total(playerHand)}.")
+        msg = await ctx.send(f"Your Hand: {playerHand}\nTotal: {total(playerHand)}")
         await ctx.send("Would you like to [H]it, [S]tand, or [Q]uit")
         try:
             move = await bot.wait_for('message', check = lambda m: m.author == ctx.author)
-            if move == "🇭":
-                await ctx.send(move)
-                hit(playerHand, deck)
-            elif move == "🇸":
-                await ctx.send(move)
+            if move.content.lower() == "h":
+                playerHand = hit(playerHand, deck)
+                await ctx.send(f"You have {playerHand} for a total of {total(playerHand)}.")
+                if total(playerHand) == 21:
+                    await ctx.send("Congratulations! You got a blackjack.")
+                    game = False
+                    break
+                elif total(playerHand) > 21:
+                    await ctx.send("You busted! Good luck next time.")
+                    game = False
+                    break
+                else:
+                    continue
+
+            elif move.content.lower() == "s":
                 game = False
                 break
+
             else:
                 await ctx.send(move)
                 game = False
@@ -609,6 +618,23 @@ async def blackjack(ctx, bet: int):
         except asyncio.TimeoutError:
             await ctx.send("The game timed out")
             return
+    
+    while dealer == True:
+        if total(dealerHand) == 21:
+            await ctx.send("The dealer got a blackjack! Good luck next time.")
+            dealer = False
+            return
+        elif total(dealerHand) > total(playerHand):
+            await ctx.send("The dealer had a greater hand. Good luck next time.")
+            dealer = False
+            return
+        elif total(dealerHand) > 21:
+            await ctx.send("The dealer busted! Congratulations.")
+            dealer = False
+            return
+        else:
+            dealerHand = hit(dealerHand)
+            await ctx.send(f'Dealer Hand: {dealerHand}\nTotal: {total(dealerHand)}')
  
 #sends a random picture from the forbiddenList directly to Finn
 @commands.cooldown(1, 15, commands.BucketType.user)
