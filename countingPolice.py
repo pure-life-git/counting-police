@@ -121,6 +121,43 @@ def gameEntry(game):
     cur.execute(SQL,data)
     conn.commit()
 
+#deals a hand for blackjack
+def deal(deck):
+    hand = []
+    for i in range(2):
+        random.shuffle(deck)
+        card = deck.pop()
+        if card == 11: card = "J"
+        if card == 12: card = "Q"
+        if card == 13: card = "K"
+        if card == 14: card = "A"
+        hand.append(card)
+    return hand
+
+#calculates the total of a players hand
+def total(hand):
+    total = 0
+    for card in hand:
+        if card == "J" or card == "Q" or card == "K":
+            total += 10
+        elif card == "A":
+            if total >= 11: total += 1
+            else: total += 11
+        else:
+            total += card
+    return total
+
+#lets the player "hit" in blackjack
+def hit(hand, deck):
+    random.shuffle(deck)
+    card = deck.pop()
+    if card == 11: card = "J"
+    if card == 12: card = "Q"
+    if card == 13: card = "K"
+    if card == 14: card = "A"
+    hand.append(card)
+    return hand
+
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
 #   ____   _   _        _____   ______            _____ __     __
@@ -531,6 +568,40 @@ async def points(ctx):
     cur.execute(SQL)
     numPoints = cur.fetchone()
     await ctx.send(f'You have {numPoints[0]} points.')
+
+@bot.command(name = "blackjack", description = "Allows the user to play a game of blackjack and bet their points")
+async def blackjack(ctx, bet: int):
+    game = True
+    choice = {
+        "regional_indicator_h:793389063960657971",
+        "regional_indicator_s:793389082716930078",
+        "regional_indicator_q:793389099653922834"
+    }
+    #prints the results for blackjack
+    def print_results(dealer_hand, player_hand):
+        return((f"The dealer has a {dealer_hand} with a total of {total(dealer_hand)}."),(f"The player has a {player_hand} with a total of {total(player_hand)}"))
+        
+
+    player = ctx.author
+    SQL = f"SELECT pointnumber FROM points WHERE id = {player.id};"
+    cur.execute(SQL)
+    points = cur.fetchone()[0]
+    if bet > points:
+        await ctx.send("You do not have enough point to bet that much.")
+        return
+    deck = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14] * 4
+    playerHand = deal(deck)
+    dealerHand = deal(deck)
+    await ctx.send(f"The dealer is showing a {dealerHand[0]}.")
+    while game == True:    
+        msg = await ctx.send(f"You have {playerHand} for a total of {total(playerHand)}.")
+        for reaction in choice:
+            await msg.add_reaction(reaction)
+        move = await bot.wait_for('on_reaction_add', check = lambda r: r in choice)
+        print(move)
+
+    
+
 
 #sends a random picture from the forbiddenList directly to Finn
 @commands.cooldown(1, 15, commands.BucketType.user)
