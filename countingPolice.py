@@ -145,14 +145,19 @@ def deal(deck):
 #calculates the total of a players hand
 def total(hand):
     total = 0
+    aces = 0
     for card in hand:
         if card == "J" or card == "Q" or card == "K":
             total += 10
         elif card == "A":
-            if total >= 11: total += 1
-            else: total += 11
+            aces += 1
         else:
             total += card
+    for i in range(aces):
+        if total >= 11: 
+            total += 1
+        else: 
+            total += 11
     return total
 
 #lets the player "hit" in blackjack
