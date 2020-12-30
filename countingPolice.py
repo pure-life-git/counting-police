@@ -784,7 +784,7 @@ async def roulette(ctx, guess: str, bet: int):
         await ctx.send('You lose! Better luck next time.')
         return
 
-
+@commands.cooldown(1,15, commands.BucketType.user)
 @bot.command(name = "slots", brief = "Lets the user spin a slot machine", description = "To play, all you need are 10 points. Then simply type the command and cross your fingers. Payouts are as follows:\n- 🍒🍒🍒: 20 points\n- 🍊🍊🍊: 35 points\n- 🍋🍋🍋: 50 points\n- 🍑🍑🍑: 75 points\n- 🔔🔔🔔: 150 points\n- 7️7️7️: JACKPOT 250 points")
 async def slots(ctx):
     player = ctx.author
