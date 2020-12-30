@@ -702,7 +702,7 @@ async def blackjack(ctx, bet: int):
     cur.execute(SQL)
     points = cur.fetchone()[0]
 
-    if bet > points: #checks if the user has enough points to place the bet
+    if bet > points or bet < 0: #checks if the user has enough points to place the bet
         await ctx.send("You do not have enough points to bet that much.")
         return
     
@@ -724,7 +724,7 @@ async def blackjack(ctx, bet: int):
             cur.execute(SQL)
             conn.commit()
             return
-        await ctx.send("Would you like to [H]it, [S]tand, or [Q]uit") #asks the user for their input
+        await ctx.send("Would you like to [H]it, [S]tand, [D]ouble or [Q]uit") #asks the user for their input
         try:
             move = await bot.wait_for('message', check = lambda m: m.author == ctx.author) #waits for the message from the user
             if move.content.lower() == "h"or move.content.lower() == "hit": #checks if they want to hit
@@ -749,6 +749,27 @@ async def blackjack(ctx, bet: int):
             elif move.content.lower() == "s" or move.content.lower() == "stand": #checks if they want to stand
                 game = False
                 break
+                
+            elif move.content.lower() == "d" or move.content.lower() == "double":
+                SQL = f"UPDATE points SET pointnumber = {points-bet} WHERE id = {player.id};" #subtracts the points from their "account"
+                cur.execute(SQL)
+                conn.commit()
+                bet *= 2
+                playerHand = hit(playerHand, deck)
+                if total(playerHand) == 21: #checks for blackjack
+                    await ctx.send("Congratulations! You got a blackjack.")
+                    game = False
+                    SQL = f"UPDATE points SET pointnumber = {points+bet} WHERE id = {player.id}" #adds the bet*2 to the users "account"
+                    cur.execute(SQL)
+                    conn.commit()
+                    return
+
+                elif total(playerHand) > 21: #checks for user bust
+                    await ctx.send("You busted! Good luck next time.")
+                    game = False
+                    return
+                else:
+                    break
 
             else: #else they quit the game
                 game = False
@@ -774,7 +795,6 @@ async def blackjack(ctx, bet: int):
             return
 
         elif total(dealerHand) > total(playerHand): #checks for greater hand
-            await ctx.send(f'Dealer Hand: {", ".join(map(str,dealerHand))}\nTotal: {total(dealerHand)}') #tells the user the new dealer's hand
             await ctx.send("The dealer had a greater hand. Good luck next time.")
             dealer = False
             return
@@ -795,7 +815,7 @@ async def roulette(ctx, guess: str, bet: int):
     cur.execute(SQL)
     points = cur.fetchone()[0]
 
-    if bet > points: #checks if the user has enough points to place the bet
+    if bet > points or bet < 0: #checks if the user has enough points to place the bet
         await ctx.send("You do not have enough points to bet that much.")
         return
     
