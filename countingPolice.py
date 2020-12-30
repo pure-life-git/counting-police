@@ -714,9 +714,16 @@ async def blackjack(ctx, bet: int):
     playerHand = deal(deck) #deals cards to the player
     dealerHand = deal(deck) #deals cards to the dealer
     await ctx.send(f"The dealer is showing a {dealerHand[0]}.") #tells the user what the dealer is showing
+    await ctx.send(f"Your Hand: {', '.join(map(str,playerHand))}\nTotal: {total(playerHand)}") #tells the user what their hand is
 
-    while game == True:    
-        msg = await ctx.send(f"Your Hand: {', '.join(map(str,playerHand))}\nTotal: {total(playerHand)}") #tells the user what their hand is
+    while game == True:
+        if total(playerHand) == 21:
+            await ctx.send("Congratulations! You got a blackjack.")
+            game = False
+            SQL = f"UPDATE points SET pointnumber = {points+bet} WHERE id = {player.id}" #adds the bet*2 to the users "account"
+            cur.execute(SQL)
+            conn.commit()
+            return
         await ctx.send("Would you like to [H]it, [S]tand, or [Q]uit") #asks the user for their input
         try:
             move = await bot.wait_for('message', check = lambda m: m.author == ctx.author) #waits for the message from the user
@@ -767,6 +774,7 @@ async def blackjack(ctx, bet: int):
             return
 
         elif total(dealerHand) > total(playerHand): #checks for greater hand
+            await ctx.send(f'Dealer Hand: {", ".join(map(str,dealerHand))}\nTotal: {total(dealerHand)}') #tells the user the new dealer's hand
             await ctx.send("The dealer had a greater hand. Good luck next time.")
             dealer = False
             return
