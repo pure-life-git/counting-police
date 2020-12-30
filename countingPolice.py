@@ -970,7 +970,7 @@ async def mute(ctx, mention, time='5s'):
 @bot.command(name = 'strikes', description = 'Reacts with the number of strikes the user has in the counting channel')
 async def strikes(ctx):
     if str(ctx.channel) != "bot":
-        await ctx.delete()
+        await ctx.message.delete()
         return
     if ctx.message.author.id == 203282979265576960: #checks to see if the userID matches Kyle's
         await ctx.message.add_reaction('💯')
