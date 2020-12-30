@@ -200,7 +200,7 @@ async def on_ready():
 @bot.group(name='game', invoke_without_command=True)
 async def game(ctx):
     if str(ctx.channel) != "bot":
-        await ctx.delete()
+        await ctx.message.delete()
         return
     await ctx.send("Valid subcommands: add, remove, clear, list, choose")
 
@@ -209,7 +209,7 @@ async def game(ctx):
 @game.command(name = 'add', description = 'Adds a game to the game list')
 async def add(ctx, *, arg):
     if str(ctx.channel) != "bot":
-        await ctx.delete()
+        await ctx.message.delete()
         return
     gameLower = str(arg).lower()
     cur.execute("SELECT * FROM gametable") #select every entry in the gametable from the DB 
@@ -229,7 +229,7 @@ async def add(ctx, *, arg):
 @game.command(name = 'remove', description = 'Removes a game from the game list')
 async def remove(ctx,*,arg):
     if str(ctx.channel) != "bot":
-        await ctx.delete()
+        await ctx.message.delete()
         return
     gameLower = str(arg).lower()
     cur.execute("SELECT * FROM gametable") #selects all the entries from the gamelist
@@ -244,7 +244,7 @@ async def remove(ctx,*,arg):
 @game.command(name = 'clear', description = 'Clears the game list')
 async def clear(ctx):
     if str(ctx.channel) != "bot":
-        await ctx.delete()
+        await ctx.message.delete()
         return
     cur.execute("DELETE FROM gametable") #deletes all entries from the game list
     conn.commit()
@@ -256,7 +256,7 @@ async def clear(ctx):
 @game.command(name = 'choose', description='Randomly chooses a game from the game list')
 async def choose(ctx):
     if str(ctx.channel) != "bot":
-        await ctx.delete()
+        await ctx.message.delete()
         return
     cur.execute("SELECT * FROM gametable") #selects all of the entries from the table
     rawList = list(cur.fetchall()) # makes a list out of the selection
@@ -271,7 +271,7 @@ async def choose(ctx):
 @game.command(name = 'list', description = 'Displays the game list')
 async def gamelist(ctx):
     if str(ctx.channel) != "bot":
-        await ctx.delete()
+        await ctx.message.delete()
         return
     cur.execute("SELECT * FROM gametable") #selects all entries from the game list
     rawList = list(cur.fetchall()) #makes a list out of all the entries
@@ -304,7 +304,7 @@ async def gamelist(ctx):
 @bot.command(name = 'rps', description = 'Plays a game of rock paper scissors with you')
 async def rps(ctx, userPick):
     if str(ctx.channel) != "bot":
-        await ctx.delete()
+        await ctx.message.delete()
         return
     #initializes a list with the possible choices the bot can make
     choices = [
@@ -403,7 +403,7 @@ async def rps(ctx, userPick):
 @bot.command(name = 'py', help_command = None)
 async def py(ctx, *args):
     if str(ctx.channel) != "bot":
-        await ctx.delete()
+        await ctx.message.delete()
         return
     argsJoin = ' '.join(args)
     answer = eval(argsJoin)
@@ -415,7 +415,7 @@ async def py(ctx, *args):
 @bot.command(name = 'wolfram', description='Returns the simple answer to a query from Wolfram|Alpha')
 async def wolfram(ctx,*args):
     if str(ctx.channel) != "bot":
-        await ctx.delete()
+        await ctx.message.delete()
         return
     question = ' '.join(args) #joins the user args into a single string
     response = wolframClient.query(question) #gets a query from the wolfram api using the question
@@ -438,7 +438,7 @@ async def wolfram(ctx,*args):
 @bot.command(name = 'wolframfull', description = 'Returns the full answer to a query from Wolfram|Alpha')
 async def wolframfull(ctx,*args):
     if str(ctx.channel) != "bot":
-        await ctx.delete()
+        await ctx.message.delete()
         return
     question = ' '.join(args) #joins all the user passed args into a single string
     res = wolframClient.query(question) #sends the question to be queried from the wolfram api
@@ -464,7 +464,7 @@ async def wolframfull(ctx,*args):
     )
 async def tictactoe(ctx):
     if str(ctx.channel) != "bot":
-        await ctx.delete()
+        await ctx.message.delete()
         return
     game = True #this var keeps track of if the game is still being played
     moves = 0 #move counter
@@ -608,7 +608,7 @@ async def tictactoe(ctx):
 @bot.command(name = 'finn', description = 'Sends a feet pic to Finn')
 async def finn(ctx):
     if str(ctx.channel) != "bot":
-        await ctx.delete()
+        await ctx.message.delete()
         return
     link = random.choice(forbiddenList)
     finnEmbed = discord.Embed(title="Feet Pics", description="Kinda cringe.", type="rich", color=discord.Color.dark_green())
@@ -623,7 +623,7 @@ async def finn(ctx):
 @bot.command(name = 'poll', description = 'Starts a poll. Default time is 120s')
 async def poll(ctx,*args):
     if str(ctx.channel) != "bot":
-        await ctx.delete()
+        await ctx.message.delete()
         return
     timer = 120 #sets a default timer as 2 minutes
 
@@ -680,7 +680,7 @@ async def poll(ctx,*args):
 @bot.command(name = 'points', description = "Tells the user how many points they have for gambling")
 async def points(ctx):
     if str(ctx.channel) != "bot":
-        await ctx.delete()
+        await ctx.message.delete()
         return
     SQL = f"SELECT pointnumber FROM points WHERE id = {ctx.author.id};" #gets the point value from the DB
     cur.execute(SQL)
@@ -692,7 +692,7 @@ async def points(ctx):
 @bot.command(name = "blackjack", brief = "Allows the user to bet their points on a game of blackjack", description = "Type the command and then the amount of points you would like to bet")
 async def blackjack(ctx, bet: int):
     if str(ctx.channel) != "bot":
-        await ctx.delete()
+        await ctx.message.delete()
         return
     game = True
     dealer = True
@@ -780,7 +780,7 @@ async def blackjack(ctx, bet: int):
 @bot.command(name = "roulette", brief = "Lets the user place bets on a game of roulette", description = "Type the command, what you're betting on (red, black, even, odd, low, high) and then the amount of points to bet.")
 async def roulette(ctx, guess: str, bet: int):
     if str(ctx.channel) != "bot":
-        await ctx.delete()
+        await ctx.message.delete()
         return
     player = ctx.author
     SQL = f"SELECT pointnumber FROM points WHERE id = {player.id};"
@@ -835,7 +835,7 @@ async def roulette(ctx, guess: str, bet: int):
 @bot.command(name = "slots", brief = "Lets the user spin a slot machine", description = "To play, all you need are 10 points. Then simply type the command and cross your fingers. Payouts are as follows:\n- 🍒🍒🍒: 20 points\n- 🍊🍊🍊: 35 points\n- 🍋🍋🍋: 50 points\n- 🍑🍑🍑: 75 points\n- 🔔🔔🔔: 150 points\n- 7️7️7️: JACKPOT 250 points")
 async def slots(ctx):
     if str(ctx.channel) != "bot":
-        await ctx.delete()
+        await ctx.message.delete()
         return
     player = ctx.author
     SQL = f"SELECT pointnumber FROM points WHERE id = {player.id};"
@@ -919,7 +919,7 @@ async def slots(ctx):
 @bot.command(name = 'purge', description = 'Deletes the bot messages within the last number of message specified by the user (limit 50)')
 async def purge(ctx,amount: int):
     if str(ctx.channel) != "bot":
-        await ctx.delete()
+        await ctx.message.delete()
         return
     if amount > 50: #checks to see if the request is stupid (i.e. made by parker)
         await ctx.send("Fuck off dickbag.")
@@ -936,7 +936,7 @@ async def purge(ctx,amount: int):
 @bot.command(name = 'mute',help_command = None)
 async def mute(ctx, mention, time='5s'):
     if str(ctx.channel) != "bot":
-        await ctx.delete()
+        await ctx.message.delete()
         return
     if time[0] == '-' or time[0].isnumeric() == False:
         await ctx.send("Please enter a positive number") #sanitizes input
@@ -1007,7 +1007,7 @@ async def strikes(ctx):
 @bot.command(name = 'operator', description = 'Picks a random Rainbow Six Siege operator from either attack or defense')
 async def operator(ctx,arg1):
     if str(ctx.channel) != "bot":
-        await ctx.delete()
+        await ctx.message.delete()
         return
     #checks if the user want an attacker or defender
     if arg1.lower() == "attacker":
@@ -1032,7 +1032,7 @@ async def operator(ctx,arg1):
 @bot.command(name = 'decide', description = 'Picks a random number between two numbers')
 async def decide(ctx,arg1,arg2):
     if str(ctx.channel) != "bot":
-        await ctx.delete()
+        await ctx.message.delete()
         return
     try:
         if isinstance(arg1, int) == False or isinstance(arg2,int) == False:
@@ -1048,7 +1048,7 @@ async def decide(ctx,arg1,arg2):
 @bot.command(name = 'dice', description = 'Rolls dice for the user\nFormat: [# of dice]d[# of sides] Separate different dice with spaces')
 async def dice(ctx, *args):
     if str(ctx.channel) != "bot":
-        await ctx.delete()
+        await ctx.message.delete()
         return
     #converts all the arguments the user passes into a list
     argsList = list(args)
