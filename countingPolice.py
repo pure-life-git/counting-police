@@ -1094,6 +1094,14 @@ async def tictactoe_error(ctx,error):
         await asyncio.sleep(5)
         await errMess.delete()
 
+@blackjack.error
+async def blackjack_error(ctx,error):
+    if isinstance(error, commands.CommandOnCooldown):
+        await ctx.message.delete()
+        errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:.2f}s')
+        await asyncio.sleep(5)
+        await errMess.delete()
+
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
 #   ____   _   _            __  __  ______   _____  _____           _____  ______ 
