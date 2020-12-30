@@ -834,7 +834,12 @@ async def roulette(ctx, guess: str, bet: int):
     ]
 
     roll = random.randint(0,36)
-    await ctx.send(f'Roll: {roll}')
+    if roll in red:
+        winConds.append('red')
+        await ctx.send(f'Roll: {roll}🟥')
+    if roll in black:
+        winConds.append('black')
+        await ctx.send(f'Roll: {roll}⬛')
     
     if roll in red:
         winConds.append('red')
