@@ -199,12 +199,18 @@ async def on_ready():
 
 @bot.group(name='game', invoke_without_command=True)
 async def game(ctx):
+    if str(ctx.channel) != "bot":
+        await ctx.delete()
+        return
     await ctx.send("Valid subcommands: add, remove, clear, list, choose")
 
 
 #adds a game provided by the user to the gameList
 @game.command(name = 'add', description = 'Adds a game to the game list')
 async def add(ctx, *, arg):
+    if str(ctx.channel) != "bot":
+        await ctx.delete()
+        return
     gameLower = str(arg).lower()
     cur.execute("SELECT * FROM gametable") #select every entry in the gametable from the DB 
     rawList = list(cur.fetchall()) #makes a list with every entry
@@ -222,6 +228,9 @@ async def add(ctx, *, arg):
 #removes a particular game from the gamelist
 @game.command(name = 'remove', description = 'Removes a game from the game list')
 async def remove(ctx,*,arg):
+    if str(ctx.channel) != "bot":
+        await ctx.delete()
+        return
     gameLower = str(arg).lower()
     cur.execute("SELECT * FROM gametable") #selects all the entries from the gamelist
     SQL = "DELETE FROM gametable WHERE games=%s;" #deletes the row in the game table with the game name
@@ -234,6 +243,9 @@ async def remove(ctx,*,arg):
 #clears game list
 @game.command(name = 'clear', description = 'Clears the game list')
 async def clear(ctx):
+    if str(ctx.channel) != "bot":
+        await ctx.delete()
+        return
     cur.execute("DELETE FROM gametable") #deletes all entries from the game list
     conn.commit()
     message = ctx.message
@@ -243,6 +255,9 @@ async def clear(ctx):
 #randomly chooses a game from the game list
 @game.command(name = 'choose', description='Randomly chooses a game from the game list')
 async def choose(ctx):
+    if str(ctx.channel) != "bot":
+        await ctx.delete()
+        return
     cur.execute("SELECT * FROM gametable") #selects all of the entries from the table
     rawList = list(cur.fetchall()) # makes a list out of the selection
     numSQL = []
@@ -255,6 +270,9 @@ async def choose(ctx):
 #lists all of the games in the gamelist
 @game.command(name = 'list', description = 'Displays the game list')
 async def gamelist(ctx):
+    if str(ctx.channel) != "bot":
+        await ctx.delete()
+        return
     cur.execute("SELECT * FROM gametable") #selects all entries from the game list
     rawList = list(cur.fetchall()) #makes a list out of all the entries
     games = []
@@ -285,6 +303,9 @@ async def gamelist(ctx):
 @commands.cooldown(2, 15, commands.BucketType.user)
 @bot.command(name = 'rps', description = 'Plays a game of rock paper scissors with you')
 async def rps(ctx, userPick):
+    if str(ctx.channel) != "bot":
+        await ctx.delete()
+        return
     #initializes a list with the possible choices the bot can make
     choices = [
         "rock",
@@ -381,6 +402,9 @@ async def rps(ctx, userPick):
 @commands.cooldown(1, 10, commands.BucketType.user)
 @bot.command(name = 'py', help_command = None)
 async def py(ctx, *args):
+    if str(ctx.channel) != "bot":
+        await ctx.delete()
+        return
     argsJoin = ' '.join(args)
     answer = eval(argsJoin)
     await ctx.send(answer)
@@ -390,6 +414,9 @@ async def py(ctx, *args):
 @commands.cooldown(1, 20, commands.BucketType.user)
 @bot.command(name = 'wolfram', description='Returns the simple answer to a query from Wolfram|Alpha')
 async def wolfram(ctx,*args):
+    if str(ctx.channel) != "bot":
+        await ctx.delete()
+        return
     question = ' '.join(args) #joins the user args into a single string
     response = wolframClient.query(question) #gets a query from the wolfram api using the question
     wolframEmbed = discord.Embed(title="Wolfram|Alpha API", description=" ", color=discord.Color.from_rgb(255,125,0))
@@ -410,6 +437,9 @@ async def wolfram(ctx,*args):
 @commands.cooldown(1, 120, commands.BucketType.user)
 @bot.command(name = 'wolframfull', description = 'Returns the full answer to a query from Wolfram|Alpha')
 async def wolframfull(ctx,*args):
+    if str(ctx.channel) != "bot":
+        await ctx.delete()
+        return
     question = ' '.join(args) #joins all the user passed args into a single string
     res = wolframClient.query(question) #sends the question to be queried from the wolfram api
     wolframEmbed = discord.Embed(title="Wolfram|Alpha API", description=" ", color=discord.Color.from_rgb(255,125,0))
@@ -433,6 +463,9 @@ async def wolframfull(ctx,*args):
     description = "Simply type the command and then mention someone to start a game with them. To choose your space, treat the board as a numbered grid 1-9 starting at the top left."
     )
 async def tictactoe(ctx):
+    if str(ctx.channel) != "bot":
+        await ctx.delete()
+        return
     game = True #this var keeps track of if the game is still being played
     moves = 0 #move counter
     
@@ -574,6 +607,9 @@ async def tictactoe(ctx):
 @commands.cooldown(1, 15, commands.BucketType.user)
 @bot.command(name = 'finn', description = 'Sends a feet pic to Finn')
 async def finn(ctx):
+    if str(ctx.channel) != "bot":
+        await ctx.delete()
+        return
     link = random.choice(forbiddenList)
     finnEmbed = discord.Embed(title="Feet Pics", description="Kinda cringe.", type="rich", color=discord.Color.dark_green())
     finnEmbed.set_image(url=link)
@@ -586,6 +622,9 @@ async def finn(ctx):
 #starts a poll with reaction-based voting
 @bot.command(name = 'poll', description = 'Starts a poll. Default time is 120s')
 async def poll(ctx,*args):
+    if str(ctx.channel) != "bot":
+        await ctx.delete()
+        return
     timer = 120 #sets a default timer as 2 minutes
 
     argsList = list(args) #gets the list of args passed by the user
@@ -640,6 +679,9 @@ async def poll(ctx,*args):
 @commands.cooldown(1, 15, commands.BucketType.user)
 @bot.command(name = 'points', description = "Tells the user how many points they have for gambling")
 async def points(ctx):
+    if str(ctx.channel) != "bot":
+        await ctx.delete()
+        return
     SQL = f"SELECT pointnumber FROM points WHERE id = {ctx.author.id};" #gets the point value from the DB
     cur.execute(SQL)
     numPoints = cur.fetchone()
@@ -649,6 +691,9 @@ async def points(ctx):
 #lets the user play blackjack and gamble their points
 @bot.command(name = "blackjack", brief = "Allows the user to bet their points on a game of blackjack", description = "Type the command and then the amount of points you would like to bet")
 async def blackjack(ctx, bet: int):
+    if str(ctx.channel) != "bot":
+        await ctx.delete()
+        return
     game = True
     dealer = True
     player = ctx.author
@@ -699,7 +744,6 @@ async def blackjack(ctx, bet: int):
                 break
 
             else: #else they quit the game
-                await ctx.send(move)
                 game = False
                 await ctx.send("You quit.")
                 return
@@ -735,6 +779,9 @@ async def blackjack(ctx, bet: int):
 #lets the user place bets on a game of roulette
 @bot.command(name = "roulette", brief = "Lets the user place bets on a game of roulette", description = "Type the command, what you're betting on (red, black, even, odd, low, high) and then the amount of points to bet.")
 async def roulette(ctx, guess: str, bet: int):
+    if str(ctx.channel) != "bot":
+        await ctx.delete()
+        return
     player = ctx.author
     SQL = f"SELECT pointnumber FROM points WHERE id = {player.id};"
     cur.execute(SQL)
@@ -787,6 +834,9 @@ async def roulette(ctx, guess: str, bet: int):
 @commands.cooldown(1,15, commands.BucketType.user)
 @bot.command(name = "slots", brief = "Lets the user spin a slot machine", description = "To play, all you need are 10 points. Then simply type the command and cross your fingers. Payouts are as follows:\n- 🍒🍒🍒: 20 points\n- 🍊🍊🍊: 35 points\n- 🍋🍋🍋: 50 points\n- 🍑🍑🍑: 75 points\n- 🔔🔔🔔: 150 points\n- 7️7️7️: JACKPOT 250 points")
 async def slots(ctx):
+    if str(ctx.channel) != "bot":
+        await ctx.delete()
+        return
     player = ctx.author
     SQL = f"SELECT pointnumber FROM points WHERE id = {player.id};"
     cur.execute(SQL)
@@ -868,6 +918,9 @@ async def slots(ctx):
 #deletes the bot messages in the last n number of messages
 @bot.command(name = 'purge', description = 'Deletes the bot messages within the last number of message specified by the user (limit 50)')
 async def purge(ctx,amount: int):
+    if str(ctx.channel) != "bot":
+        await ctx.delete()
+        return
     if amount > 50: #checks to see if the request is stupid (i.e. made by parker)
         await ctx.send("Fuck off dickbag.")
     message = await ctx.history(limit=amount).flatten() #flattens a list of the recent messages
@@ -882,6 +935,9 @@ async def purge(ctx,amount: int):
 #mutes a member of the server for a specified amount of time
 @bot.command(name = 'mute',help_command = None)
 async def mute(ctx, mention, time='5s'):
+    if str(ctx.channel) != "bot":
+        await ctx.delete()
+        return
     if time[0] == '-' or time[0].isnumeric() == False:
         await ctx.send("Please enter a positive number") #sanitizes input
         return
@@ -913,6 +969,9 @@ async def mute(ctx, mention, time='5s'):
 @commands.cooldown(1, 10, commands.BucketType.user)
 @bot.command(name = 'strikes', description = 'Reacts with the number of strikes the user has in the counting channel')
 async def strikes(ctx):
+    if str(ctx.channel) != "bot":
+        await ctx.delete()
+        return
     if ctx.message.author.id == 203282979265576960: #checks to see if the userID matches Kyle's
         await ctx.message.add_reaction('💯')
         return
@@ -947,6 +1006,9 @@ async def strikes(ctx):
 @commands.cooldown(1, 15, commands.BucketType.user)
 @bot.command(name = 'operator', description = 'Picks a random Rainbow Six Siege operator from either attack or defense')
 async def operator(ctx,arg1):
+    if str(ctx.channel) != "bot":
+        await ctx.delete()
+        return
     #checks if the user want an attacker or defender
     if arg1.lower() == "attacker":
         #sends a message with a random attacker
@@ -969,6 +1031,9 @@ async def operator(ctx,arg1):
 @commands.cooldown(1, 10, commands.BucketType.user)
 @bot.command(name = 'decide', description = 'Picks a random number between two numbers')
 async def decide(ctx,arg1,arg2):
+    if str(ctx.channel) != "bot":
+        await ctx.delete()
+        return
     try:
         if isinstance(arg1, int) == False or isinstance(arg2,int) == False:
             await ctx.send("Please enter whole numbers")
@@ -982,6 +1047,9 @@ async def decide(ctx,arg1,arg2):
 #common dice roller with parsing
 @bot.command(name = 'dice', description = 'Rolls dice for the user\nFormat: [# of dice]d[# of sides] Separate different dice with spaces')
 async def dice(ctx, *args):
+    if str(ctx.channel) != "bot":
+        await ctx.delete()
+        return
     #converts all the arguments the user passes into a list
     argsList = list(args)
     if len(argsList) == 0:
