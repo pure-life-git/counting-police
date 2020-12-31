@@ -1327,6 +1327,20 @@ async def lock(ctx, channel: discord.TextChannel):
     await channel.send("Channel locked.")
 
 
+@bot.command(name = "unlock")
+async def unlock(ctx, channel: discord.TextChannel):
+    if ctx.author.id not in modID:
+        await ctx.send("You do not have the permissions to use this command.")
+        return
+    channel = channel or ctx.channel
+    role = discord.utils.get(ctx.message.guild.roles,name='Patrons') #assigns the counting clown role to a variable
+    overwrite = channel.overwrites_for(role)
+    overwrite.send_messages = True
+    await channel.set_permissions(role, overwrite=overwrite)
+    await channel.send("Channel unlocked.")
+
+
+
 #--------------------------------------------------------------------------------------------------------------------------------------#
 #  __  __  _____   _____   _____    
 # |  \/  ||_   _| / ____| / ____|   
