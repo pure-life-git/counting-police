@@ -102,23 +102,47 @@ defenderList = [
 # |_|      \____/ |_| \_| \_____|   |_|   |_____|\____/ |_| \_||_____/                                                                       
                                                                       
 
+def reestablish():
+    cur = conn.cursor()
+
+
 #enters a message from the #counting channel into the postgresql DB
 def countEntry(num, user):
     SQL = "INSERT INTO countingtable (count) VALUES (%s);"
     data = (num,)
-    cur.execute(SQL, data)
+    while True:
+        try:
+            cur.execute(SQL, data)
+            break
+        except psycopg2.InterfaceError:
+            reestablish()
     conn.commit()
     if num % 25 == 0:
         SQLtwo = "DELETE FROM countingtable WHERE count < (%s);"
         dataTwo = (num-1,)
-        cur.execute(SQLtwo, dataTwo)
+        while True:
+            try:
+                cur.execute(SQLtwo, dataTwo)
+                break
+            except psycopg2.InterfaceError:
+                reestablish()
         conn.commit()
     SQL = f"SELECT pointnumber FROM points WHERE id = {user.id};"
-    cur.execute(SQL)
+    while True:
+        try:
+            cur.execute(SQL)
+            break
+        except psycopg2.InterfaceError:
+            reestablish()
     points = cur.fetchone()
 
     SQL = f"UPDATE points SET pointnumber = {points[0]+10} WHERE id = {user.id};"
-    cur.execute(SQL)
+    while True:
+        try:
+            cur.execute(SQL)
+            break
+        except psycopg2.InterfaceError:
+            reestablish()
     conn.commit()
 
 
@@ -1255,12 +1279,22 @@ async def on_message(message):
             await dad.add_reaction('👌')
         return
     else:
-        cur.execute("SELECT MAX(count) FROM countingtable;") #gets the max value from the countingtable
+        while True:
+            try:
+                cur.execute("SELECT MAX(count) FROM countingtable;") #gets the max value from the countingtable
+                break
+            except psycopg2.InterfaceError:
+                reestablish()
         correctNumberDB = list(cur.fetchone()) #fetches the value tuple and stores it in a variable
         correctNumberSQL = int(correctNumberDB[0])+1 #get the actual int value and increases it by one to reflect the correct value
         print('Correct Number in DB: ',str(correctNumberSQL))
         if str(message.content).isnumeric() == False or int(message.content) != correctNumberSQL: #checks to see if the message is not a number or is not the correct number
-            cur.execute("SELECT * FROM striketable") #selects all the values in the strikelist
+            while True:    
+                try:
+                    cur.execute("SELECT * FROM striketable") #selects all the values in the strikelist
+                    break
+                except psycopg2.InterfaceError:
+                    reestablish()
             strikeList = cur.fetchall()
             userID = message.author.id
             for i in strikeList:
@@ -1270,12 +1304,22 @@ async def on_message(message):
                         #sends a message alerting everyone to the user's infraction
                         await message.channel.send(message.author.mention + ' entered ' + str(message.content) + ' and screwed up the count. This is their 2nd infraction.')
                         SQL = "UPDATE striketable SET strikes = 2 WHERE name = '%s';" #updates their strikes to reflect the new number
-                        cur.execute(SQL, (userID,))
+                        while True:
+                            try:
+                                cur.execute(SQL, (userID,))
+                                break
+                            except psycopg2.InterfaceError:
+                                reestablish()
                         conn.commit()
                         return
                     else: #if they don't have one strike and theyre already in the table, then they have two strikes
                         SQLtwo = "UPDATE striketable SET strikes = 3 WHERE name = '%s';" #updates their strikes to reflect the new number
-                        cur.execute(SQLtwo, (userID,))
+                        while True:
+                            try:
+                                cur.execute(SQLtwo, (userID,))
+                                break
+                            except psycopg2.InterfaceError:
+                                reestablish()
                         conn.commit()
                         role = discord.utils.get(message.guild.roles,name='Counting Clown') #assigns the counting clown role to a variable
                         await message.author.add_roles(role) #give the author the counting clown role
@@ -1286,12 +1330,23 @@ async def on_message(message):
 
             #if we haven't returned by now, it means they are not in the table
             SQL = "INSERT INTO striketable (name, strikes) VALUES (%s, 1)" #inserts their userid into the table
-            cur.execute(SQL, (userID,))
+            while True:
+                try:
+                    cur.execute(SQL, (userID,))
+                    break
+                except psycopg2.InterfaceError:
+                    reestablish()
             conn.commit()
             await message.delete() #deletes their message
             #sends a message alerting everyone to the user's infraction
             await message.channel.send(message.author.mention + ' entered ' + str(message.content) + ' and screwed up the count. This is their 1st infraction.')
-            cur.execute("SELECT COUNT(name) FROM striketable;") #updates the status of the bot to match the new number of criminals
+            while True:
+                try:
+                    cur.execute("SELECT COUNT(name) FROM striketable;") #updates the status of the bot to match the new number of criminals
+                    break
+                except psycopg2.InterfaceError:
+                    reestablish()
+
             numCriminalsTable = cur.fetchall()
             numCriminals = numCriminalsTable[0][0]
             print(numCriminals)
