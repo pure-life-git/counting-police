@@ -1347,7 +1347,9 @@ async def claim(ctx):
     UTCtime = datetime.datetime.now()
     print(UTCtime)
     print(type(UTCtime))
-    #SQL = f"UPDATE points SET "
+    SQL = f"UPDATE points SET claimtime = {UTCtime} WHERE id = {ctx.author.id};"
+    cur.execute(SQL)
+    conn.commit()
 
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
