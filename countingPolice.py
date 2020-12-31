@@ -1344,6 +1344,12 @@ async def unlock(ctx, channel: discord.TextChannel):
 
 @bot.command(name = "claim", brief = "Claims daily points")
 async def claim(ctx):
+    SQL = f"SELECT claimtime FROM points WHERE id = {ctx.author.id};"
+    cur.execute(SQL)
+    lastTime = cur.fetchone()[0]
+    print(lastTime)
+    print(type(lastTime))
+    print()
     UTCtime = datetime.datetime.now()
     print(UTCtime)
     print(type(UTCtime))
