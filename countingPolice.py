@@ -1357,6 +1357,9 @@ async def claim(ctx):
     cur.execute(SQL)
     conn.commit()
 
+    timeDifference = UTCtime - lastTime
+    print(timeDifference)
+
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
 #  __  __  _____   _____   _____    
