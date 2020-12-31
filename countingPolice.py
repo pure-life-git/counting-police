@@ -1364,6 +1364,14 @@ async def claim(ctx):
     secondDifference = timeDifference.total_seconds()
     hourDifference = secondDifference/3600
 
+    hours = secondDifference // 3600
+
+    secondDifference %= 3600
+    minutes = secondDifference // 60
+
+    secondDifference %= 60
+    seconds = secondDifference
+
     if hourDifference > 24:
         SQL = f"SELECT pointnumber FROM points WHERE id = {ctx.author.id};"
         cur.execute(SQL)
@@ -1379,7 +1387,7 @@ async def claim(ctx):
         await ctx.send("25 points have been added to your account. You can claim again in 24 hours.")
         
     else:
-        await ctx.send(f"You can claim your points in {24-hourDifference:.2f} hours.")
+        await ctx.send(f"You can claim your points in {hours}h {minutes}m {seconds}s.")
         return
     print(hourDifference)
 
