@@ -1344,7 +1344,7 @@ async def unlock(ctx, channel: discord.TextChannel):
 
 @bot.command(name = "claim", brief = "Claims daily points")
 async def claim(ctx):
-    UTCtime = datetime.utcnow()
+    UTCtime = datetime.datetime.utcnow()
     print(UTCtime)
     #SQL = f"UPDATE points SET "
 
