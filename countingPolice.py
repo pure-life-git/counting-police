@@ -1350,7 +1350,7 @@ async def claim(ctx):
     print(lastTime)
     print(type(lastTime))
     print()
-    UTCtime = datetime.datetime.now()
+    UTCtime = datetime.datetime.now(datetime.timezone.utc)
     print(UTCtime)
     print(type(UTCtime))
     SQL = f"UPDATE points SET claimtime = '{UTCtime}' WHERE id = {ctx.author.id};"
