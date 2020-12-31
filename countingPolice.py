@@ -889,6 +889,7 @@ async def blackjack(ctx, bet: int):
             return
     
     while dealer == True: #loop for dealer moves
+        await ctx.send(f'Dealer Hand: {", ".join(map(str,dealerHand))}\nTotal: {total(dealerHand)}') #tells the user the new dealer's hand
         if total(dealerHand) == 21: #checks for blackjack
             await ctx.send("The dealer got a blackjack! Good luck next time.")
             dealer = False
@@ -928,7 +929,6 @@ async def blackjack(ctx, bet: int):
         
         else:
             dealerHand = hit(dealerHand, deck) #dealer hits
-            await ctx.send(f'Dealer Hand: {", ".join(map(str,dealerHand))}\nTotal: {total(dealerHand)}') #tells the user the new dealer's hand
 
 
 #lets the user place bets on a game of roulette
