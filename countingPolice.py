@@ -1347,19 +1347,24 @@ async def claim(ctx):
     SQL = f"SELECT claimtime FROM points WHERE id = {ctx.author.id};"
     cur.execute(SQL)
     lastTime = cur.fetchone()[0]
-    print(lastTime)
-    print(type(lastTime))
-    print()
+
     UTCtime = datetime.datetime.now(datetime.timezone.utc)
-    print(UTCtime)
-    print(type(UTCtime))
-    SQL = f"UPDATE points SET claimtime = '{UTCtime}' WHERE id = {ctx.author.id};"
-    cur.execute(SQL)
-    conn.commit()
 
     timeDifference = UTCtime - lastTime
     secondDifference = timeDifference.total_seconds()
     hourDifference = secondDifference/3600
+
+    if hourDifference > 24:
+        SQL = f"UPDATE points SET claimtime = '{UTCtime}' WHERE id = {ctx.author.id};"
+        cur.execute(SQL)
+        conn.commit()
+    else:
+        await ctx.send(f"You can claim your points in {24-hourDifference:.2f} hours.")
+        return
+
+    
+
+    
 
     print(hourDifference)
 
