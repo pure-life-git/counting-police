@@ -845,6 +845,9 @@ async def blackjack(ctx, bet: int):
                 break
                 
             elif move.content.lower() == "d" or move.content.lower() == "double":
+                if points-bet < bet:
+                    await ctx.send("You don't have enough points to double down.")
+                    continue
                 SQL = f"UPDATE points SET pointnumber = {points-(bet*2)} WHERE id = {player.id};" #subtracts the points from their "account"
                 while True:
                     try:
@@ -908,6 +911,20 @@ async def blackjack(ctx, bet: int):
             await ctx.send("The dealer had a greater hand. Good luck next time.")
             dealer = False
             return
+        
+        elif total(dealerHand) > 16:
+            dealer = False
+            await ctx.send("Congratulations. You had a greater hand.")
+            SQL = f"UPDATE points SET pointnumber = {points+bet} WHERE id = {player.id}" #adds double the bet to the user's account
+            while True:
+                try:
+                    cur.execute(SQL)
+                    break
+                except psycopg2.InterfaceError:
+                    reestablish()
+            conn.commit()
+            return
+
         
         else:
             dealerHand = hit(dealerHand, deck) #dealer hits
