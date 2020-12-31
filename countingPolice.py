@@ -1121,7 +1121,7 @@ async def store(ctx):
     storeEmbed.add_field(name = "One - Remove a strike", value = "Removes a strike from your counting record\nCost: 250 points", inline = False)
     await ctx.send(embed=storeEmbed)
 
-@store.command(name = "1", description = "Removes a strike from your counting record")
+@store.command(name = "one", description = "Removes a strike from your counting record")
 async def one(ctx):
     itemEmbed = discord.Embed(title = "Remove a Strike", description = "Removes a strike from your counting record")
     itemEmbed.add_field(name = "Cost", value = "250 points")
