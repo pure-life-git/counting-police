@@ -17,6 +17,7 @@ import asyncio
 from discord.ext.commands.errors import CommandOnCooldown
 import psycopg2
 import wolframalpha
+import datetime
 
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
@@ -759,6 +760,7 @@ async def points(ctx):
         except psycopg2.InterfaceError:
             reestablish()
     numPoints = cur.fetchone()
+    conn.commit()
     await ctx.send(f'You have {numPoints[0]} points.') #sends a message with the point value
 
 
