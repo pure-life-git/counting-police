@@ -1103,6 +1103,58 @@ async def slots(ctx):
         return
     
 
+@bot.group(name='store', invoke_without_command = True)
+async def store(ctx):
+    if str(ctx.channel) != "bot":
+        await ctx.message.delete()
+        return
+    SQL = f"SELECT pointnumber FROM points WHERE id = {ctx.author.id};"
+    while True:
+        try:
+            cur.execute(SQL)
+            break
+        except psycopg2.InterfaceError:
+            reestablish()
+    points = cur.fetchone()[0]
+    storeEmbed = discord.Embed(title = "The Lounge Store", description = "Purchase things with your hard earned points\nNO REFUNDS")
+    storeEmbed.add_field(name = "Your Points", value = f"{points}", inline = False)
+    storeEmbed.add_field(name = "One - Remove a strike", value = "Removes a strike from your counting record\nCost: 250 points", inline = False)
+    await ctx.send(embed=storeEmbed)
+
+@store.command(name = "1", description = "Removes a strike from your counting record")
+async def one(ctx):
+    SQL = "SELECT * FROM storetable WHERE number = 1;"
+    while True:
+        try:
+            cur.execute(SQL)
+            break
+        except psycopg2.InterfaceError:
+            reestablish()
+    entry = cur.fetchone()
+    item = entry[1]
+    cost = entry[2]
+    SQL = f"SELECT pointnumber FROM points WHERE id = {ctx.author.id};"
+    while True:
+        try:
+            cur.execute(SQL)
+            break
+        except psycopg2.InterfaceError:
+            reestablish()
+    points = cur.fetchone()[0]
+    if points < cost:
+        await ctx.send("You do not have enought points to purchase that item")
+        return
+    
+    SQL = f"UPDATE points SET pointnumber = {points-cost} WHERE id = {ctx.author.id};"
+    while True:
+        try:
+            cur.execute(SQL)
+            break
+        except psycopg2.InterfaceError:
+            reestablish()
+    await ctx.send(f"Thank you for your purchase! You now have {points-cost} points.")
+
+
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
 #  __  __   ____   _____   ______  _____          _______  _____  ____   _   _ 
