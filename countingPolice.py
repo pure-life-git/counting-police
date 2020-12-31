@@ -1314,7 +1314,7 @@ async def strikes(ctx):
     await ctx.message.add_reaction('0️⃣')
 
 
-@bot.command
+@bot.command(name = "lock")
 async def lock(ctx, channel: discord.TextChannel):
     if ctx.author.id not in modID:
         await ctx.send("You do not have the permissions to use this command.")
@@ -1515,7 +1515,7 @@ async def roulette_error(ctx,error):
 @slots.error
 async def slots_error(ctx,error):
     if isinstance(error, commands.CommandOnCooldown):
-        await ctx.delete()
+        await ctx.message.delete()
         errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:.2f}s')
         await asyncio.sleep(5)
         await errMess.delete()
