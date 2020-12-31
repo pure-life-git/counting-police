@@ -150,7 +150,12 @@ def countEntry(num, user):
 def gameEntry(game):
     SQL = """INSERT INTO gametable (games) VALUES (%s)"""
     data = (game,)
-    cur.execute(SQL,data)
+    while True:
+        try:
+            cur.execute(SQL,data)
+            break
+        except psycopg2.InterfaceError:
+            reestablish()
     conn.commit()
 
 #deals a hand for blackjack
@@ -209,7 +214,12 @@ def hit(hand, deck):
 @bot.event
 async def on_ready():
     print(f'{bot.user.name} has connected to Discord!')
-    cur.execute("SELECT COUNT(name) FROM striketable;")
+    while True:
+        try:
+            cur.execute("SELECT COUNT(name) FROM striketable;")
+            break
+        except psycopg2.InterfaceError:
+            reestablish()
     numCriminalsTable = cur.fetchall()
     numCriminals = numCriminalsTable[0][0]
     print(numCriminals)
@@ -241,7 +251,12 @@ async def add(ctx, *, arg):
         await ctx.message.delete()
         return
     gameLower = str(arg).lower()
-    cur.execute("SELECT * FROM gametable") #select every entry in the gametable from the DB 
+    while True:
+        try:
+            cur.execute("SELECT * FROM gametable") #select every entry in the gametable from the DB 
+            break
+        except psycopg2.InterfaceError:
+            reestablish()
     rawList = list(cur.fetchall()) #makes a list with every entry
     games = []
     for i in rawList: 
@@ -261,9 +276,19 @@ async def remove(ctx,*,arg):
         await ctx.message.delete()
         return
     gameLower = str(arg).lower()
-    cur.execute("SELECT * FROM gametable") #selects all the entries from the gamelist
+    while True:
+        try:
+            cur.execute("SELECT * FROM gametable") #selects all the entries from the gamelist
+            break
+        except psycopg2.InterfaceError:
+            reestablish()
     SQL = "DELETE FROM gametable WHERE games=%s;" #deletes the row in the game table with the game name
-    cur.execute(SQL,(gameLower,))
+    while True:
+        try:
+            cur.execute(SQL,(gameLower,))
+            break
+        except psycopg2.InterfaceError:
+            reestablish()
     conn.commit()
     message = ctx.message
     await message.add_reaction('👍')
@@ -275,7 +300,12 @@ async def clear(ctx):
     if str(ctx.channel) != "bot":
         await ctx.message.delete()
         return
-    cur.execute("DELETE FROM gametable") #deletes all entries from the game list
+    while True:
+        try:
+            cur.execute("DELETE FROM gametable") #deletes all entries from the game list
+            break
+        except psycopg2.InterfaceError:
+            reestablish()
     conn.commit()
     message = ctx.message
     await message.add_reaction('👍')
@@ -287,12 +317,17 @@ async def choose(ctx):
     if str(ctx.channel) != "bot":
         await ctx.message.delete()
         return
-    cur.execute("SELECT * FROM gametable") #selects all of the entries from the table
+    while True:
+        try:
+            cur.execute("SELECT * FROM gametable") #selects all of the entries from the table
+            break
+        except psycopg2.InterfaceError:
+            reestablish()
     rawList = list(cur.fetchall()) # makes a list out of the selection
     numSQL = []
     for i in rawList:
         numSQL.append(i[0]) #takes the list of tuples and appends the first index to a new list
-    num = random.choice(numSQL) #chooses a 
+    num = random.choice(numSQL) #chooses a game from the list
     await ctx.send(num + ' has been chosen by machine engineered randomness!') #sends a message with the result
 
 
@@ -302,7 +337,12 @@ async def gamelist(ctx):
     if str(ctx.channel) != "bot":
         await ctx.message.delete()
         return
-    cur.execute("SELECT * FROM gametable") #selects all entries from the game list
+    while True:
+        try:
+            cur.execute("SELECT * FROM gametable") #selects all entries from the game list
+            break
+        except psycopg2.InterfaceError:
+            reestablish()
     rawList = list(cur.fetchall()) #makes a list out of all the entries
     games = []
     for i in rawList:
@@ -712,7 +752,12 @@ async def points(ctx):
         await ctx.message.delete()
         return
     SQL = f"SELECT pointnumber FROM points WHERE id = {ctx.author.id};" #gets the point value from the DB
-    cur.execute(SQL)
+    while True:
+        try:
+            cur.execute(SQL)
+            break
+        except psycopg2.InterfaceError:
+            reestablish()
     numPoints = cur.fetchone()
     await ctx.send(f'You have {numPoints[0]} points.') #sends a message with the point value
 
@@ -728,7 +773,12 @@ async def blackjack(ctx, bet: int):
     player = ctx.author
 
     SQL = f"SELECT pointnumber FROM points WHERE id = {player.id};"
-    cur.execute(SQL)
+    while True:
+        try:
+            cur.execute(SQL)
+            break
+        except psycopg2.InterfaceError:
+            reestablish()
     points = cur.fetchone()[0]
 
     if bet > points or bet < 0: #checks if the user has enough points to place the bet
@@ -736,7 +786,12 @@ async def blackjack(ctx, bet: int):
         return
     
     SQL = f"UPDATE points SET pointnumber = {points-bet} WHERE id = {player.id};" #subtracts the points from their "account"
-    cur.execute(SQL)
+    while True:
+        try:
+            cur.execute(SQL)
+            break
+        except psycopg2.InterfaceError:
+            reestablish()
     conn.commit()
 
     deck = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14] * 4 #initializes the deck as a list
@@ -750,7 +805,12 @@ async def blackjack(ctx, bet: int):
             await ctx.send("Congratulations! You got a blackjack.")
             game = False
             SQL = f"UPDATE points SET pointnumber = {points+bet} WHERE id = {player.id}" #adds the bet*2 to the users "account"
-            cur.execute(SQL)
+            while True:
+                try:
+                    cur.execute(SQL)
+                    break
+                except psycopg2.InterfaceError:
+                    reestablish()
             conn.commit()
             return
         await ctx.send("Would you like to [H]it, [S]tand, [D]ouble or [Q]uit") #asks the user for their input
@@ -763,7 +823,12 @@ async def blackjack(ctx, bet: int):
                     await ctx.send("Congratulations! You got a blackjack.")
                     game = False
                     SQL = f"UPDATE points SET pointnumber = {points+bet} WHERE id = {player.id}" #adds the bet*2 to the users "account"
-                    cur.execute(SQL)
+                    while True:
+                        try:
+                            cur.execute(SQL)
+                            break
+                        except psycopg2.InterfaceError:
+                            reestablish()
                     conn.commit()
                     return
 
@@ -780,16 +845,27 @@ async def blackjack(ctx, bet: int):
                 break
                 
             elif move.content.lower() == "d" or move.content.lower() == "double":
-                SQL = f"UPDATE points SET pointnumber = {points-bet} WHERE id = {player.id};" #subtracts the points from their "account"
-                cur.execute(SQL)
+                SQL = f"UPDATE points SET pointnumber = {points-(bet*2)} WHERE id = {player.id};" #subtracts the points from their "account"
+                while True:
+                    try:
+                        cur.execute(SQL)
+                        break
+                    except psycopg2.InterfaceError:
+                        reestablish()
                 conn.commit()
                 bet *= 2
                 playerHand = hit(playerHand, deck)
+                await ctx.send(f"Your Hand: {', '.join(map(str,playerHand))}\nTotal: {total(playerHand)}") #sends the players hand
                 if total(playerHand) == 21: #checks for blackjack
                     await ctx.send("Congratulations! You got a blackjack.")
                     game = False
                     SQL = f"UPDATE points SET pointnumber = {points+bet} WHERE id = {player.id}" #adds the bet*2 to the users "account"
-                    cur.execute(SQL)
+                    while True:
+                        try:
+                            cur.execute(SQL)
+                            break
+                        except psycopg2.InterfaceError:
+                            reestablish()
                     conn.commit()
                     return
 
@@ -819,7 +895,12 @@ async def blackjack(ctx, bet: int):
             await ctx.send("The dealer busted! Congratulations.")
             dealer = False
             SQL = f"UPDATE points SET pointnumber = {points+bet} WHERE id = {player.id}" #adds double the bet to the user's account
-            cur.execute(SQL)
+            while True:
+                try:
+                    cur.execute(SQL)
+                    break
+                except psycopg2.InterfaceError:
+                    reestablish()
             conn.commit()
             return
 
@@ -841,7 +922,12 @@ async def roulette(ctx, guess: str, bet: int):
         return
     player = ctx.author
     SQL = f"SELECT pointnumber FROM points WHERE id = {player.id};"
-    cur.execute(SQL)
+    while True:
+        try:
+            cur.execute(SQL)
+            break
+        except psycopg2.InterfaceError:
+            reestablish()
     points = cur.fetchone()[0]
 
     if bet > points or bet < 0: #checks if the user has enough points to place the bet
@@ -849,7 +935,12 @@ async def roulette(ctx, guess: str, bet: int):
         return
     
     SQL = f"UPDATE points SET pointnumber = {points-bet} WHERE id = {player.id};" #subtracts the points from their "account"
-    cur.execute(SQL)
+    while True:
+        try:
+            cur.execute(SQL)
+            break
+        except psycopg2.InterfaceError:
+            reestablish()
     conn.commit()
 
     winConds = []
@@ -886,7 +977,12 @@ async def roulette(ctx, guess: str, bet: int):
     if guess.lower() in winConds:
         await ctx.send('You win! Congratulations.')
         SQL = f"UPDATE points SET pointnumber = {points+bet} WHERE id = {player.id}" #adds the bet*2 to the users "account"
-        cur.execute(SQL)
+        while True:
+            try:
+                cur.execute(SQL)
+                break
+            except psycopg2.InterfaceError:
+                reestablish()
         conn.commit()
         return
     else:
@@ -901,7 +997,12 @@ async def slots(ctx):
         return
     player = ctx.author
     SQL = f"SELECT pointnumber FROM points WHERE id = {player.id};"
-    cur.execute(SQL)
+    while True:
+        try:
+            cur.execute(SQL)
+            break
+        except psycopg2.InterfaceError:
+            reestablish()
     points = cur.fetchone()[0]
 
     if 10 > points: #checks if the user has enough points to play
@@ -909,7 +1010,12 @@ async def slots(ctx):
         return
     
     SQL = f"UPDATE points SET pointnumber = {points-10} WHERE id = {player.id};" #subtracts the points from their "account"
-    cur.execute(SQL)
+    while True:
+        try:
+            cur.execute(SQL)
+            break
+        except psycopg2.InterfaceError:
+            reestablish()
     conn.commit()
 
     items = [
@@ -929,37 +1035,67 @@ async def slots(ctx):
         if wheelOne == '🍒':
             await ctx.send("Congratulations! You won 20 points.")
             SQL = f"UPDATE points SET pointnumber = {points+20} WHERE id = {player.id};"
-            cur.execute(SQL)
+            while True:
+                try:
+                    cur.execute(SQL)
+                    break
+                except psycopg2.InterfaceError:
+                    reestablish()
             conn.commit()
             return
         elif wheelOne == '🍊':
             await ctx.send("Congratulations! You won 35 points.")
             SQL = f"UPDATE points SET pointnumber = {points+35} WHERE id = {player.id};"
-            cur.execute(SQL)
+            while True:
+                try:
+                    cur.execute(SQL)
+                    break
+                except psycopg2.InterfaceError:
+                    reestablish()
             conn.commit()
             return
         elif wheelOne == '🍋':
             await ctx.send("Congratulations! You won 50 points.")
             SQL = f"UPDATE points SET pointnumber = {points+50} WHERE id = {player.id};"
-            cur.execute(SQL)
+            while True:
+                try:
+                    cur.execute(SQL)
+                    break
+                except psycopg2.InterfaceError:
+                    reestablish()
             conn.commit()
             return
         elif wheelOne == '🍑':
             await ctx.send("Congratulations! You won 75 points.")
             SQL = f"UPDATE points SET pointnumber = {points+75} WHERE id = {player.id};"
-            cur.execute(SQL)
+            while True:
+                try:
+                    cur.execute(SQL)
+                    break
+                except psycopg2.InterfaceError:
+                    reestablish()
             conn.commit()
             return
         elif wheelOne == '🔔':
             await ctx.send("Congratulations! You won 150 points.")
             SQL = f"UPDATE points SET pointnumber = {points+150} WHERE id = {player.id};"
-            cur.execute(SQL)
+            while True:
+                try:
+                    cur.execute(SQL)
+                    break
+                except psycopg2.InterfaceError:
+                    reestablish()
             conn.commit()
             return
         elif wheelOne == '7️':
             await ctx.send("Congratulations! You won the jackpot of 250 points.")
             SQL = f"UPDATE points SET pointnumber = {points+250} WHERE id = {player.id};"
-            cur.execute(SQL)
+            while True:
+                try:
+                    cur.execute(SQL)
+                    break
+                except psycopg2.InterfaceError:
+                    reestablish()
             conn.commit()
             return
     else:
@@ -1037,7 +1173,12 @@ async def strikes(ctx):
     if ctx.message.author.id == 203282979265576960: #checks to see if the userID matches Kyle's
         await ctx.message.add_reaction('💯')
         return
-    cur.execute("SELECT * FROM striketable") #selects all values in the striketable
+    while True:
+        try:
+            cur.execute("SELECT * FROM striketable") #selects all values in the striketable
+            break
+        except psycopg2.InterfaceError:
+            reestablish()
     fetch = cur.fetchall() #fetches all values in the striketable
     for i in fetch: #for each value in the fetch tuple, check if the 
         if int(i[0]) == ctx.message.author.id: #checks if the message authors userID is in the list of people with strikes
