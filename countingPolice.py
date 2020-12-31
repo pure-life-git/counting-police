@@ -1123,6 +1123,28 @@ async def store(ctx):
 
 @store.command(name = "1", description = "Removes a strike from your counting record")
 async def one(ctx):
+    itemEmbed = discord.Embed(title = "Remove a Strike", description = "Removes a strike from your counting record")
+    itemEmbed.add_field(name = "Cost", value = "250 points")
+    itemEmbed.add_field(name = "Would you like to purchase this item?", value = "[Y]es or [N]o")
+    await ctx.send(embed=itemEmbed)
+    decision = await bot.wait_for('message', check = lambda n: n.author == ctx.author)
+    if decision.content.lower() != 'y' and decision.content.lower() != 'yes':
+        await ctx.send("Come again soon!")
+        return
+    
+    SQL = f"SELECT * FROM striketable WHERE name = '{ctx.author.id}';"
+    while True:
+        try:
+            cur.execute(SQL)
+            break
+        except psycopg2.InterfaceError:
+            reestablish()
+    strikeEntry = cur.fetchone()
+    if strikeEntry is None:
+        await ctx.send("You don't have strikes.")
+        return
+
+    
     SQL = "SELECT * FROM storetable WHERE number = 1;"
     while True:
         try:
@@ -1144,6 +1166,33 @@ async def one(ctx):
     if points < cost:
         await ctx.send("You do not have enought points to purchase that item")
         return
+    
+    if strikeEntry[1] == 1:
+        SQL = f"DELETE FROM striketable WHERE name = '{ctx.author.id}';"
+        while True:
+            try:
+                cur.execute(SQL)
+                break
+            except psycopg2.InterfaceError:
+                reestablish()
+    elif strikeEntry[1] == 3:
+        SQL = f"UPDATE striketable SET strikes = 2 WHERE name = '{ctx.author.id}';"
+        while True:
+            try:
+                cur.execute(SQL)
+                break
+            except psycopg2.InterfaceError:
+                reestablish()
+        role = discord.utils.get(ctx.guild.roles,name='Counting Clown')
+        await ctx.author.remove_roles(role)
+    else:
+        SQL = f"UPDATE striketable SET strikes = 1 WHERE name = '{ctx.author.id}';"
+        while True:
+            try:
+                cur.execute(SQL)
+                break
+            except psycopg2.InterfaceError:
+                reestablish()
     
     SQL = f"UPDATE points SET pointnumber = {points-cost} WHERE id = {ctx.author.id};"
     while True:
