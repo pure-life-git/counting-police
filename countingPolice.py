@@ -1358,7 +1358,10 @@ async def claim(ctx):
     conn.commit()
 
     timeDifference = UTCtime - lastTime
-    print(timeDifference)
+    secondDifference = timeDifference.total_seconds()
+    hourDifference = secondDifference/3600
+
+    print(hourDifference)
 
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
