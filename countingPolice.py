@@ -769,6 +769,7 @@ async def points(ctx):
 
 
 #lets the user play blackjack and gamble their points
+@commands.cooldown(1, 15, commands.BucketType.user)
 @bot.command(name = "blackjack", brief = "Allows the user to bet their points on a game of blackjack", description = "Type the command and then the amount of points you would like to bet")
 async def blackjack(ctx, bet: int):
     if str(ctx.channel) not in channelList:
