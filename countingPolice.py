@@ -52,6 +52,10 @@ wolframClient = wolframalpha.Client(wolframID)
 #  \_____||______|\____/ |____//_/    \_\|______|
 
 
+channelList = [
+    "bot", "admins-only"
+]
+
 #list of mod ids
 modID = [
     203282979265576960,
@@ -239,7 +243,7 @@ async def on_ready():
 
 @bot.group(name='game', invoke_without_command=True)
 async def game(ctx):
-    if str(ctx.channel) != "bot":
+    if str(ctx.channel) not in channelList:
         await ctx.message.delete()
         return
     await ctx.send("Valid subcommands: add, remove, clear, list, choose")
@@ -248,7 +252,7 @@ async def game(ctx):
 #adds a game provided by the user to the gameList
 @game.command(name = 'add', description = 'Adds a game to the game list')
 async def add(ctx, *, arg):
-    if str(ctx.channel) != "bot":
+    if str(ctx.channel) not in channelList:
         await ctx.message.delete()
         return
     gameLower = str(arg).lower()
@@ -273,7 +277,7 @@ async def add(ctx, *, arg):
 #removes a particular game from the gamelist
 @game.command(name = 'remove', description = 'Removes a game from the game list')
 async def remove(ctx,*,arg):
-    if str(ctx.channel) != "bot":
+    if str(ctx.channel) not in channelList:
         await ctx.message.delete()
         return
     gameLower = str(arg).lower()
@@ -298,7 +302,7 @@ async def remove(ctx,*,arg):
 #clears game list
 @game.command(name = 'clear', description = 'Clears the game list')
 async def clear(ctx):
-    if str(ctx.channel) != "bot":
+    if str(ctx.channel) not in channelList:
         await ctx.message.delete()
         return
     while True:
@@ -315,7 +319,7 @@ async def clear(ctx):
 #randomly chooses a game from the game list
 @game.command(name = 'choose', description='Randomly chooses a game from the game list')
 async def choose(ctx):
-    if str(ctx.channel) != "bot":
+    if str(ctx.channel) not in channelList:
         await ctx.message.delete()
         return
     while True:
@@ -335,7 +339,7 @@ async def choose(ctx):
 #lists all of the games in the gamelist
 @game.command(name = 'list', description = 'Displays the game list')
 async def gamelist(ctx):
-    if str(ctx.channel) != "bot":
+    if str(ctx.channel) not in channelList:
         await ctx.message.delete()
         return
     while True:
@@ -373,7 +377,7 @@ async def gamelist(ctx):
 @commands.cooldown(2, 15, commands.BucketType.user)
 @bot.command(name = 'rps', description = 'Plays a game of rock paper scissors with you')
 async def rps(ctx, userPick):
-    if str(ctx.channel) != "bot":
+    if str(ctx.channel) not in channelList:
         await ctx.message.delete()
         return
     #initializes a list with the possible choices the bot can make
@@ -472,7 +476,7 @@ async def rps(ctx, userPick):
 @commands.cooldown(1, 10, commands.BucketType.user)
 @bot.command(name = 'py', help_command = None)
 async def py(ctx, *args):
-    if str(ctx.channel) != "bot":
+    if str(ctx.channel) not in channelList:
         await ctx.message.delete()
         return
     argsJoin = ' '.join(args)
@@ -484,7 +488,7 @@ async def py(ctx, *args):
 @commands.cooldown(1, 20, commands.BucketType.user)
 @bot.command(name = 'wolfram', description='Returns the simple answer to a query from Wolfram|Alpha')
 async def wolfram(ctx,*args):
-    if str(ctx.channel) != "bot":
+    if str(ctx.channel) not in channelList:
         await ctx.message.delete()
         return
     question = ' '.join(args) #joins the user args into a single string
@@ -507,7 +511,7 @@ async def wolfram(ctx,*args):
 @commands.cooldown(1, 120, commands.BucketType.user)
 @bot.command(name = 'wolframfull', description = 'Returns the full answer to a query from Wolfram|Alpha')
 async def wolframfull(ctx,*args):
-    if str(ctx.channel) != "bot":
+    if str(ctx.channel) not in channelList:
         await ctx.message.delete()
         return
     question = ' '.join(args) #joins all the user passed args into a single string
@@ -533,7 +537,7 @@ async def wolframfull(ctx,*args):
     description = "Simply type the command and then mention someone to start a game with them. To choose your space, treat the board as a numbered grid 1-9 starting at the top left."
     )
 async def tictactoe(ctx):
-    if str(ctx.channel) != "bot":
+    if str(ctx.channel) not in channelList:
         await ctx.message.delete()
         return
     game = True #this var keeps track of if the game is still being played
@@ -677,7 +681,7 @@ async def tictactoe(ctx):
 @commands.cooldown(1, 15, commands.BucketType.user)
 @bot.command(name = 'finn', description = 'Sends a feet pic to Finn')
 async def finn(ctx):
-    if str(ctx.channel) != "bot":
+    if str(ctx.channel) not in channelList:
         await ctx.message.delete()
         return
     link = random.choice(forbiddenList)
@@ -692,7 +696,7 @@ async def finn(ctx):
 #starts a poll with reaction-based voting
 @bot.command(name = 'poll', description = 'Starts a poll. Default time is 120s')
 async def poll(ctx,*args):
-    if str(ctx.channel) != "bot":
+    if str(ctx.channel) not in channelList:
         await ctx.message.delete()
         return
     timer = 120 #sets a default timer as 2 minutes
@@ -749,7 +753,7 @@ async def poll(ctx,*args):
 @commands.cooldown(1, 15, commands.BucketType.user)
 @bot.command(name = 'points', description = "Tells the user how many points they have for gambling")
 async def points(ctx):
-    if str(ctx.channel) != "bot":
+    if str(ctx.channel) not in channelList:
         await ctx.message.delete()
         return
     SQL = f"SELECT pointnumber FROM points WHERE id = {ctx.author.id};" #gets the point value from the DB
@@ -767,7 +771,7 @@ async def points(ctx):
 #lets the user play blackjack and gamble their points
 @bot.command(name = "blackjack", brief = "Allows the user to bet their points on a game of blackjack", description = "Type the command and then the amount of points you would like to bet")
 async def blackjack(ctx, bet: int):
-    if str(ctx.channel) != "bot":
+    if str(ctx.channel) not in channelList:
         await ctx.message.delete()
         return
     game = True
@@ -936,7 +940,7 @@ async def blackjack(ctx, bet: int):
 #lets the user place bets on a game of roulette
 @bot.command(name = "roulette", brief = "Lets the user place bets on a game of roulette", description = "Type the command, what you're betting on (red, black, even, odd, low, high) and then the amount of points to bet.")
 async def roulette(ctx, guess: str, bet: int):
-    if str(ctx.channel) != "bot":
+    if str(ctx.channel) not in channelList:
         await ctx.message.delete()
         return
     player = ctx.author
@@ -1011,7 +1015,7 @@ async def roulette(ctx, guess: str, bet: int):
 @commands.cooldown(1,15, commands.BucketType.user)
 @bot.command(name = "slots", brief = "Lets the user spin a slot machine", description = "To play, all you need are 10 points. Then simply type the command and cross your fingers. Payouts are as follows:\n- 🍒🍒🍒: 20 points\n- 🍊🍊🍊: 35 points\n- 🍋🍋🍋: 50 points\n- 🍑🍑🍑: 75 points\n- 🔔🔔🔔: 150 points\n- 7️7️7️: JACKPOT 250 points")
 async def slots(ctx):
-    if str(ctx.channel) != "bot":
+    if str(ctx.channel) not in channelList:
         await ctx.message.delete()
         return
     player = ctx.author
@@ -1124,7 +1128,7 @@ async def slots(ctx):
 
 @bot.group(name='store', invoke_without_command = True)
 async def store(ctx):
-    if str(ctx.channel) != "bot":
+    if str(ctx.channel) not in channelList:
         await ctx.message.delete()
         return
     SQL = f"SELECT pointnumber FROM points WHERE id = {ctx.author.id};"
@@ -1142,6 +1146,9 @@ async def store(ctx):
 
 @store.command(name = "one", description = "Removes a strike from your counting record")
 async def one(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
     itemEmbed = discord.Embed(title = "Remove a Strike", description = "Removes a strike from your counting record")
     itemEmbed.add_field(name = "Cost", value = "250 points")
     itemEmbed.add_field(name = "Would you like to purchase this item?", value = "[Y]es or [N]o")
@@ -1236,7 +1243,7 @@ async def one(ctx):
 #deletes the bot messages in the last n number of messages
 @bot.command(name = 'purge', description = 'Deletes the bot messages within the last number of message specified by the user (limit 50)')
 async def purge(ctx,amount: int):
-    if str(ctx.channel) != "bot":
+    if str(ctx.channel) not in channelList:
         await ctx.message.delete()
         return
     if amount > 50: #checks to see if the request is stupid (i.e. made by parker)
@@ -1253,7 +1260,7 @@ async def purge(ctx,amount: int):
 #mutes a member of the server for a specified amount of time
 @bot.command(name = 'mute',help_command = None)
 async def mute(ctx, mention, time='5s'):
-    if str(ctx.channel) != "bot":
+    if str(ctx.channel) not in channelList:
         await ctx.message.delete()
         return
     if time[0] == '-' or time[0].isnumeric() == False:
@@ -1287,7 +1294,7 @@ async def mute(ctx, mention, time='5s'):
 @commands.cooldown(1, 10, commands.BucketType.user)
 @bot.command(name = 'strikes', description = 'Reacts with the number of strikes the user has in the counting channel')
 async def strikes(ctx):
-    if str(ctx.channel) != "bot":
+    if str(ctx.channel) not in channelList:
         await ctx.message.delete()
         return
     if ctx.message.author.id == 203282979265576960: #checks to see if the userID matches Kyle's
@@ -1344,6 +1351,9 @@ async def unlock(ctx, channel: discord.TextChannel):
 
 @bot.command(name = "claim", brief = "Claims daily points")
 async def claim(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
     SQL = f"SELECT claimtime FROM points WHERE id = {ctx.author.id};"
     cur.execute(SQL)
     lastTime = cur.fetchone()[0]
@@ -1362,19 +1372,15 @@ async def claim(ctx):
         SQL = f"UPDATE points SET pointnumber = {points+25} WHERE id = {ctx.author.id};"
         cur.execute(SQL)
         conn.commit()
-        
+
         SQL = f"UPDATE points SET claimtime = '{UTCtime}' WHERE id = {ctx.author.id};"
         cur.execute(SQL)
         conn.commit()
+        await ctx.send("25 points have been added to your account. You can claim again in 24 hours.")
         
     else:
         await ctx.send(f"You can claim your points in {24-hourDifference:.2f} hours.")
         return
-
-    
-
-    
-
     print(hourDifference)
 
 
