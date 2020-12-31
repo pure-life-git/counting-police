@@ -1349,6 +1349,7 @@ async def unlock(ctx, channel: discord.TextChannel):
     await channel.send("Channel unlocked.")
 
 
+@commands.cooldown(1,15, commands.BucketType.user)
 @bot.command(name = "claim", brief = "Claims daily points")
 async def claim(ctx):
     if str(ctx.channel) not in channelList:
@@ -1581,6 +1582,14 @@ async def roulette_error(ctx,error):
 
 @slots.error
 async def slots_error(ctx,error):
+    if isinstance(error, commands.CommandOnCooldown):
+        await ctx.message.delete()
+        errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:.2f}s')
+        await asyncio.sleep(5)
+        await errMess.delete()
+
+@claim.error
+async def claim_error(ctx, error):
     if isinstance(error, commands.CommandOnCooldown):
         await ctx.message.delete()
         errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:.2f}s')
