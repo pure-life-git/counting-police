@@ -1387,7 +1387,7 @@ async def claim(ctx):
         await ctx.send("25 points have been added to your account. You can claim again in 24 hours.")
         
     else:
-        await ctx.send(f"You can claim your points in {hours}h {minutes}m {seconds}s.")
+        await ctx.send(f"You can claim your points in {int(hours)}h {int(minutes)}m {int(seconds)}s.")
         return
     print(hourDifference)
 
