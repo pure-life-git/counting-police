@@ -1364,6 +1364,8 @@ async def claim(ctx):
     secondDifference = timeDifference.total_seconds()
     hourDifference = secondDifference/3600
 
+    secondDifference = 86400 - secondDifference
+
     hours = secondDifference // 3600
 
     secondDifference %= 3600
