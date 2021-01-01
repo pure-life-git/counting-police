@@ -978,11 +978,9 @@ async def blackjack(ctx, bet: int):
             if bjwin(player) == True:
                 if bjRole not in player.roles:
                     await player.add_roles(bjRole)
-
-                currentKing = bjRole.members[1]
-                await currentKing.remove_roles(bjRole)
-        
-
+                for member in bjRole.members:
+                    if member != ctx.author:
+                        await member.remove_roles(bjRole)
             return
 
         elif total(dealerHand) > total(playerHand): #checks for greater hand
@@ -1210,7 +1208,7 @@ async def slots(ctx):
         return
     
 
-@bot.group(name='store', invoke_without_command = True)
+@bot.group(name='store', brief = 'Displays the store page', invoke_without_command = True)
 async def store(ctx):
     if str(ctx.channel) not in channelList:
         await ctx.message.delete()
@@ -1406,7 +1404,7 @@ async def pay(ctx, recipient: discord.User, amount:int):
 
 
 @commands.cooldown(1, 10, commands.BucketType.user)
-@bot.command(name = "totalpointslb")
+@bot.command(name = "totalpointslb", brief = "Displays a leaderboard of the total points gained by a user")
 async def totalpointslb(ctx):
     if str(ctx.channel) not in channelList:
         await ctx.message.delete()
