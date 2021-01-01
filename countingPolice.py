@@ -1553,6 +1553,11 @@ async def claim(ctx):
         return
     print(hourDifference)
 
+@bot.command(name = "createrole")
+async def createrole(ctx, name: str, r: int, g: int, b: int):
+    await ctx.guild.create_role(name=name, color=discord.Color.from_rgb(r, g, b))
+
+
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
 #  __  __  _____   _____   _____    
