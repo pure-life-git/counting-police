@@ -209,9 +209,10 @@ def hit(hand, deck):
 
 
 def bjwin(player):
-    SQL = f"SELECT id FROM points ORDER BY bjwins DESC;"
+    SQL = f"SELECT id, name FROM points ORDER BY bjwins DESC;"
     cur.execute(SQL)
     highestPlayerID = cur.fetchone()[0]
+    print(cur.fetchone()[1])
     if highestPlayerID == player.id: return True
     else: return False
 
@@ -990,8 +991,6 @@ async def blackjack(ctx, bet: int):
                 bjRole = discord.utils.get(ctx.message.guild.roles,name='BJ King')
                 if bjRole not in player.roles:
                     await player.add_roles(bjRole)
-                else:
-                    pass
                 currentKing = bjRole.members[0]
                 await currentKing.remove_roles(bjRole)  
             return
