@@ -1259,6 +1259,9 @@ async def pay(ctx, recipient: discord.User, amount:int):
     if str(ctx.channel) not in channelList:
         await ctx.message.delete()
         return
+    
+    if amount <= 0:
+        await ctx.send("No. Fuck u")
 
     if recipient == ctx.author:
         await ctx.send("You can't pay yourself.")
