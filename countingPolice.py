@@ -852,6 +852,7 @@ async def blackjack(ctx, bet: int):
                 #currentKing = bjRole.members[0]
                 #await currentKing.remove_roles(bjRole)
             print(bjRole.members)
+            print(len(bjRole.members))
             return
         await ctx.send("Would you like to [H]it, [S]tand, [D]ouble or [Q]uit") #asks the user for their input
         try:
@@ -882,6 +883,7 @@ async def blackjack(ctx, bet: int):
                         #currentKing = bjRole.members[0]
                         #await currentKing.remove_roles(bjRole)
                     print(bjRole.members)
+                    print(len(bjRole.members))
                     return
 
                 elif total(playerHand) > 21: #checks for user bust
@@ -934,6 +936,7 @@ async def blackjack(ctx, bet: int):
                         #currentKing = bjRole.members[0]
                         #await currentKing.remove_roles(bjRole)
                     print(bjRole.members)
+                    print(len(bjRole.members))
                     return
 
                 elif total(playerHand) > 21: #checks for user bust
@@ -982,6 +985,7 @@ async def blackjack(ctx, bet: int):
                 #currentKing = bjRole.members[0]
                 #await currentKing.remove_roles(bjRole)
             print(bjRole.members)
+            print(len(bjRole.members))
             return
 
         elif total(dealerHand) > total(playerHand): #checks for greater hand
@@ -1012,6 +1016,7 @@ async def blackjack(ctx, bet: int):
                 #currentKing = bjRole.members[0]
                 #await currentKing.remove_roles(bjRole)
             print(bjRole.members)
+            print(len(bjRole.members))
             return
 
         
