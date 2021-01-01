@@ -845,11 +845,9 @@ async def blackjack(ctx, bet: int):
             if bjwin(player) == True:
                 if bjRole not in player.roles:
                     await player.add_roles(bjRole)
-
-                currentKing = bjRole.members[1]
-                await currentKing.remove_roles(bjRole)
-        
-
+                for member in bjRole.members:
+                    if member != ctx.author:
+                        await member.remove_roles(bjRole)
             return
         await ctx.send("Would you like to [H]it, [S]tand, [D]ouble or [Q]uit") #asks the user for their input
         try:
@@ -876,11 +874,9 @@ async def blackjack(ctx, bet: int):
                     if bjwin(player) == True:
                         if bjRole not in player.roles:
                             await player.add_roles(bjRole)
-
-                        currentKing = bjRole.members[1]
-                        await currentKing.remove_roles(bjRole)
-                
-        
+                        for member in bjRole.members:
+                            if member != ctx.author:
+                                await member.remove_roles(bjRole)
                     return
 
                 elif total(playerHand) > 21: #checks for user bust
@@ -929,11 +925,9 @@ async def blackjack(ctx, bet: int):
                     if bjwin(player) == True:
                         if bjRole not in player.roles:
                             await player.add_roles(bjRole)
-
-                        currentKing = bjRole.members[1]
-                        await currentKing.remove_roles(bjRole)
-                
-        
+                        for member in bjRole.members:
+                            if member != ctx.author:
+                                await member.remove_roles(bjRole)
                     return
 
                 elif total(playerHand) > 21: #checks for user bust
@@ -1007,14 +1001,10 @@ async def blackjack(ctx, bet: int):
             if bjwin(player) == True:
                 if bjRole not in player.roles:
                     await player.add_roles(bjRole)
-
-                currentKing = bjRole.members[1]
-                await currentKing.remove_roles(bjRole)
-        
-
+                for member in bjRole.members:
+                    if member != ctx.author:
+                        await member.remove_roles(bjRole)
             return
-
-        
         else:
             dealerHand = hit(dealerHand, deck) #dealer hits
 
