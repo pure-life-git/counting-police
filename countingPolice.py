@@ -1555,6 +1555,9 @@ async def claim(ctx):
 
 @bot.command(name = "createrole")
 async def createrole(ctx, name: str, r: int, g: int, b: int):
+    if ctx.author.id not in modID:
+        await ctx.send("You do not have the permissions to use this command.")
+        return
     await ctx.guild.create_role(name=name, color=discord.Color.from_rgb(r, g, b))
     await ctx.send(f"Role created with name {name} and color from rgb({r}, {g}, {b})")
 
