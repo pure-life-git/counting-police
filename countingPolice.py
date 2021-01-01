@@ -820,7 +820,7 @@ async def blackjack(ctx, bet: int):
                     reestablish()
             conn.commit()
             return
-        await ctx.send("Would you like to [H]it, [S]tand, [D]ouble or [Q]uit") #asks the user for their input
+        await ctx.send(f"{ctx.author.mention} Would you like to [H]it, [S]tand, [D]ouble or [Q]uit") #asks the user for their input
         try:
             move = await bot.wait_for('message', check = lambda m: m.author == ctx.author) #waits for the message from the user
             if move.content.lower() == "h"or move.content.lower() == "hit": #checks if they want to hit
