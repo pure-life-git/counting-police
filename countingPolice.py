@@ -31,7 +31,10 @@ import datetime
 
 #initialize client and bot
 #client = discord.Client()
-bot = commands.Bot(command_prefix = '.', description = 'Help for the H Welding Machine Bot')
+intents = discord.Intents.default()
+intents.members = True
+intents.presence = True
+bot = commands.Bot(command_prefix = '.', description = 'Help for the H Welding Machine Bot', intents = intents)
 
 #initializes connections to postgresql database
 DATABASE_URL = os.environ['DATABASE_URL']
