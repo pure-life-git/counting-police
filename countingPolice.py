@@ -848,7 +848,7 @@ async def blackjack(ctx, bet: int):
                             reestablish()
                     conn.commit()
 
-                    SQL = f"UPDATE points SET bjwins += 1 WHERE id = {player.id};"
+                    SQL = f"UPDATE points SET bjwins = bjwins + 1 WHERE id = {player.id};"
                     cur.execute(SQL)
                     conn.commit()
                     return
@@ -892,7 +892,7 @@ async def blackjack(ctx, bet: int):
                             reestablish()
                     conn.commit()
 
-                    SQL = f"UPDATE points SET bjwins += 1 WHERE id = {player.id};"
+                    SQL = f"UPDATE points SET bjwins = bjwins + 1 WHERE id = {player.id};"
                     cur.execute(SQL)
                     conn.commit()
                     return
@@ -932,7 +932,7 @@ async def blackjack(ctx, bet: int):
                     reestablish()
             conn.commit()
 
-            SQL = f"UPDATE points SET bjwins += 1 WHERE id = {player.id};"
+            SQL = f"UPDATE points SET bjwins = bjwins + 1 WHERE id = {player.id};"
             cur.execute(SQL)
             conn.commit()
             return
@@ -954,7 +954,7 @@ async def blackjack(ctx, bet: int):
                     reestablish()
             conn.commit()
 
-            SQL = f"UPDATE points SET bjwins += 1 WHERE id = {player.id};"
+            SQL = f"UPDATE points SET bjwins = bjwins + 1 WHERE id = {player.id};"
             cur.execute(SQL)
             conn.commit()
             return
