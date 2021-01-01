@@ -206,6 +206,10 @@ def hit(hand, deck):
     return hand
 
 
+def bjwin(player):
+    SQL = f"SELECT MAX(bjwins) FROM points;"
+
+
 #--------------------------------------------------------------------------------------------------------------------------------------#
 #   ____   _   _        _____   ______            _____ __     __
 #  / __ \ | \ | |      |  __ \ |  ____|    /\    |  __ \\ \   / /
@@ -1278,6 +1282,7 @@ async def pay(ctx, recipient: discord.User, amount:int):
     
     if amount <= 0:
         await ctx.send("No. Fuck u")
+        return
 
     if recipient == ctx.author:
         await ctx.send("You can't pay yourself.")
