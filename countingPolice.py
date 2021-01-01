@@ -840,6 +840,17 @@ async def blackjack(ctx, bet: int):
                 except psycopg2.InterfaceError:
                     reestablish()
             conn.commit()
+            SQL = f"UPDATE points SET bjwins = bjwins + 1 WHERE id = {player.id};"
+            cur.execute(SQL)
+            conn.commit()
+            bjRole = discord.utils.get(ctx.message.guild.roles,name='BJ King')
+            if bjwin(player) == True:
+                if bjRole not in player.roles:
+                    await player.add_roles(bjRole)
+
+                #currentKing = bjRole.members[0]
+                #await currentKing.remove_roles(bjRole)
+            print(bjRole.members)
             return
         await ctx.send("Would you like to [H]it, [S]tand, [D]ouble or [Q]uit") #asks the user for their input
         try:
@@ -862,8 +873,8 @@ async def blackjack(ctx, bet: int):
                     SQL = f"UPDATE points SET bjwins = bjwins + 1 WHERE id = {player.id};"
                     cur.execute(SQL)
                     conn.commit()
+                    bjRole = discord.utils.get(ctx.message.guild.roles,name='BJ King')
                     if bjwin(player) == True:
-                        bjRole = discord.utils.get(ctx.message.guild.roles,name='BJ King')
                         if bjRole not in player.roles:
                             await player.add_roles(bjRole)
 
@@ -914,8 +925,8 @@ async def blackjack(ctx, bet: int):
                     SQL = f"UPDATE points SET bjwins = bjwins + 1 WHERE id = {player.id};"
                     cur.execute(SQL)
                     conn.commit()
+                    bjRole = discord.utils.get(ctx.message.guild.roles,name='BJ King')
                     if bjwin(player) == True:
-                        bjRole = discord.utils.get(ctx.message.guild.roles,name='BJ King')
                         if bjRole not in player.roles:
                             await player.add_roles(bjRole)
 
@@ -962,8 +973,8 @@ async def blackjack(ctx, bet: int):
             SQL = f"UPDATE points SET bjwins = bjwins + 1 WHERE id = {player.id};"
             cur.execute(SQL)
             conn.commit()
+            bjRole = discord.utils.get(ctx.message.guild.roles,name='BJ King')
             if bjwin(player) == True:
-                bjRole = discord.utils.get(ctx.message.guild.roles,name='BJ King')
                 if bjRole not in player.roles:
                     await player.add_roles(bjRole)
 
@@ -992,11 +1003,11 @@ async def blackjack(ctx, bet: int):
             SQL = f"UPDATE points SET bjwins = bjwins + 1 WHERE id = {player.id};"
             cur.execute(SQL)
             conn.commit()
+            bjRole = discord.utils.get(ctx.message.guild.roles,name='BJ King')
             if bjwin(player) == True:
-                bjRole = discord.utils.get(ctx.message.guild.roles,name='BJ King')
                 if bjRole not in player.roles:
                     await player.add_roles(bjRole)
-                
+
                 #currentKing = bjRole.members[0]
                 #await currentKing.remove_roles(bjRole)
             print(bjRole.members)
