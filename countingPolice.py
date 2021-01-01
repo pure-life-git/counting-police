@@ -796,6 +796,7 @@ async def blackjack(ctx, bet: int):
     if str(ctx.channel) not in channelList:
         await ctx.message.delete()
         return
+    print(ctx.guild.roles)
     game = True
     dealer = True
     player = ctx.author
