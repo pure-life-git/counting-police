@@ -209,7 +209,12 @@ def hit(hand, deck):
 
 
 def bjwin(player):
-    SQL = f"SELECT MAX(bjwins) FROM points;"
+    SQL = f"SELECT id FROM points ORDER BY bjwins DESC;"
+    cur.execute(SQL)
+    highestPlayerID = cur.fetchone()[0]
+    if highestPlayerID == player.id: return True
+    else: return False
+
 
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
@@ -851,6 +856,14 @@ async def blackjack(ctx, bet: int):
                     SQL = f"UPDATE points SET bjwins = bjwins + 1 WHERE id = {player.id};"
                     cur.execute(SQL)
                     conn.commit()
+                    if bjwin(player) == True:
+                        bjRole = discord.utils.get(ctx.message.guild.roles,name='BJ King')
+                        if bjRole not in player.roles:
+                            await player.add_roles(bjRole)
+                        else:
+                            pass
+                        currentKing = bjRole.members[0]
+                        await currentKing.remove_roles(bjRole)  
                     return
 
                 elif total(playerHand) > 21: #checks for user bust
@@ -895,6 +908,14 @@ async def blackjack(ctx, bet: int):
                     SQL = f"UPDATE points SET bjwins = bjwins + 1 WHERE id = {player.id};"
                     cur.execute(SQL)
                     conn.commit()
+                    if bjwin(player) == True:
+                        bjRole = discord.utils.get(ctx.message.guild.roles,name='BJ King')
+                        if bjRole not in player.roles:
+                            await player.add_roles(bjRole)
+                        else:
+                            pass
+                        currentKing = bjRole.members[0]
+                        await currentKing.remove_roles(bjRole)  
                     return
 
                 elif total(playerHand) > 21: #checks for user bust
@@ -935,6 +956,14 @@ async def blackjack(ctx, bet: int):
             SQL = f"UPDATE points SET bjwins = bjwins + 1 WHERE id = {player.id};"
             cur.execute(SQL)
             conn.commit()
+            if bjwin(player) == True:
+                bjRole = discord.utils.get(ctx.message.guild.roles,name='BJ King')
+                if bjRole not in player.roles:
+                    await player.add_roles(bjRole)
+                else:
+                    pass
+                currentKing = bjRole.members[0]
+                await currentKing.remove_roles(bjRole)  
             return
 
         elif total(dealerHand) > total(playerHand): #checks for greater hand
@@ -957,6 +986,14 @@ async def blackjack(ctx, bet: int):
             SQL = f"UPDATE points SET bjwins = bjwins + 1 WHERE id = {player.id};"
             cur.execute(SQL)
             conn.commit()
+            if bjwin(player) == True:
+                bjRole = discord.utils.get(ctx.message.guild.roles,name='BJ King')
+                if bjRole not in player.roles:
+                    await player.add_roles(bjRole)
+                else:
+                    pass
+                currentKing = bjRole.members[0]
+                await currentKing.remove_roles(bjRole)  
             return
 
         
