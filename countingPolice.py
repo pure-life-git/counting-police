@@ -211,10 +211,15 @@ def hit(hand, deck):
 def bjwin(player):
     SQL = f"SELECT id, name FROM points ORDER BY bjwins DESC;"
     cur.execute(SQL)
-    highestPlayerID = cur.fetchone()[0]
-    print(cur.fetchone()[1])
-    if highestPlayerID == player.id: return True
-    else: return False
+    highestPlayer = cur.fetchone()
+    highestPlayerID = highestPlayer[0]
+    print(highestPlayer[1])
+    if highestPlayerID == player.id:
+        print('True')
+        return True
+    else: 
+        print('False')
+        return False
 
 
 
