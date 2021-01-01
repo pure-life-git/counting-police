@@ -1231,6 +1231,27 @@ async def one(ctx):
     await ctx.send(f"Thank you for your purchase! You now have {points-cost} points.")
 
 
+@bot.command(name = "leaderboard", brief = "Displays a leaderboard of points")
+async def leaderboard(ctx):
+    pointList = []
+    memberList = []
+    SQL = f"SELECT id, pointnumber FROM points ORDER BY pointnumber DESC;"
+    fullList = cur.fetchall()
+    for pair in fullList:
+        user = await ctx.message.guild.fetch_member(pair[0])
+        point = pair[1]
+        memberList.append(user)
+        pointList.append(point)
+    
+    leaderboardEmbed = discord.Embed(title = "Points Leaderboard", description = "Leaderboard of points", color = discord.Color.blurple())
+    leaderboardEmbed.add_field(name = "Top 5", value = f"1. {memberList[0].name} - {pointList[0]} points\n2. {memberList[1].name} - {pointList[1]} points\n3. {memberList[2].name} - {pointList[2]} points\n4. {memberList[3].name} - {pointList[3]} points\n5. {memberList[4].name} - {pointList[4]} points", inline=False)
+    userIndex = memberList.index(ctx.author.id)
+    leaderboardEmbed.add_field(name = "Your place", value = f"{userIndex-1}. {memberList[userIndex].name} - {pointList[userIndex]} points")
+    await ctx.send(embed=leaderboardEmbed)
+
+
+
+
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
 #  __  __   ____   _____   ______  _____          _______  _____  ____   _   _ 
