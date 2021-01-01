@@ -996,8 +996,9 @@ async def blackjack(ctx, bet: int):
                 bjRole = discord.utils.get(ctx.message.guild.roles,name='BJ King')
                 if bjRole not in player.roles:
                     await player.add_roles(bjRole)
-                currentKing = bjRole.members[0]
-                await currentKing.remove_roles(bjRole)  
+                print(bjRole.members)
+                #currentKing = bjRole.members[0]
+                #await currentKing.remove_roles(bjRole)
             return
 
         
