@@ -866,9 +866,10 @@ async def blackjack(ctx, bet: int):
                         bjRole = discord.utils.get(ctx.message.guild.roles,name='BJ King')
                         if bjRole not in player.roles:
                             await player.add_roles(bjRole)
-                        print(bjRole.members)
+
                         #currentKing = bjRole.members[0]
                         #await currentKing.remove_roles(bjRole)
+                    print(bjRole.members)
                     return
 
                 elif total(playerHand) > 21: #checks for user bust
@@ -917,9 +918,10 @@ async def blackjack(ctx, bet: int):
                         bjRole = discord.utils.get(ctx.message.guild.roles,name='BJ King')
                         if bjRole not in player.roles:
                             await player.add_roles(bjRole)
-                        print(bjRole.members)
+
                         #currentKing = bjRole.members[0]
                         #await currentKing.remove_roles(bjRole)
+                    print(bjRole.members)
                     return
 
                 elif total(playerHand) > 21: #checks for user bust
@@ -964,9 +966,10 @@ async def blackjack(ctx, bet: int):
                 bjRole = discord.utils.get(ctx.message.guild.roles,name='BJ King')
                 if bjRole not in player.roles:
                     await player.add_roles(bjRole)
-                print(bjRole.members)
+
                 #currentKing = bjRole.members[0]
                 #await currentKing.remove_roles(bjRole)
+            print(bjRole.members)
             return
 
         elif total(dealerHand) > total(playerHand): #checks for greater hand
@@ -993,9 +996,10 @@ async def blackjack(ctx, bet: int):
                 bjRole = discord.utils.get(ctx.message.guild.roles,name='BJ King')
                 if bjRole not in player.roles:
                     await player.add_roles(bjRole)
-                print(bjRole.members)
+                
                 #currentKing = bjRole.members[0]
                 #await currentKing.remove_roles(bjRole)
+            print(bjRole.members)
             return
 
         
