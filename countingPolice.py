@@ -31,9 +31,7 @@ import datetime
 
 #initialize client and bot
 #client = discord.Client()
-intents = discord.Intents.default()
-intents.members = True
-intents.presence = True
+intents = discord.Intents.all()
 bot = commands.Bot(command_prefix = '.', description = 'Help for the H Welding Machine Bot', intents = intents)
 
 #initializes connections to postgresql database
