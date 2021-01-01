@@ -210,7 +210,7 @@ def hit(hand, deck):
 
 
 def bjwin(player):
-    SQL = f"SELECT id, name FROM points ORDER BY bjwins DESC;"
+    SQL = f"SELECT id, name FROM points ORDER BY totalPoints DESC;"
     cur.execute(SQL)
     highestPlayer = cur.fetchone()
     highestPlayerID = highestPlayer[0]
@@ -838,7 +838,7 @@ async def blackjack(ctx, bet: int):
                 except psycopg2.InterfaceError:
                     reestablish()
             conn.commit()
-            SQL = f"UPDATE points SET bjwins = bjwins + 1 WHERE id = {player.id};"
+            SQL = f"UPDATE points SET totalpoints = totalpoints + {bet} WHERE id = {player.id};"
             cur.execute(SQL)
             conn.commit()
             bjRole = ctx.guild.get_role(794512596740079616)
@@ -869,7 +869,7 @@ async def blackjack(ctx, bet: int):
                             reestablish()
                     conn.commit()
 
-                    SQL = f"UPDATE points SET bjwins = bjwins + 1 WHERE id = {player.id};"
+                    SQL = f"UPDATE points SET totalpoints = totalpoints + {bet} WHERE id = {player.id};"
                     cur.execute(SQL)
                     conn.commit()
                     bjRole = ctx.guild.get_role(794512596740079616)
@@ -922,7 +922,7 @@ async def blackjack(ctx, bet: int):
                             reestablish()
                     conn.commit()
 
-                    SQL = f"UPDATE points SET bjwins = bjwins + 1 WHERE id = {player.id};"
+                    SQL = f"UPDATE points SET totalpoints = totalpoints + {bet} WHERE id = {player.id};"
                     cur.execute(SQL)
                     conn.commit()
                     bjRole = ctx.guild.get_role(794512596740079616)
@@ -971,7 +971,7 @@ async def blackjack(ctx, bet: int):
                     reestablish()
             conn.commit()
 
-            SQL = f"UPDATE points SET bjwins = bjwins + 1 WHERE id = {player.id};"
+            SQL = f"UPDATE points SET totalpoints = totalpoints + {bet} WHERE id = {player.id};"
             cur.execute(SQL)
             conn.commit()
             bjRole = ctx.guild.get_role(794512596740079616)
@@ -1002,7 +1002,7 @@ async def blackjack(ctx, bet: int):
                     reestablish()
             conn.commit()
 
-            SQL = f"UPDATE points SET bjwins = bjwins + 1 WHERE id = {player.id};"
+            SQL = f"UPDATE points SET totalpoints = totalpoints + {bet} WHERE id = {player.id};"
             cur.execute(SQL)
             conn.commit()
             bjRole = ctx.guild.get_role(794512596740079616)
