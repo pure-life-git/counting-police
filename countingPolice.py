@@ -1300,8 +1300,9 @@ async def leaderboard(ctx):
         await ctx.message.delete()
         return
     pointList = []
+    winList = []
     memberList = []
-    SQL = f"SELECT id, pointnumber FROM points ORDER BY pointnumber DESC;"
+    SQL = f"SELECT id, pointnumber, bjwins FROM points ORDER BY pointnumber DESC;"
     while True:
         try:
             cur.execute(SQL)
@@ -1313,13 +1314,15 @@ async def leaderboard(ctx):
     for pair in fullList:
         user = await ctx.message.guild.fetch_member(pair[0])
         point = pair[1]
+        wins = pair[2]
         memberList.append(user)
         pointList.append(point)
+        winList.append(wins)
     
     leaderboardEmbed = discord.Embed(title = "Points Leaderboard", description = "Leaderboard of points", color = discord.Color.blurple())
-    leaderboardEmbed.add_field(name = "Top 5", value = f"1. {memberList[0].name} - {pointList[0]} points\n2. {memberList[1].name} - {pointList[1]} points\n3. {memberList[2].name} - {pointList[2]} points\n4. {memberList[3].name} - {pointList[3]} points\n5. {memberList[4].name} - {pointList[4]} points", inline=False)
+    leaderboardEmbed.add_field(name = "Top 5", value = f"1. {memberList[0].name} - {pointList[0]} points ({winList[0]} wins)\n2. {memberList[1].name} - {pointList[1]} points ({winList[1]} wins)\n3. {memberList[2].name} - {pointList[2]} points ({winList[2]} wins)\n4. {memberList[3].name} - {pointList[3]} points ({winList[3]} wins)\n5. {memberList[4].name} - {pointList[4]} points ({winList[4]} wins)", inline=False)
     userIndex = memberList.index(ctx.author)
-    leaderboardEmbed.add_field(name = "Your place", value = f"{userIndex+1}. {memberList[userIndex].name} - {pointList[userIndex]} points")
+    leaderboardEmbed.add_field(name = "Your place", value = f"{userIndex+1}. {memberList[userIndex].name} - {pointList[userIndex]} points ({winList[userIndex]} wins)")
     await ctx.send(embed=leaderboardEmbed)
 
 
