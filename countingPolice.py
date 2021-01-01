@@ -1237,9 +1237,7 @@ async def leaderboard(ctx):
     memberList = []
     SQL = f"SELECT id, pointnumber FROM points ORDER BY pointnumber DESC;"
     cur.execute(SQL)
-    conn.commit()
     fullList = cur.fetchall()
-    print(fullList)
     for pair in fullList:
         user = await ctx.message.guild.fetch_member(pair[0])
         point = pair[1]
