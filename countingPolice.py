@@ -1259,7 +1259,13 @@ async def leaderboard(ctx):
     pointList = []
     memberList = []
     SQL = f"SELECT id, pointnumber FROM points ORDER BY pointnumber DESC;"
-    cur.execute(SQL)
+    while True:
+        try:
+            cur.execute(SQL)
+            break
+        except psycopg2.InterfaceError:
+            reestablish()
+    conn.commit()
     fullList = cur.fetchall()
     for pair in fullList:
         user = await ctx.message.guild.fetch_member(pair[0])
@@ -1289,7 +1295,12 @@ async def pay(ctx, recipient: discord.User, amount:int):
         return
 
     SQL = f"SELECT pointnumber FROM points WHERE id = {ctx.author.id};"
-    cur.execute(SQL)
+    while True:
+        try:
+            cur.execute(SQL)
+            break
+        except psycopg2.InterfaceError:
+            reestablish()
     conn.commit()
     authorPoints = cur.fetchone()[0]
 
@@ -1298,16 +1309,31 @@ async def pay(ctx, recipient: discord.User, amount:int):
         return
 
     SQL = f"SELECT pointnumber FROM points WHERE id = {recipient.id};"
-    cur.execute(SQL)
+    while True:
+        try:
+            cur.execute(SQL)
+            break
+        except psycopg2.InterfaceError:
+            reestablish()
     conn.commit()
     recipientPoints = cur.fetchone()[0]
 
     SQL = f"UPDATE points SET pointnumber = {authorPoints-amount} WHERE id = {ctx.author.id};"
-    cur.execute(SQL)
+    while True:
+        try:
+            cur.execute(SQL)
+            break
+        except psycopg2.InterfaceError:
+            reestablish()
     conn.commit()
 
     SQL = f"UPDATE points SET pointnumber = {recipientPoints+amount} WHERE id = {recipient.id};"
-    cur.execute(SQL)
+    while True:
+        try:
+            cur.execute(SQL)
+            break
+        except psycopg2.InterfaceError:
+            reestablish()
     conn.commit()
 
     await ctx.send(f"Transfer successful! {ctx.author.name} -{amount} --> {recipient.name} +{amount}")
