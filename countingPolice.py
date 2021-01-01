@@ -850,7 +850,7 @@ async def blackjack(ctx, bet: int):
                 if bjRole not in player.roles:
                     await player.add_roles(bjRole)
 
-                currentKing = bjRole.members[0]
+                currentKing = bjRole.members[1]
                 await currentKing.remove_roles(bjRole)
             print(bjRole.members)
             print(len(bjRole.members))
@@ -881,7 +881,7 @@ async def blackjack(ctx, bet: int):
                         if bjRole not in player.roles:
                             await player.add_roles(bjRole)
 
-                        currentKing = bjRole.members[0]
+                        currentKing = bjRole.members[1]
                         await currentKing.remove_roles(bjRole)
                     print(bjRole.members)
                     print(len(bjRole.members))
@@ -934,7 +934,7 @@ async def blackjack(ctx, bet: int):
                         if bjRole not in player.roles:
                             await player.add_roles(bjRole)
 
-                        currentKing = bjRole.members[0]
+                        currentKing = bjRole.members[1]
                         await currentKing.remove_roles(bjRole)
                     print(bjRole.members)
                     print(len(bjRole.members))
@@ -983,7 +983,7 @@ async def blackjack(ctx, bet: int):
                 if bjRole not in player.roles:
                     await player.add_roles(bjRole)
 
-                currentKing = bjRole.members[0]
+                currentKing = bjRole.members[1]
                 await currentKing.remove_roles(bjRole)
             print(bjRole.members)
             print(len(bjRole.members))
@@ -1014,7 +1014,7 @@ async def blackjack(ctx, bet: int):
                 if bjRole not in player.roles:
                     await player.add_roles(bjRole)
 
-                currentKing = bjRole.members[0]
+                currentKing = bjRole.members[1]
                 await currentKing.remove_roles(bjRole)
             print(bjRole.members)
             print(len(bjRole.members))
