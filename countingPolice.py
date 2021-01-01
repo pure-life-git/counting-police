@@ -37,6 +37,7 @@ bot = commands.Bot(command_prefix = '.', description = 'Help for the H Welding M
 DATABASE_URL = os.environ['DATABASE_URL']
 conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 cur = conn.cursor()
+conn.autocommit = True
 
 #sets up wolfram api
 wolframID = 'PAX2TQ-2V94QU68XE'
@@ -139,6 +140,7 @@ def countEntry(num, user):
             break
         except psycopg2.InterfaceError:
             reestablish()
+    conn.commit()
     points = cur.fetchone()
 
     SQL = f"UPDATE points SET pointnumber = {points[0]+10} WHERE id = {user.id};"
@@ -229,6 +231,7 @@ async def on_ready():
             break
         except psycopg2.InterfaceError:
             reestablish()
+    conn.commit()
     numCriminalsTable = cur.fetchall()
     numCriminals = numCriminalsTable[0][0]
     print(numCriminals)
@@ -266,6 +269,7 @@ async def add(ctx, *, arg):
             break
         except psycopg2.InterfaceError:
             reestablish()
+    conn.commit()
     rawList = list(cur.fetchall()) #makes a list with every entry
     games = []
     for i in rawList: 
@@ -291,6 +295,7 @@ async def remove(ctx,*,arg):
             break
         except psycopg2.InterfaceError:
             reestablish()
+    conn.commit()
     SQL = "DELETE FROM gametable WHERE games=%s;" #deletes the row in the game table with the game name
     while True:
         try:
@@ -332,6 +337,7 @@ async def choose(ctx):
             break
         except psycopg2.InterfaceError:
             reestablish()
+    conn.commit()
     rawList = list(cur.fetchall()) # makes a list out of the selection
     numSQL = []
     for i in rawList:
