@@ -1233,6 +1233,9 @@ async def one(ctx):
 
 @bot.command(name = "leaderboard", brief = "Displays a leaderboard of points")
 async def leaderboard(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
     pointList = []
     memberList = []
     SQL = f"SELECT id, pointnumber FROM points ORDER BY pointnumber DESC;"
@@ -1251,6 +1254,39 @@ async def leaderboard(ctx):
     await ctx.send(embed=leaderboardEmbed)
 
 
+@bot.command(name = "pay", brief = "Gives another user some of your points")
+async def pay(ctx, recipient: discord.User, amount:int):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
+
+    if recipient == ctx.author:
+        await ctx.send("You can't pay yourself.")
+        return
+
+    SQL = f"SELECT pointnumber FROM points WHERE id = {ctx.author.id};"
+    cur.execute(SQL)
+    conn.commit()
+    authorPoints = cur.fetchone()[0]
+
+    if amount > authorPoints:
+        await ctx.send("You don't have enough points for that.")
+        return
+
+    SQL = f"SELECT pointnumber FROM points WHERE id = {recipient.id};"
+    cur.execute(SQL)
+    conn.commit()
+    recipientPoints = cur.fetchone()[0]
+
+    SQL = f"UPDATE points SET pointnumber = {authorPoints-amount} WHERE id = {ctx.author.id};"
+    cur.execute(SQL)
+    conn.commit()
+
+    SQL = f"UPDATE points SET pointnumber = {recipientPoints+amount} WHERE id = {recipient.id};"
+    cur.execute(SQL)
+    conn.commit()
+
+    await ctx.send(f"Transfer successful! {ctx.author.name} -{amount} --> {recipient.name} +{amount}")
 
 
 
