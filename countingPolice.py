@@ -1239,6 +1239,7 @@ async def leaderboard(ctx):
     cur.execute(SQL)
     conn.commit()
     fullList = cur.fetchall()
+    print(fullList)
     for pair in fullList:
         user = await ctx.message.guild.fetch_member(pair[0])
         point = pair[1]
@@ -1247,7 +1248,7 @@ async def leaderboard(ctx):
     
     leaderboardEmbed = discord.Embed(title = "Points Leaderboard", description = "Leaderboard of points", color = discord.Color.blurple())
     leaderboardEmbed.add_field(name = "Top 5", value = f"1. {memberList[0].name} - {pointList[0]} points\n2. {memberList[1].name} - {pointList[1]} points\n3. {memberList[2].name} - {pointList[2]} points\n4. {memberList[3].name} - {pointList[3]} points\n5. {memberList[4].name} - {pointList[4]} points", inline=False)
-    userIndex = memberList.index(ctx.author.id)
+    userIndex = memberList.index(ctx.author)
     leaderboardEmbed.add_field(name = "Your place", value = f"{userIndex-1}. {memberList[userIndex].name} - {pointList[userIndex]} points")
     await ctx.send(embed=leaderboardEmbed)
 
