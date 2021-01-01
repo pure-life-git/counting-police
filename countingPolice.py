@@ -1405,6 +1405,36 @@ async def pay(ctx, recipient: discord.User, amount:int):
     await ctx.send(f"Transfer successful! {ctx.author.name} -{amount} --> {recipient.name} +{amount}")
 
 
+@commands.cooldown(1, 10, commands.BucketType.user)
+@bot.command(name = "totalpointslb")
+async def totalpointslb(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
+    pointList = []
+    memberList = []
+    SQL = f"SELECT id, totalpoints FROM points ORDER BY totalpoints DESC;"
+    while True:
+        try:
+            cur.execute(SQL)
+            break
+        except psycopg2.InterfaceError:
+            reestablish()
+    conn.commit()
+    fullList = cur.fetchall()
+    for pair in fullList:
+        user = await ctx.message.guild.fetch_member(pair[0])
+        point = pair[1]
+        memberList.append(user)
+        pointList.append(point)
+    
+    leaderboardEmbed = discord.Embed(title = "Total Points Leaderboard", description = "Leaderboard of total points (as of 1/1/2021)", color = discord.Color.blurple())
+    leaderboardEmbed.add_field(name = "Top 5", value = f"1. {memberList[0].name} - {pointList[0]} total points\n2. {memberList[1].name} - {pointList[1]} total points\n3. {memberList[2].name} - {pointList[2]} total points\n4. {memberList[3].name} - {pointList[3]} total points\n5. {memberList[4].name} - {pointList[4]} total points", inline=False)
+    userIndex = memberList.index(ctx.author)
+    leaderboardEmbed.add_field(name = "Your place", value = f"{userIndex+1}. {memberList[userIndex].name} - {pointList[userIndex]} total points")
+    await ctx.send(embed=leaderboardEmbed)
+
+
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
 #  __  __   ____   _____   ______  _____          _______  _____  ____   _   _ 
