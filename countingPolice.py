@@ -1465,7 +1465,13 @@ async def claim(ctx):
         await ctx.message.delete()
         return
     SQL = f"SELECT claimtime FROM points WHERE id = {ctx.author.id};"
-    cur.execute(SQL)
+    while True:
+        try:
+            cur.execute(SQL)
+            break
+        except psycopg2.InterfaceError:
+            reestablish()
+    conn.commit()
     lastTime = cur.fetchone()[0]
 
     UTCtime = datetime.datetime.now(datetime.timezone.utc)
@@ -1487,6 +1493,7 @@ async def claim(ctx):
     if hourDifference > 24:
         SQL = f"SELECT pointnumber FROM points WHERE id = {ctx.author.id};"
         cur.execute(SQL)
+        conn.commit()
         points = cur.fetchone()[0]
 
         SQL = f"UPDATE points SET pointnumber = {points+25} WHERE id = {ctx.author.id};"
