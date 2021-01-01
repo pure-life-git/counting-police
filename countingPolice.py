@@ -837,6 +837,10 @@ async def blackjack(ctx, bet: int):
                         except psycopg2.InterfaceError:
                             reestablish()
                     conn.commit()
+
+                    SQL = f"UPDATE points SET bjwins += 1 WHERE id = {player.id};"
+                    cur.execute(SQL)
+                    conn.commit()
                     return
 
                 elif total(playerHand) > 21: #checks for user bust
@@ -877,6 +881,10 @@ async def blackjack(ctx, bet: int):
                         except psycopg2.InterfaceError:
                             reestablish()
                     conn.commit()
+
+                    SQL = f"UPDATE points SET bjwins += 1 WHERE id = {player.id};"
+                    cur.execute(SQL)
+                    conn.commit()
                     return
 
                 elif total(playerHand) > 21: #checks for user bust
@@ -913,6 +921,10 @@ async def blackjack(ctx, bet: int):
                 except psycopg2.InterfaceError:
                     reestablish()
             conn.commit()
+
+            SQL = f"UPDATE points SET bjwins += 1 WHERE id = {player.id};"
+            cur.execute(SQL)
+            conn.commit()
             return
 
         elif total(dealerHand) > total(playerHand): #checks for greater hand
@@ -930,6 +942,10 @@ async def blackjack(ctx, bet: int):
                     break
                 except psycopg2.InterfaceError:
                     reestablish()
+            conn.commit()
+
+            SQL = f"UPDATE points SET bjwins += 1 WHERE id = {player.id};"
+            cur.execute(SQL)
             conn.commit()
             return
 
