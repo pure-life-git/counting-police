@@ -807,7 +807,7 @@ async def blackjack(ctx, bet: int):
             reestablish()
     points = cur.fetchone()[0]
 
-    if bet > points or bet < 0: #checks if the user has enough points to place the bet
+    if bet > points or bet <= 0: #checks if the user has enough points to place the bet
         await ctx.send("You do not have enough points to bet that much.")
         return
     
