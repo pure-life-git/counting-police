@@ -838,6 +838,11 @@ async def blackjack(ctx, bet: int):
                 except psycopg2.InterfaceError:
                     reestablish()
             conn.commit()
+            
+            SQL = f"UPDATE points SET bjwins = bjwins + 1 WHERE id = {player.id};"
+            cur.execute(SQL)
+            conn.commit()
+
             SQL = f"UPDATE points SET totalpoints = totalpoints + {bet} WHERE id = {player.id};"
             cur.execute(SQL)
             conn.commit()
@@ -865,6 +870,9 @@ async def blackjack(ctx, bet: int):
                             break
                         except psycopg2.InterfaceError:
                             reestablish()
+                    conn.commit()
+                    SQL = f"UPDATE points SET bjwins = bjwins + 1 WHERE id = {player.id};"
+                    cur.execute(SQL)
                     conn.commit()
 
                     SQL = f"UPDATE points SET totalpoints = totalpoints + {bet} WHERE id = {player.id};"
@@ -917,6 +925,9 @@ async def blackjack(ctx, bet: int):
                         except psycopg2.InterfaceError:
                             reestablish()
                     conn.commit()
+                    SQL = f"UPDATE points SET bjwins = bjwins + 1 WHERE id = {player.id};"
+                    cur.execute(SQL)
+                    conn.commit()
 
                     SQL = f"UPDATE points SET totalpoints = totalpoints + {bet} WHERE id = {player.id};"
                     cur.execute(SQL)
@@ -964,6 +975,9 @@ async def blackjack(ctx, bet: int):
                 except psycopg2.InterfaceError:
                     reestablish()
             conn.commit()
+            SQL = f"UPDATE points SET bjwins = bjwins + 1 WHERE id = {player.id};"
+            cur.execute(SQL)
+            conn.commit()
 
             SQL = f"UPDATE points SET totalpoints = totalpoints + {bet} WHERE id = {player.id};"
             cur.execute(SQL)
@@ -992,6 +1006,10 @@ async def blackjack(ctx, bet: int):
                     break
                 except psycopg2.InterfaceError:
                     reestablish()
+            conn.commit()
+
+            SQL = f"UPDATE points SET bjwins = bjwins + 1 WHERE id = {player.id};"
+            cur.execute(SQL)
             conn.commit()
 
             SQL = f"UPDATE points SET totalpoints = totalpoints + {bet} WHERE id = {player.id};"
