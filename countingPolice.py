@@ -18,6 +18,7 @@ from discord.ext.commands.errors import CommandOnCooldown
 import psycopg2
 import wolframalpha
 import datetime
+import chess
 
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
@@ -998,6 +999,12 @@ async def blackjack(ctx, bet: int):
         
         elif total(dealerHand) > 16:
             dealer = False
+            if total(dealerHand) == total(playerHand):
+                await ctx.send("Push. Your bet has been returned.")
+                SQL = f"UPDATE points SET pointnumber = {points} WHERE id = {player.id};"
+                cur.execute(SQL)
+                conn.commit()
+                return
             await ctx.send("Congratulations. You had a greater hand.")
             SQL = f"UPDATE points SET pointnumber = {points+bet} WHERE id = {player.id}" #adds double the bet to the user's account
             while True:
