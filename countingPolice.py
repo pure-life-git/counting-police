@@ -18,7 +18,6 @@ from discord.ext.commands.errors import CommandOnCooldown
 import psycopg2
 import wolframalpha
 import datetime
-import chess
 
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
