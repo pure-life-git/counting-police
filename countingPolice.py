@@ -606,7 +606,7 @@ async def tictactoe(ctx):
     
     playerOne = ctx.message.author #sets player one as the person who initiated the challenge
     playerTwo = ctx.message.mentions[0] #sets player two as the person player one mentioned in their challenge
-    if playerTwo == bot.user:
+    if bot.user.mentioned_in(ctx.message):
         print('true')
         bot = True
 
