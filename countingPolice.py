@@ -556,10 +556,41 @@ async def wolframfull(ctx,*args):
     description = "Simply type the command and then mention someone to start a game with them. To choose your space, treat the board as a numbered grid 1-9 starting at the top left."
     )
 async def tictactoe(ctx):
+    def checkWinner(board):
+        return board['1'] == board['2'] == board['3'] != ' ' or board['4'] == board['5'] == board['6'] != ' ' or board['7'] == board['8'] == board['9'] != ' ' or board['1'] == board['4'] == board['7'] != ' ' or board['2'] == board['5'] == board['8'] != ' ' or board['3'] == board['6'] == board['9'] != ' ' or board['1'] == board['5'] == board['9'] != ' ' or board['3'] == board['5'] == board['7'] != ' '
+
+    def getCompMove(board):
+        corners = ['1', '3', '7', '9']
+        for i in range (1,10):
+            space = ''.join(i)
+            copy = board.copy()
+            if copy[space] == ' ':
+                copy[space] = move
+                if checkWinner(copy):
+                    return space
+        
+        for i in range(1, 10):
+            space = ''.join(i)
+            copy = board.copy()
+            if copy[space] == ' ':
+                copy[space] = plays[0][1]
+                if checkWinner(copy):
+                    return space
+        
+        for i in corners:
+            if board[i] == ' ':
+                return i
+
+        if board['5'] == ' ':
+            return('5')
+        
+
+
     if str(ctx.channel) not in channelList:
         await ctx.message.delete()
         return
     game = True #this var keeps track of if the game is still being played
+    bot = False
     moves = 0 #move counter
     
     board = { #establishes a dictionary containing the values at each space of the board 1-9
@@ -575,24 +606,28 @@ async def tictactoe(ctx):
     
     playerOne = ctx.message.author #sets player one as the person who initiated the challenge
     playerTwo = ctx.message.mentions[0] #sets player two as the person player one mentioned in their challenge
+    if playerTwo == bot.user:
+        bot = True
 
     plays = [(playerOne,'x'), (playerTwo, 'o')] #gives each player a move set
 
-    challMsg = await ctx.send(f"{playerOne.name} has challenged {playerTwo.name} to a game of Tic Tac Toe! Do you accept? Y/N") #sends the challenge message
-    try:
-        msg = await bot.wait_for('message', check = lambda m: m.author == playerTwo, timeout = 30.0) #waits for a message from player two
-        if msg.content.lower() == 'y':
-            await ctx.send(f"Challenge accepted! {playerOne.name} goes first.") #if player two messaged "y" then the challenge is accepted
-            await challMsg.delete() #deletes the challenge message that the bot sent
-        else:
-            await ctx.send('Challenge declined.') #if player two messaged anything other than "y", the challenge is declined and the command is returned
-            await challMsg.delete() #deletes the challenge message that the bot sent
-            return
+    if not bot:
 
-    except asyncio.TimeoutError: #if the program raises a TimeoutError from asyncio, then the challenge times out
-        await challMsg.delete() #deletes the challenge message that the bot sent
-        await ctx.send("Challenge timed out.") #lets the user know that the challenge timed out
-        return #returns the function
+        challMsg = await ctx.send(f"{playerOne.name} has challenged {playerTwo.name} to a game of Tic Tac Toe! Do you accept? Y/N") #sends the challenge message
+        try:
+            msg = await bot.wait_for('message', check = lambda m: m.author == playerTwo, timeout = 30.0) #waits for a message from player two
+            if msg.content.lower() == 'y':
+                await ctx.send(f"Challenge accepted! {playerOne.name} goes first.") #if player two messaged "y" then the challenge is accepted
+                await challMsg.delete() #deletes the challenge message that the bot sent
+            else:
+                await ctx.send('Challenge declined.') #if player two messaged anything other than "y", the challenge is declined and the command is returned
+                await challMsg.delete() #deletes the challenge message that the bot sent
+                return
+
+        except asyncio.TimeoutError: #if the program raises a TimeoutError from asyncio, then the challenge times out
+            await challMsg.delete() #deletes the challenge message that the bot sent
+            await ctx.send("Challenge timed out.") #lets the user know that the challenge timed out
+            return #returns the function
 
     while game == True: #checks if the game has ended
         
@@ -618,23 +653,30 @@ async def tictactoe(ctx):
         else: #else it's player two's turn
             mover = plays[1][0] #sets who is moving
             move = plays[1][1] #sets what piece they use
-            mess = await bot.wait_for('message', check = lambda m: m.author == mover) #waits for the player's move
+            if not bot:
+                mess = await bot.wait_for('message', check = lambda m: m.author == mover) #waits for the player's move
 
-            if mess.content.lower() == 'end': #checks if the user wants to end the game
-                game = False
-                break
+                if mess.content.lower() == 'end': #checks if the user wants to end the game
+                    game = False
+                    break
 
-            elif mess.content.lower() not in keys: #checks if the space is a valid space on the baord
-                await ctx.send("That is not a valid input. Please enter a number 1-9")
-                continue
+                elif mess.content.lower() not in keys: #checks if the space is a valid space on the baord
+                    await ctx.send("That is not a valid input. Please enter a number 1-9")
+                    continue
 
-            elif board[mess.content] != ' ': #checks if the space is full on the board
-                await ctx.send("That space if full. Please pick a free space") 
-                continue
+                elif board[mess.content] != ' ': #checks if the space is full on the board
+                    await ctx.send("That space if full. Please pick a free space") 
+                    continue
 
-            else: #if none of the checks have triggered, then we set the board space to the player's piece and add one to the move count
-                board[mess.content] = move
+                else: #if none of the checks have triggered, then we set the board space to the player's piece and add one to the move count
+                    board[mess.content] = move
+                    moves += 1
+            else:
+                board[getCompMove(board)] = move
                 moves += 1
+                
+
+                
         
         #Win Conditions
         if moves >=5:
