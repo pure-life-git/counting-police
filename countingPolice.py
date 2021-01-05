@@ -1729,7 +1729,7 @@ async def py_error(ctx,error):
     if isinstance(error, commands.CommandOnCooldown):
         await ctx.message.delete()
         errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:.2f}s')
-        await asyncio.sleep(5)
+        await asyncio.sleep(error.retry_after)
         await errMess.delete()
 
 
@@ -1738,7 +1738,7 @@ async def wolfram_error(ctx,error):
     if isinstance(error, commands.CommandOnCooldown):
         await ctx.message.delete()
         errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:.2f}s')
-        await asyncio.sleep(5)
+        await asyncio.sleep(error.retry_after)
         await errMess.delete()
 
 
@@ -1747,7 +1747,7 @@ async def wolframfull_error(ctx,error):
     if isinstance(error, commands.CommandOnCooldown):
         await ctx.message.delete()
         errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:.2f}s')
-        await asyncio.sleep(5)
+        await asyncio.sleep(error.retry_after)
         await errMess.delete()
 
 
@@ -1756,7 +1756,7 @@ async def operator_error(ctx,error):
     if isinstance(error, commands.CommandOnCooldown):
         await ctx.message.delete()
         errMess = await ctx.send(f'You are on cooldowwn for this command. Try again in {error.retry_after:.2f}s')
-        await asyncio.sleep(5)
+        await asyncio.sleep(error.retry_after)
         await errMess.delete()
 
 
@@ -1765,7 +1765,7 @@ async def rps_error(ctx,error):
     if isinstance(error, commands.CommandOnCooldown):
         await ctx.message.delete()
         errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:.2f}s')
-        await asyncio.sleep(5)
+        await asyncio.sleep(error.retry_after)
         await errMess.delete()
 
 
@@ -1774,7 +1774,7 @@ async def decide_error(ctx,error):
     if isinstance(error,commands.CommandOnCooldown):
         await ctx.message.delete()
         errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:.2f}s')
-        await asyncio.sleep(5)
+        await asyncio.sleep(error.retry_after)
         await errMess.delete()
 
 
@@ -1783,7 +1783,7 @@ async def finn_error(ctx,error):
     if isinstance(error,commands.CommandOnCooldown):
         await ctx.message.delete()
         errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:.2f}s')
-        await asyncio.sleep(5)
+        await asyncio.sleep(error.retry_after)
         await errMess.delete()
 
 
@@ -1792,7 +1792,7 @@ async def strike_error(ctx,error):
     if isinstance(error, commands.CommandOnCooldown):
         await ctx.message.delete()
         errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:.2f}s')
-        await asyncio.sleep(5)
+        await asyncio.sleep(error.retry_after)
         await errMess.delete()
 
 @tictactoe.error
@@ -1800,7 +1800,7 @@ async def tictactoe_error(ctx,error):
     if isinstance(error, commands.CommandOnCooldown):
         await ctx.message.delete()
         errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:.2f}s')
-        await asyncio.sleep(5)
+        await asyncio.sleep(error.retry_after)
         await errMess.delete()
 
 @blackjack.error
@@ -1808,7 +1808,7 @@ async def blackjack_error(ctx,error):
     if isinstance(error, commands.CommandOnCooldown):
         await ctx.message.delete()
         errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:.2f}s')
-        await asyncio.sleep(5)
+        await asyncio.sleep(error.retry_after)
         await errMess.delete()
 
 @roulette.error
@@ -1816,7 +1816,7 @@ async def roulette_error(ctx,error):
     if isinstance(error,commands.CommandOnCooldown):
         await ctx.message.delet()
         errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:.2f}s')
-        await asyncio.sleep(5)
+        await asyncio.sleep(error.retry_after)
         await errMess.delete()
 
 @slots.error
@@ -1832,7 +1832,7 @@ async def claim_error(ctx, error):
     if isinstance(error, commands.CommandOnCooldown):
         await ctx.message.delete()
         errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:.2f}s')
-        await asyncio.sleep(5)
+        await asyncio.sleep(error.retry_after)
         await errMess.delete()
 
 
