@@ -1684,7 +1684,7 @@ async def pointtable(ctx):
     cur.execute(SQL)
     rows = cur.fetchall()
     
-    table = "```+------------+---------+------------------+-----------+--------+\n|pointnumber |name     |id                |bj wins    |totalpoints |\n+------------+---------+------------------+-----------+------------+\n"
+    table = "```\n+------------+---------+------------------+-----------+--------+\n|pointnumber |name     |id                |bj wins    |totalpoints |\n+------------+---------+------------------+-----------+------------+\n"
 
     for row in rows:
         entry = f"|{row[0]:<12}|{row[1]:<9}|{row[2]:<18}|{row[3]:<11}|{row[4]:<12}|\n"
@@ -1705,7 +1705,7 @@ async def striketable(ctx):
     cur.execute(SQL)
     rows = cur.fetchall()
     
-    table = "```\n+----------------------+--------------------+---------+\n|name           |id                  |strikes  |\n+----------------------+--------------------+---------+\n"
+    table = "```\n+----------------------+--------------------+---------+\n|name                  |id                  |strikes  |\n+----------------------+--------------------+---------+\n"
     for row in rows:
         curUser = await ctx.message.guild.fetch_member(int(row[0]))
         entry = f"|{curUser.name:<22}|{int(row[0]):<20}|{row[1]:<9}|\n"
