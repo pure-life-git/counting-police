@@ -1686,12 +1686,17 @@ async def pointtable(ctx):
 
     for elt in cur.description:
         col_names.append(elt[0])
-    await ctx.send("`+----------------------"+len(col_names)*'+----------------------+'+'`')
-    await ctx.send("`|pointnumber           |name                  |id                    |blackjack wins        |total points          |`")
-    await ctx.send("`+----------------------"+len(col_names)*'+----------------------+`')
+    
+    table = "```+----------------------+"+4*"----------------------+\n|pointnumber           |name                  |id                    |blackjack wins        |total points          |\n+----------------------+"+4*"----------------------+\n"
+
     for row in rows:
+        entry = f"|{row[0]:<22}|{row[1]:<22}|{row[2]:<22}|{row[3]:<22}|{row[4]:<22}|\n"
+        table = "".join((table,entry))
         await ctx.send(f"`|{row[0]:<22}|{row[1]:<22}|{row[2]:<22}|{row[3]:<22}|{row[4]:<22}|`")
-    await ctx.send("`+----------------------"+len(col_names)*'+----------------------+'+'`')
+    
+    end = "+----------------------+"+4*"----------------------+```"
+    table = "".join((table,end))
+    await ctx.send(table)
 
 
 
