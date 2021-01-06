@@ -1690,9 +1690,9 @@ async def pointtable(ctx):
     table = "```+----------------------+"+4*"----------------------+\n|pointnumber           |name                  |id                    |blackjack wins        |total points          |\n+----------------------+"+4*"----------------------+\n"
 
     for row in rows:
-        entry = f"|{row[0]:<22}|{row[1]:<22}|{row[2]:<22}|{row[3]:<22}|{row[4]:<22}|\n"
+        entry = f"|{row[0]:<7}|{row[1]:<9}|{row[2]:<18}|{row[3]:<11}|{row[4]:<8}|\n"
         table = "".join((table,entry))
-        await ctx.send(f"`|{row[0]:<22}|{row[1]:<22}|{row[2]:<22}|{row[3]:<22}|{row[4]:<22}|`")
+        #await ctx.send(f"`|{row[0]:<7}|{row[1]:<9}|{row[2]:<18}|{row[3]:<11}|{row[4]:<8}|`")
     
     end = "+----------------------+"+4*"----------------------+```"
     table = "".join((table,end))
