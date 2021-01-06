@@ -1696,6 +1696,7 @@ async def pointtable(ctx):
     
     end = "+----------------------+"+4*"----------------------+```"
     table = "".join((table,end))
+    print(len(table))
     await ctx.send(table)
 
 
