@@ -1687,7 +1687,7 @@ async def pointtable(ctx):
     for elt in cur.description:
         col_names.append(elt[0])
     
-    table = "```+------------+---------+------------------+-----------+--------+\n|pointnumber |name     |id                 |blackjack wins |total points |\n+----------------------+"+4*"----------------------+\n"
+    table = "```+------------+---------+------------------+-----------+--------+\n|pointnumber |name     |id                 |blackjack wins |total points |\n+------------+---------+------------------+-----------+--------+\n"
 
     for row in rows:
         entry = f"|{row[0]:<12}|{row[1]:<9}|{row[2]:<18}|{row[3]:<11}|{row[4]:<8}|\n"
