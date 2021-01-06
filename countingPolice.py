@@ -1679,13 +1679,10 @@ async def dev(ctx):
 async def pointtable(ctx):
     if ctx.author.id not in modID:
         return
-    col_names = []
+
     SQL = "SELECT pointnumber, name, id, bjwins,totalpoints FROM points;"
     cur.execute(SQL)
     rows = cur.fetchall()
-
-    for elt in cur.description:
-        col_names.append(elt[0])
     
     table = "```+------------+---------+------------------+-----------+--------+\n|pointnumber |name     |id                |bj wins    |totalpoints |\n+------------+---------+------------------+-----------+------------+\n"
 
@@ -1699,6 +1696,23 @@ async def pointtable(ctx):
     print(len(table))
     await ctx.send(table)
 
+@dev.command(name = 'striketable')
+async def striketable(ctx):
+    if ctx.author.id not in modID:
+        return
+    
+    SQL = "SELECT name, strikes FROM striketable;"
+    cur.execute(SQL)
+    rows = cur.fetchall()
+    
+    table = "```\n+---------------+--------------------+---------+\n|name           |id                  |strikes  |\n+---------------+--------------------+---------+\n"
+    for row in rows:
+        curUser = await ctx.message.guild.fetch_member(int(row[0]))
+        entry = f"|{curUser.name:<15}|{int(row[0]):<20}|{row[1]:<9}|\n"
+        table = "".join((table,entry))
+    end = "+---------------+--------------------+---------+\n|name           |id                  |strikes  |\n+---------------+--------------------+---------+```"
+    table = "".join((table,end))
+    await ctx.send(table)
 
 
 
