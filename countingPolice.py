@@ -1705,12 +1705,12 @@ async def striketable(ctx):
     cur.execute(SQL)
     rows = cur.fetchall()
     
-    table = "```\n+---------------+--------------------+---------+\n|name           |id                  |strikes  |\n+---------------+--------------------+---------+\n"
+    table = "```\n+----------------------+--------------------+---------+\n|name           |id                  |strikes  |\n+----------------------+--------------------+---------+\n"
     for row in rows:
         curUser = await ctx.message.guild.fetch_member(int(row[0]))
-        entry = f"|{curUser.name:<15}|{int(row[0]):<20}|{row[1]:<9}|\n"
+        entry = f"|{curUser.name:<22}|{int(row[0]):<20}|{row[1]:<9}|\n"
         table = "".join((table,entry))
-    end = "+---------------+--------------------+---------+\n|name           |id                  |strikes  |\n+---------------+--------------------+---------+```"
+    end = "+----------------------+--------------------+---------+```"
     table = "".join((table,end))
     await ctx.send(table)
 
