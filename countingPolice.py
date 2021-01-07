@@ -1971,7 +1971,7 @@ async def on_message(message):
                 cur.execute(SQL)
                 return
             else:
-                SQL = f"INSERT INTO sentence VALUES ({str(message.content)});"
+                SQL = f"INSERT INTO sentence VALUES ('{str(message.content)}');"
                 cur.execute(SQL)
         if message.content.lower().startswith('im') or str(message.content).lower().startswith("i'm"):
             dad = await message.channel.send('Hi ' + message.content.split(' ',1)[1] + ", I'm dad!")
