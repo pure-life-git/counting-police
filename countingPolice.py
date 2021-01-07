@@ -1812,7 +1812,7 @@ async def dice(ctx, *args):
 @commands.cooldown(1, 15, commands.BucketType.user)
 @bot.command(name = "source", brief = "Links the source github repo")
 async def source(ctx):
-    await ctx.send("https://hastebin.com/iseyugafik.py")
+    await ctx.send("https://hastebin.com/fakiyesovo.py")
 
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
