@@ -1969,18 +1969,10 @@ async def on_message(message):
                 await message.channel.send(" ".join(wordsList) + ".")
                 SQL = "DELETE FROM sentence;"
                 cur.execute(SQL)
-                await message.channel.edit(topic = "0 WORDS LONG")
                 return
             else:
                 SQL = f"INSERT INTO sentence VALUES ('{str(message.content)}');"
                 cur.execute(SQL)
-                SQL = "SELECT * FROM sentence;"
-                cur.execute(SQL)
-                wordsListSQL = cur.fetchall()
-                wordsList = []
-                for word in wordsListSQL:
-                    wordsList.append(word[0])
-                await message.channel.edit(topic = f"{len(wordsList)} WORDS LONG")
                 return
         if message.content.lower().startswith('im') or str(message.content).lower().startswith("i'm"):
             dad = await message.channel.send('Hi ' + message.content.split(' ',1)[1] + ", I'm dad!")
