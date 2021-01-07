@@ -1715,7 +1715,17 @@ async def striketable(ctx):
     await ctx.send(table)
 
 
-
+@dev.command(name="sql")
+async def devsql(ctx, statement: str):
+    if ctx.author.id not in modID:
+        return
+    try:
+        cur.execute(statement)
+        await ctx.send("Process completed")
+    except psycopg2.Error:
+        await ctx.send("An error occurred")
+        return
+    
 
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
@@ -1948,6 +1958,21 @@ async def on_message(message):
 
     #if the message is from a channel other than counting, it checks to see if it can make a dad joke
     if str(message.channel) != 'counting':
+        if str(message.channel) == "one-word-sentence":
+            if str(message.content) == ".":
+                SQL = "SELECT * FROM sentence;"
+                cur.execute(SQL)
+                wordsListSQL = cur.fetchall()
+                wordsList = []
+                for word in wordsListSQL:
+                    wordsList.append(word[0])
+                await message.channel.send(" ".join(wordsList) + ".")
+                SQL = "DELETE FROM sentence;"
+                cur.execute(SQL)
+                return
+            else:
+                SQL = f"INSERT INTO sentence VALUES ({str(message.content)});"
+                cur.execute(SQL)
         if message.content.lower().startswith('im') or str(message.content).lower().startswith("i'm"):
             dad = await message.channel.send('Hi ' + message.content.split(' ',1)[1] + ", I'm dad!")
             await dad.add_reaction('👌')
