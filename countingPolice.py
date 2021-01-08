@@ -816,7 +816,7 @@ async def copypasta(ctx):
         await ctx.message.delete()
         return
     posts = []
-    for submission in reddit.subreddit("copypasta").top(limit=50):
+    for submission in reddit.subreddit("copypasta").hot(limit=50):
         posts.append(submission)
     while True:
         post = random.choice(posts)
