@@ -809,12 +809,12 @@ async def poll(ctx,*args):
     await ctx.send(embed=resultsEmbed) #sends the results embed
 
 
+@commands.cooldown(1, 120, commands.BucketType.user)
 @bot.command(name = "copypasta", brief = "Randomly chooses a post from r/copypasta")
 async def copypasta(ctx):
-    if ctx.author.id not in modID:
-        return
-    if str(ctx.channel) != "bot":
+    if str(ctx.channel) not in channelList:
         await ctx.message.delete()
+        return
     posts = []
     for submission in reddit.subreddit("copypasta").top(limit=50):
         posts.append(submission)
