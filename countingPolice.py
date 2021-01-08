@@ -813,6 +813,8 @@ async def poll(ctx,*args):
 async def copypasta(ctx):
     if ctx.author.id not in modID:
         return
+    if str(ctx.channel) != "bot":
+        await ctx.message.delete()
     posts = []
     for submission in reddit.subreddit("copypasta").top(limit=50):
         posts.append(submission)
