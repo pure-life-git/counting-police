@@ -829,8 +829,8 @@ async def copypasta(ctx):
 
 @bot.command(name="suggestion", brief="Submit a suggestion for the bot", description = "Submit a suggestion for the bot")
 async def suggestion(ctx, suggestion):
-    await ctx.author.send(f"This --> ({suggestion}) fucking sucks. You should be ashamed.")
-    await ctx.author.send("https://images.emojiterra.com/google/android-pie/512px/1f595.png")
+    await ctx.message.add_reaction("🖕")
+    await ctx.channel.send(f"This --> ({suggestion}) fucking sucks. You should be ashamed.")
 
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
