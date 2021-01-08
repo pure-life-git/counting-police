@@ -18,6 +18,7 @@ from discord.ext.commands.errors import CommandOnCooldown
 import psycopg2
 import wolframalpha
 import datetime
+import praw
 
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
@@ -43,6 +44,12 @@ conn.autocommit = True
 #sets up wolfram api
 wolframID = 'PAX2TQ-2V94QU68XE'
 wolframClient = wolframalpha.Client(wolframID)
+
+reddit = praw.Reddit(
+    client_id = "lJAFFMKHpYC78A", 
+    client_secret = "F-SH3uYtIGzZCBC1xNYkxBPPQMgDqg", 
+    user_agent = "windows:counting-police:v1.0 (by/u/TheosOldUsername)"
+)
 
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
@@ -802,6 +809,16 @@ async def poll(ctx,*args):
     await ctx.send(embed=resultsEmbed) #sends the results embed
 
 
+@bot.command(name = "copypasta", brief = "Randomly chooses a post from r/copypasta")
+async def copypasta(ctx):
+    posts = []
+    for submission in reddit.subreddit("copypasta").top(limit=50):
+        posts.append(submission)
+    post = random.choice(posts)
+    await ctx.send(post.selftext)
+
+
+
 #--------------------------------------------------------------------------------------------------------------------------------------#
 #   _____            __  __  ____   _       _____  _   _   _____ 
 #  / ____|    /\    |  \/  ||  _ \ | |     |_   _|| \ | | / ____|
@@ -1263,7 +1280,7 @@ async def slots(ctx):
     else:
         await ctx.send("You didn't win. Good luck next time.")
         return
-    
+
 
 @bot.group(name='store', brief = 'Displays the store page', invoke_without_command = True)
 async def store(ctx):
@@ -1282,6 +1299,7 @@ async def store(ctx):
     storeEmbed.add_field(name = "Your Points", value = f"{points}", inline = False)
     storeEmbed.add_field(name = "One - Remove a strike", value = "Removes a strike from your counting record\nCost: 250 points", inline = False)
     await ctx.send(embed=storeEmbed)
+
 
 @store.command(name = "one", description = "Removes a strike from your counting record")
 async def one(ctx):
@@ -1583,7 +1601,7 @@ async def strikes(ctx):
     await ctx.message.add_reaction('0️⃣')
 
 
-@bot.command(name = "lock")
+@bot.command(name = "lock", help_command = None)
 async def lock(ctx, channel: discord.TextChannel):
     if ctx.author.id not in modID:
         await ctx.send("You do not have the permissions to use this command.")
@@ -1596,13 +1614,13 @@ async def lock(ctx, channel: discord.TextChannel):
     await channel.send("Channel locked.")
 
 
-@bot.command(name = "unlock")
+@bot.command(name = "unlock", help_command = None)
 async def unlock(ctx, channel: discord.TextChannel):
     if ctx.author.id not in modID:
         await ctx.send("You do not have the permissions to use this command.")
         return
     channel = channel or ctx.channel
-    role = discord.utils.get(ctx.message.guild.roles,name='Patrons') #assigns the counting clown role to a variable
+    role = discord.utils.get(ctx.message.guild.roles,name='Patrons')
     overwrite = channel.overwrites_for(role)
     overwrite.send_messages = True
     await channel.set_permissions(role, overwrite=overwrite)
@@ -1615,7 +1633,7 @@ async def claim(ctx):
     if str(ctx.channel) not in channelList:
         await ctx.message.delete()
         return
-    SQL = f"SELECT claimtime FROM points WHERE id = {ctx.author.id};"
+    SQL = f"SELECT claimtime FROM points WHERE id = {ctx.author.id};" #grab the last claimtime row from the DB
     while True:
         try:
             cur.execute(SQL)
@@ -1623,59 +1641,59 @@ async def claim(ctx):
         except psycopg2.InterfaceError:
             reestablish()
     conn.commit()
-    lastTime = cur.fetchone()[0]
+    lastTime = cur.fetchone()[0] #gets the actual time from the returned tuple
 
-    UTCtime = datetime.datetime.now(datetime.timezone.utc)
+    UTCtime = datetime.datetime.now(datetime.timezone.utc) #grabs the time now
 
-    timeDifference = UTCtime - lastTime
-    secondDifference = timeDifference.total_seconds()
-    hourDifference = secondDifference/3600
+    timeDifference = UTCtime - lastTime #gets the time differnce between the last claim time and the current time
+    secondDifference = timeDifference.total_seconds() #obtains a difference in seconds from the difference
+    hourDifference = secondDifference/3600 #converts the second difference to an hour difference
 
     secondDifference = 86400 - secondDifference
 
-    hours = secondDifference // 3600
+    hours = secondDifference // 3600 #gets number of hours until next claim time
 
     secondDifference %= 3600
-    minutes = secondDifference // 60
+    minutes = secondDifference // 60 #gets number of minutes until next claim time minus hours
 
     secondDifference %= 60
-    seconds = secondDifference
+    seconds = secondDifference #gets number of seconds until next claim time minus hours and minutes
 
-    if hourDifference > 24:
+    if hourDifference > 24: #if the time difference is more than a day
         SQL = f"SELECT pointnumber FROM points WHERE id = {ctx.author.id};"
         cur.execute(SQL)
         conn.commit()
-        points = cur.fetchone()[0]
+        points = cur.fetchone()[0] #selects the current point value of the user
 
-        SQL = f"UPDATE points SET pointnumber = {points+25} WHERE id = {ctx.author.id};"
+        SQL = f"UPDATE points SET pointnumber = {points+25} WHERE id = {ctx.author.id};" #adds 25 points to the user's account
         cur.execute(SQL)
         conn.commit()
 
-        SQL = f"UPDATE points SET claimtime = '{UTCtime}' WHERE id = {ctx.author.id};"
+        SQL = f"UPDATE points SET claimtime = '{UTCtime}' WHERE id = {ctx.author.id};" #updates the claimtime to the current time
         cur.execute(SQL)
         conn.commit()
         await ctx.send("25 points have been added to your account. You can claim again in 24 hours.")
         
     else:
-        await ctx.send(f"You can claim your points in {int(hours)}h {int(minutes)}m {int(seconds)}s.")
+        await ctx.send(f"You can claim your points in {int(hours)}h {int(minutes)}m {int(seconds)}s.") #tells the user how long they have until they can claim their points
         return
-    print(hourDifference)
 
-@bot.command(name = "createrole")
+
+@bot.command(name = "createrole", help_command=None)
 async def createrole(ctx, name: str, r: int, g: int, b: int):
     if ctx.author.id not in modID:
         await ctx.send("You do not have the permissions to use this command.")
         return
-    await ctx.guild.create_role(name=name, color=discord.Color.from_rgb(r, g, b))
+    await ctx.guild.create_role(name=name, color=discord.Color.from_rgb(r, g, b)) #creates a role with "name" name and "r,g,b" color
     await ctx.send(f"Role created with name {name} and color from rgb({r}, {g}, {b})")
 
 
-@bot.group(invoke_without_command = True)
+@bot.group(invoke_without_command = True, help_command=None)
 async def dev(ctx):
     if ctx.author.id not in modID:
         return
 
-@dev.command(name = 'pointtable')
+@dev.command(name = 'pointtable', help_command=None)
 async def pointtable(ctx):
     if ctx.author.id not in modID:
         return
@@ -1696,7 +1714,7 @@ async def pointtable(ctx):
     print(len(table))
     await ctx.send(table)
 
-@dev.command(name = 'striketable')
+@dev.command(name = 'striketable', help_command = None)
 async def striketable(ctx):
     if ctx.author.id not in modID:
         return
@@ -1715,7 +1733,7 @@ async def striketable(ctx):
     await ctx.send(table)
 
 
-@dev.command(name="sql")
+@dev.command(name="sql", help_command=None)
 async def devsql(ctx, statement: str):
     if ctx.author.id not in modID:
         return
@@ -1770,7 +1788,7 @@ async def decide(ctx,arg1,arg2):
         await ctx.message.delete()
         return
     try:
-        if isinstance(arg1, int) == False or isinstance(arg2,int) == False:
+        if isinstance(arg1, int) == False or isinstance(arg2,int) == False: #checks if either argument isn't an int
             await ctx.send("Please enter whole numbers")
             return
         number = random.randint(int(arg1),int(arg2))
@@ -1792,10 +1810,10 @@ async def dice(ctx, *args):
         return
     
     for i in argsList:
-        matched = re.match("^[0-9]+d[0-9]+$", i)
+        matched = re.match("^[0-9]+d[0-9]+$", i) #this regex checks to see if the input from the user matches the format of a die
         is_match = bool(matched)
         if is_match == False:
-            await ctx.send("Please enter a valid die")
+            await ctx.send("Please enter a valid die") #if the input doesn't match, lets the user know and returns
             return
     sum = 0
     rolls = []
