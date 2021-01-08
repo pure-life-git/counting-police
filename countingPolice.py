@@ -829,6 +829,9 @@ async def copypasta(ctx):
 
 @bot.command(name="suggestion", brief="Submit a suggestion for the bot", description = "Submit a suggestion for the bot")
 async def suggestion(ctx, *args):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
     await ctx.message.add_reaction("🖕")
     await ctx.channel.send(f"This --> ({' '.join(args)}) fucking sucks. You should be ashamed.")
 
@@ -1842,9 +1845,9 @@ async def dice(ctx, *args):
 
 
 @commands.cooldown(1, 15, commands.BucketType.user)
-@bot.command(name = "source", brief = "Links the source github repo")
+@bot.command(name = "source", brief = "Links the source code hastebin")
 async def source(ctx):
-    await ctx.send("https://hastebin.com/fakiyesovo.py")
+    await ctx.send("https://hastebin.com/eyiyamosaq.py")
 
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
