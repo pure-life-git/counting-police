@@ -828,9 +828,9 @@ async def copypasta(ctx):
 
 
 @bot.command(name="suggestion", brief="Submit a suggestion for the bot", description = "Submit a suggestion for the bot")
-async def suggestion(ctx, suggestion):
+async def suggestion(ctx):
     await ctx.message.add_reaction("🖕")
-    await ctx.channel.send(f"This --> ({suggestion}) fucking sucks. You should be ashamed.")
+    await ctx.channel.send(f"This --> ({ctx.message.content}) fucking sucks. You should be ashamed.")
 
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
