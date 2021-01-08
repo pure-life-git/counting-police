@@ -819,7 +819,7 @@ async def copypasta(ctx):
         try:
             await ctx.send(post.selftext)
             break
-        except len(post.selftext) > 1999:
+        except discord.errors.HTTPException:
             continue
 
 
