@@ -811,6 +811,8 @@ async def poll(ctx,*args):
 
 @bot.command(name = "copypasta", brief = "Randomly chooses a post from r/copypasta")
 async def copypasta(ctx):
+    if ctx.author.id not in modID:
+        return
     posts = []
     for submission in reddit.subreddit("copypasta").top(limit=50):
         posts.append(submission)
