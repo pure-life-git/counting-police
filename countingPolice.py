@@ -814,8 +814,14 @@ async def copypasta(ctx):
     posts = []
     for submission in reddit.subreddit("copypasta").top(limit=50):
         posts.append(submission)
-    post = random.choice(posts)
-    await ctx.send(post.selftext)
+    while True:
+        post = random.choice(posts)
+        try:
+            await ctx.send(post.selftext)
+            break
+        except len(post.selftext) > 1999:
+            continue
+
 
 
 
