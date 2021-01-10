@@ -259,7 +259,7 @@ def Check(user):
     if r:
         r = r[0]
         if r['type'] == 'live':
-            return True
+            return True, r['game_name']
         else:
             return False
     else:
@@ -2153,10 +2153,11 @@ async def on_voice_state_update(member, before, after):
                 streamersInVC.append(streamerList[person.id])
         
         for streamer in streamersInVC:
-            if Check(streamer):
+            streaming, name = Check(streamer)
+            if streaming == True:
                 botChannel = bot.get_channel(514562197217738769)
                 streamer = bot.get_user(list(streamerList.keys())[list(streamerList.values()).index(streamer)])
-                msg = await botChannel.send(f"{member.mention}, {streamer.name} is streaming.")
+                msg = await botChannel.send(f"{member.mention}, {streamer.name} is streaming {name}.")
                 await asyncio.sleep(60)
                 await msg.delete()
     else:
