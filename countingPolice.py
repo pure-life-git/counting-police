@@ -2064,7 +2064,7 @@ async def on_message(message):
             return [len(list(y for y in x if y[-1].isdigit())) for x in d[word.lower()]]
 
         numsyls = 0
-        finalString = "__"
+        finalString = "*"
         variable = message.content
         print(variable.split())
         for word in variable.split():
@@ -2075,7 +2075,7 @@ async def on_message(message):
             elif numsyls == 12:
                 finalString = "".join((finalString, "\n"))
         if numsyls == 17:
-            finalString = "".join((finalString, f"\n- {message.author.name}__"))
+            finalString = "".join((finalString, f"\n- {message.author.name}*"))
             haikuEmbed = discord.Embed(title = "Haiku Bot", description = "", color = discord.Color.from_rgb(120, 195, 255))
             haikuEmbed.add_field(name = "Haiku", value = finalString, inline = False)
             await message.channel.send(embed = haikuEmbed)
