@@ -2153,7 +2153,7 @@ async def on_voice_state_update(member, before, after):
     for streamer in streamersInVC:
         if Check(streamer):
             botChannel = bot.get_channel(793671486346100786)
-            streamer = bot.get_user(list(streamerList.keys())[list(streamerList.values()).index('streamer')])
+            streamer = bot.get_user(list(streamerList.keys())[list(streamerList.values()).index(streamer)])
             msg = await botChannel.send(f"{member.mention}, {streamer.name} is streaming.")
             await asyncio.sleep(60)
             await msg.delete()
