@@ -2144,20 +2144,23 @@ async def on_message(message):
 
 @bot.event
 async def on_voice_state_update(member, before, after):
-    vc = after.channel
-    #print(vc.name)
-    streamersInVC = []
-    for person in vc.members:
-        if person.id in streamerList:
-            streamersInVC.append(streamerList[person.id])
-    
-    for streamer in streamersInVC:
-        if Check(streamer):
-            botChannel = bot.get_channel(793671486346100786)
-            streamer = bot.get_user(list(streamerList.keys())[list(streamerList.values()).index(streamer)])
-            msg = await botChannel.send(f"{member.mention}, {streamer.name} is streaming.")
-            await asyncio.sleep(60)
-            await msg.delete()
+    if before.channel is None and after.channel is not None:
+        vc = after.channel
+        #print(vc.name)
+        streamersInVC = []
+        for person in vc.members:
+            if person.id in streamerList:
+                streamersInVC.append(streamerList[person.id])
+        
+        for streamer in streamersInVC:
+            if Check(streamer):
+                botChannel = bot.get_channel(514562197217738769)
+                streamer = bot.get_user(list(streamerList.keys())[list(streamerList.values()).index(streamer)])
+                msg = await botChannel.send(f"{member.mention}, {streamer.name} is streaming.")
+                await asyncio.sleep(60)
+                await msg.delete()
+    else:
+        return
         
 
 
