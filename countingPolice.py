@@ -261,7 +261,8 @@ def Check(user):
     if r:
         r = r[0]
         if r['type'] == 'live':
-            return True, r['game_name']
+            newTup = (True, r['game_name'])
+            return(newTup)
         else:
             return False
     else:
@@ -2124,7 +2125,7 @@ async def on_message(message):
 
 @bot.event
 async def on_voice_state_update(member, before, after):
-    if before.channel is None and after.channel is not None:
+    if before.channel != after.channel and after.channel is not None:
         vc = after.channel
         #print(vc.name)
         streamersInVC = []
