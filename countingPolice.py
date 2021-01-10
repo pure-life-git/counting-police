@@ -2146,7 +2146,7 @@ async def on_message(message):
 async def on_voice_state_update(member, before, after):
     vc = after.channel
     streamersInVC = []
-    for person in vc:
+    for person in vc.members:
         if person.id in streamerList:
             streamersInVC.append(streamerList[person.id])
     
