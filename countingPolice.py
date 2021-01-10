@@ -540,16 +540,6 @@ async def rps(ctx, userPick):
             return
 
 
-@commands.cooldown(1, 10, commands.BucketType.user)
-@bot.command(name = 'py', help_command = None)
-async def py(ctx, *args):
-    if str(ctx.channel) not in channelList:
-        await ctx.message.delete()
-        return
-    argsJoin = ' '.join(args)
-    answer = eval(argsJoin)
-    await ctx.send(answer)
-
 
 #sends user input to the wolframalpha api and prints out the answer
 @commands.cooldown(1, 20, commands.BucketType.user)
@@ -1895,15 +1885,6 @@ async def source(ctx):
 # |  __|  |  _  / |  _  / | |  | ||  _  / 
 # | |____ | | \ \ | | \ \ | |__| || | \ \ 
 # |______||_|  \_\|_|  \_\ \____/ |_|  \_\                                                                                  
-
-
-@py.error
-async def py_error(ctx,error):
-    if isinstance(error, commands.CommandOnCooldown):
-        await ctx.message.delete()
-        errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:.2f}s')
-        await asyncio.sleep(error.retry_after)
-        await errMess.delete()
 
 
 @wolfram.error
