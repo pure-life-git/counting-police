@@ -257,7 +257,7 @@ def Check(user):
 
     r = requests.get(URL.format(user), headers = head).json()['data']
 
-    print(r)
+    #print(r)
     if r:
         r = r[0]
         if r['type'] == 'live':
@@ -2135,7 +2135,7 @@ async def on_voice_state_update(member, before, after):
         
         for streamer in streamersInVC:
             streaming, name = Check(streamer)
-            if streaming == 1:
+            if streaming == 1 and streamer != member.id:
                 botChannel = bot.get_channel(514562197217738769)
                 streamer = bot.get_user(list(streamerList.keys())[list(streamerList.values()).index(streamer)])
                 msg = await botChannel.send(f"{member.mention}, {streamer.name} is streaming {name}.")
