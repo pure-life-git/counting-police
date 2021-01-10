@@ -2145,6 +2145,7 @@ async def on_message(message):
 @bot.event
 async def on_voice_state_update(member, before, after):
     vc = after.channel
+    print(vc.name)
     streamersInVC = []
     for person in vc.members:
         if person.id in streamerList:
