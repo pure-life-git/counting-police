@@ -19,6 +19,7 @@ import psycopg2
 import wolframalpha
 import datetime
 import praw
+import requests
 
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
@@ -42,12 +43,12 @@ cur = conn.cursor()
 conn.autocommit = True
 
 #sets up wolfram api
-wolframID = 'PAX2TQ-2V94QU68XE'
+wolframID = os.environ['WOLFRAM_ID']
 wolframClient = wolframalpha.Client(wolframID)
 
 reddit = praw.Reddit(
-    client_id = "lJAFFMKHpYC78A", 
-    client_secret = "F-SH3uYtIGzZCBC1xNYkxBPPQMgDqg", 
+    client_id = os.environ['REDDIT_ID'], 
+    client_secret = os.environ['REDDIT_SECRET'], 
     user_agent = "windows:counting-police:v1.0 (by/u/TheosOldUsername)"
 )
 
@@ -61,6 +62,16 @@ reddit = praw.Reddit(
 #  \_____||______|\____/ |____//_/    \_\|______|
 
 
+
+CLIENT_ID = os.environ['TWITCH_ID']
+CLIENT_SECRET = os.environ['TWITCH_SECRET']
+URL = "https://api.twitch.tv/helix/streams?user_login={}"
+authURL = 'https://id.twitch.tv/oauth2/token'
+AutParams = {'client_id': CLIENT_ID,
+             'client_secret': CLIENT_SECRET,
+             'grant_type': 'client_credentials'
+             }
+
 channelList = [
     "bot", "admins-only"
 ]
@@ -70,6 +81,12 @@ modID = [
     203282979265576960,
     288710564367171595
 ]
+
+streamerList = {
+    173202512977854466: "AGallonofRaccoons",
+    221115052038684683: "smartinmoose",
+    288710564367171595: "ctrlaltdel_"
+}
 
 #foot picture list for .finn
 forbiddenList = [
@@ -224,6 +241,28 @@ def bjwin(player):
     if highestPlayerID == player.id:
         return True
     else: 
+        return False
+
+
+def Check(user):
+    AutCall = requests.post(url=authURL, params=AutParams)
+    access_token = AutCall.json()['access_token']
+
+    head = {
+        'Client-ID': CLIENT_ID,
+        'Authorization': "Bearer " + access_token
+    }
+
+    r = requests.get(URL.format(user), headers = head).json()['data']
+
+    print(r)
+    if r:
+        r = r[0]
+        if r['type'] == 'live':
+            return True
+        else:
+            return False
+    else:
         return False
 
 
@@ -2101,6 +2140,25 @@ async def on_message(message):
                 await guild.create_role(name="1000", color=discord.Color.from_rgb(21,244,238))
                 oneThousandRole = discord.utils.get(message.guild.roles,name='1000')
                 await message.author.add_roles(oneThousandRole)
+
+
+@bot.event
+async def on_voice_state_update(member, before, after):
+    vc = after.channel
+    streamersInVC = []
+    for person in vc:
+        if person.id in streamerList:
+            streamersInVC.append(streamerList[person.id])
+    
+    for streamer in streamersInVC:
+        if Check(streamer):
+            botChannel = bot.get_channel(793671486346100786)
+            streamer = bot.get_user(list(streamerList.keys())[list(streamerList.values()).index('streamer')])
+            msg = await botChannel.send(f"{member.mention}, {streamer.name} is streaming.")
+            await asyncio.sleep(60)
+            await msg.delete()
+        
+
 
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
