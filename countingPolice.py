@@ -1579,9 +1579,6 @@ async def totalpointslb(ctx):
 #deletes the bot messages in the last n number of messages
 @bot.command(name = 'purge', description = 'Deletes the bot messages within the last number of message specified by the user (limit 50)')
 async def purge(ctx,amount: int):
-    if str(ctx.channel) not in channelList:
-        await ctx.message.delete()
-        return
     if amount > 50: #checks to see if the request is stupid (i.e. made by parker)
         await ctx.send("Fuck off dickbag.")
     message = await ctx.history(limit=amount).flatten() #flattens a list of the recent messages
