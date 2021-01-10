@@ -3,3 +3,4 @@ psycopg2
 wolframalpha
 praw
 requests
+nltk

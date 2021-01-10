@@ -20,6 +20,8 @@ import wolframalpha
 import datetime
 import praw
 import requests
+import nltk
+from nltk.corpus import cmudict
 
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
@@ -51,6 +53,9 @@ reddit = praw.Reddit(
     client_secret = os.environ['REDDIT_SECRET'], 
     user_agent = "windows:counting-police:v1.0 (by/u/TheosOldUsername)"
 )
+
+nltk.download('cmudict')
+d = cmudict.dict()
 
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
@@ -2054,6 +2059,28 @@ async def on_message(message):
         if message.content.lower().startswith('i am'):
             dad = await message.channel.send('Hi ' + message.content.lower().split('i am ',1)[1] + ", I'm dad!")
             await dad.add_reaction('👌')
+
+        def nsyl(word):
+            return [len(list(y for y in x if y[-1].isdigit())) for x in d[word.lower()]]
+
+        numsyls = 0
+        finalString = "__"
+        variable = message.content
+        print(variable.split())
+        for word in variable.split():
+            numsyls += nsyl(word)[0]
+            finalString = " ".join((finalString, word))
+            if numsyls == 5:
+                finalString = "".join((finalString, "\n"))
+            elif numsyls == 12:
+                finalString = "".join((finalString, "\n"))
+        if numsyls == 17:
+            finalString = "".join((finalString, f"\n- {message.author.name}__"))
+            haikuEmbed = discord.Embed(title = "Haiku Bot", description = "", color = discord.Color.from_rgb(120, 195, 255))
+            haikuEmbed.add_field(name = "Haiku", value = finalString, inline = False)
+            await message.channel.send(embed = haikuEmbed)
+            #print(finalString)
+        
         return
     else:
         while True:
