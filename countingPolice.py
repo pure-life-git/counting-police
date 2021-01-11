@@ -874,6 +874,8 @@ async def dog(ctx,*args):
     if str(ctx.channel) not in channelList:
         await ctx.message.delete()
         return
+
+
     def getPics(breed = ""):
         if breed != "":
             breeds = requests.get("https://dog.ceo/api/breeds/list/all").json()['message']
@@ -885,6 +887,22 @@ async def dog(ctx,*args):
             URL = "https://dog.ceo/api/breeds/image/random"
         response = requests.get(URL.format(breed)).json()['message']
         return response
+
+
+    if len(args) > 1:
+        subbreeds = requests.get("https://dog.ceo/api/breed/{}/list".format(args[1]))
+        if subbreeds.json()['status'] == "error" or subbreeds.json()['message'] == []:
+            pass
+        else:
+            if args[0] not in subbreeds.json()['message']:
+                await ctx.send("That is not a valid sub-breed of {args[1]}.")
+                return
+            else:
+                breed = "/".join((args[1], args[0]))
+                await ctx.send(getPics(breed))
+                return
+
+    
     try:
         await ctx.send(getPics("".join(args)))
     except IndexError:
