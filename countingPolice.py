@@ -868,8 +868,12 @@ async def suggestion(ctx, *args):
     await ctx.channel.send(f"This --> ({' '.join(args)}) fucking sucks. You should be ashamed.")
 
 
+@commands.cooldown(1, 30, commands.BucketType.user)
 @bot.command(name="dog", brief="Posts a random picture of a dog", description="When used without an arguments, the command will post a picture of a random dog. If given an argument, it will send a random picture of a dog from that breed.")
 async def dog(ctx,*args):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
     def getPics(breed = ""):
         if breed != "":
             breeds = requests.get("https://dog.ceo/api/breeds/list/all").json()['message']
@@ -882,7 +886,7 @@ async def dog(ctx,*args):
         response = requests.get(URL.format(breed)).json()['message']
         return response
     try:
-        await ctx.send(getPics(args[0]))
+        await ctx.send(getPics("".join(args)))
     except IndexError:
         await ctx.send(getPics())
 
@@ -2004,6 +2008,14 @@ async def slots_error(ctx,error):
 
 @claim.error
 async def claim_error(ctx, error):
+    if isinstance(error, commands.CommandOnCooldown):
+        await ctx.message.delete()
+        errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:.2f}s')
+        await asyncio.sleep(error.retry_after)
+        await errMess.delete()
+
+@dog.error
+async def dog_error(ctx, error):
     if isinstance(error, commands.CommandOnCooldown):
         await ctx.message.delete()
         errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:.2f}s')
