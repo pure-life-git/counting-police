@@ -879,8 +879,9 @@ async def dog(ctx,*args):
     def getPics(breed = ""):
         if breed != "":
             breeds = requests.get("https://dog.ceo/api/breeds/list/all").json()['message']
-            if breed not in breeds.keys():
-                return("That's not a valid dog breed.")
+            if "/" not in list(breed):
+                if breed not in breeds.keys():
+                    return("That's not a valid dog breed.")
             breed = "".join((breed,'/'))
             URL = "https://dog.ceo/api/breed/{}images/random"
         else:
