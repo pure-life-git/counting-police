@@ -868,6 +868,24 @@ async def suggestion(ctx, *args):
     await ctx.channel.send(f"This --> ({' '.join(args)}) fucking sucks. You should be ashamed.")
 
 
+@bot.command(name="dog", brief="Posts a random picture of a dog", description="When used without an arguments, the command will post a picture of a random dog. If given an argument, it will send a random picture of a dog from that breed.")
+async def dog(ctx,*args):
+    def getPics(breed = ""):
+        if breed != "":
+            breeds = requests.get("https://dog.ceo/api/breeds/list/all").json()['message']
+            if breed not in breeds.keys():
+                return("That's not a valid dog breed.")
+            breed = "".join((breed,'/'))
+            URL = "https://dog.ceo/api/breed/{}/images/random"
+        else:
+            URL = "https://dog.ceo/api/breeds/image/random"
+        response = requests.get(URL.format(breed)).json()['message']
+        return response
+    
+    await ctx.send(getPics(args[0]))
+
+
+
 #--------------------------------------------------------------------------------------------------------------------------------------#
 #   _____            __  __  ____   _       _____  _   _   _____ 
 #  / ____|    /\    |  \/  ||  _ \ | |     |_   _|| \ | | / ____|
