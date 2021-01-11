@@ -881,8 +881,10 @@ async def dog(ctx,*args):
             URL = "https://dog.ceo/api/breeds/image/random"
         response = requests.get(URL.format(breed)).json()['message']
         return response
-    
-    await ctx.send(getPics(args[0]))
+    if len(args)>0:
+        await ctx.send(getPics(args[0]))
+    else:
+        await ctx.send(getPics())
 
 
 
