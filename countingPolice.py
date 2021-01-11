@@ -876,7 +876,7 @@ async def dog(ctx,*args):
             if breed not in breeds.keys():
                 return("That's not a valid dog breed.")
             breed = "".join((breed,'/'))
-            URL = "https://dog.ceo/api/breed/{}/images/random"
+            URL = "https://dog.ceo/api/breed/{}images/random"
         else:
             URL = "https://dog.ceo/api/breeds/image/random"
         response = requests.get(URL.format(breed)).json()['message']
