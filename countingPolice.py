@@ -315,11 +315,11 @@ async def help(ctx):
     if str(ctx.channel) not in channelList:
         await ctx.message.delete()
         return
-    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the bot", color = discord.Color.from_rgb(231, 76, 60))
-    helpEmbed.add_field(name = ":video_game: Game", value = "Help with the game features of this bot.", inline = True)
-    helpEmbed.add_field(name = ":slot_machine: Gambling", value = "Get help with the various gambling features of this bot.", inline = True)
-    helpEmbed.add_field(name = ":crossed_swords: Moderation", value = "Help with some of the available moderation commands.", inline = False)
-    helpEmbed.add_field(name = ":game_die: Miscellaneous", value = "Help with the other miscellaneous commands", inline = True)
+    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "The prefix of the bot is `.`", color = discord.Color.from_rgb(231, 76, 60))
+    helpEmbed.add_field(name = ":video_game: **Game - 5**", value = "`add`, `remove`, `clear`, `choose`, `list`", inline = False)
+    helpEmbed.add_field(name = ":slot_machine: **Gambling - 9**", value = "`blackjack`, `roulette`, `slots`, `points`, `claim`, `pay`, `leaderboard`, `totalpointslb`, `store`", inline = False)
+    helpEmbed.add_field(name = ":game_die: **Miscellaneous**", value = "`rps`, `wolfram`, `wolframfull`, `tictactoe`, `finn`, `poll`, `copypasta`, `suggestion`, `dog`, `cat`, `purge`, `operator`, `decide`, `dice`, `source`, `ytsearch`", inline = False)
+    helpEmbed.set_footer(text = "For more information try .help (command) or .help (category), ex: .help rps or .help gambling")
     await ctx.send(embed=helpEmbed)
 
 
