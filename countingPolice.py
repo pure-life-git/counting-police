@@ -2048,6 +2048,14 @@ async def dog_error(ctx, error):
         await asyncio.sleep(error.retry_after)
         await errMess.delete()
 
+@cat.error
+async def cat_error(ctx,error):
+    if isinstance(error, commands.CommandOnCooldown):
+        await ctx.message.delete()
+        errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:>2f}s')
+        await asyncio.sleep(error.retry_after)
+        await errMess.delete()
+
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
 #   ____   _   _            __  __  ______   _____  _____           _____  ______ 
@@ -2199,7 +2207,7 @@ async def on_voice_state_update(member, before, after):
                 streamer = bot.get_user(list(streamerList.keys())[list(streamerList.values()).index(streamer)])
                 msg = await botChannel.send(f"{member.mention}, {streamer.name} is streaming {name}.")
                 msgs.append(msg)
-        await asyncio.sleep(60)
+        await asyncio.sleep(30)
         for mess in msgs:
             await mess.delete()
     else:
