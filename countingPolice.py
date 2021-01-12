@@ -910,6 +910,13 @@ async def dog(ctx,*args):
         await ctx.send(getPics())
 
 
+@commands.cooldown(1, 30, commands.BucketType.user)
+@bot.command(name="cat", brief="Posts a random picture of a cat", description = "Posts a random picture of a cat into the channel. You cannot specify breeds")
+async def cat(ctx):
+    response = requests.get("https://aws.random.cat/meow").json()['file']
+    await ctx.send(response)
+
+
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
 #   _____            __  __  ____   _       _____  _   _   _____ 
