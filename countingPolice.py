@@ -1945,12 +1945,12 @@ async def ytsearch(ctx, *args):
         await ctx.send(embed = noResultEmbed)
         return
     resultsEmbed = discord.Embed(title = "YtSearch", description = "First five results", color = discord.Color.from_rgb(255,0,0))
-    for result in len(resultsDICT):
-        video_title = result["title"]
-        video_url = "".join(("https://www.youtube.com", result["url_suffix"]))
-        video_channel = result["channel"]
-        video_runtime = result["duration"]
-        video_views = result["views"]
+    for result in range(len(resultsDICT)):
+        video_title = resultsDICT[result]["title"]
+        video_url = "".join(("https://www.youtube.com", resultsDICT[result]["url_suffix"]))
+        video_channel = resultsDICT[result]["channel"]
+        video_runtime = resultsDICT[result]["duration"]
+        video_views = resultsDICT[result]["views"]
         resultsEmbed.add_field(name=video_title, value = f"Link: {video_url}\nChannel: {video_channel}\nDuration: {video_runtime}\nViews: {video_views}", inline=False)
     await ctx.send(embed=resultsEmbed)
 
