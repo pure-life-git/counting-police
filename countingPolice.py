@@ -1635,36 +1635,36 @@ async def purge(ctx,amount: int):
 
 
 #mutes a member of the server for a specified amount of time
-@bot.command(name = 'mute',help_command = None)
-async def mute(ctx, mention, time='5s'):
-    if str(ctx.channel) not in channelList:
-        await ctx.message.delete()
-        return
-    if time[0] == '-' or time[0].isnumeric() == False:
-        await ctx.send("Please enter a positive number") #sanitizes input
-        return
-    if int(ctx.message.author.id) not in modID:
-        await ctx.send("You do not have permission to use this command.") #only mods can use this command
-        return
+# @bot.command(name = 'mute',help_command = None)
+# async def mute(ctx, mention, time='5s'):
+#     if str(ctx.channel) not in channelList:
+#         await ctx.message.delete()
+#         return
+#     if time[0] == '-' or time[0].isnumeric() == False:
+#         await ctx.send("Please enter a positive number") #sanitizes input
+#         return
+#     if int(ctx.message.author.id) not in modID:
+#         await ctx.send("You do not have permission to use this command.") #only mods can use this command
+#         return
     
-    multiplier = 0
+#     multiplier = 0
     
-    if time[len(time)-1].lower() == 's': #
-        multiplier = 1                   #   
-    if time[len(time)-1].lower() == 'm': #   this set of ifs checks to see
-        multiplier = 60                  #   what unit of time the user 
-    if time[len(time)-1].lower() == 'h': #   would like to use: seconds,
-        multiplier = 3600                #   minutes, hours, or days
-    if time[len(time)-1].lower() == 'd': #
-        multiplier = 86400               #
+#     if time[len(time)-1].lower() == 's': #
+#         multiplier = 1                   #   
+#     if time[len(time)-1].lower() == 'm': #   this set of ifs checks to see
+#         multiplier = 60                  #   what unit of time the user 
+#     if time[len(time)-1].lower() == 'h': #   would like to use: seconds,
+#         multiplier = 3600                #   minutes, hours, or days
+#     if time[len(time)-1].lower() == 'd': #
+#         multiplier = 86400               #
     
-    member = ctx.message.mentions[0]
-    await member.edit(mute=True)
-    await ctx.send(f"{member} has been muted for {time}") #sends a confirmation message to the user
-    time = int(time[:-1])
-    time *= multiplier
-    await asyncio.sleep(time) #sleeps for the duration of time
-    await member.edit(mute=False) #unmutes after the duration of time
+#     member = ctx.message.mentions[0]
+#     await member.edit(mute=True)
+#     await ctx.send(f"{member} has been muted for {time}") #sends a confirmation message to the user
+#     time = int(time[:-1])
+#     time *= multiplier
+#     await asyncio.sleep(time) #sleeps for the duration of time
+#     await member.edit(mute=False) #unmutes after the duration of time
 
 
 #lets the user check how many strikes they have
@@ -1954,6 +1954,13 @@ async def ytsearch(ctx, *args):
         resultsEmbed.add_field(name=video_title, value = f"Link: {video_url}\nChannel: {video_channel}\nDuration: {video_runtime}\nViews: {video_views}", inline=False)
     await ctx.send(embed=resultsEmbed)
 
+
+@bot.command
+async def testembed(ctx):
+    embed = discord.Embed(title="test", description="description", color = discord.Color.black())
+    embed.set_author(name = "author_name", url = "test_url", icon_url = "test_icon_url")
+    embed.add_field(name = "test_field", value = "test_value", inline=False)
+    await ctx.send(embed=testembed)
 
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
