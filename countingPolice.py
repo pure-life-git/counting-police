@@ -1957,7 +1957,7 @@ async def ytsearch(ctx, *args):
 
 @bot.command()
 async def testembed(ctx):
-    embed = discord.Embed(title="test", description="description", color = discord.Color.black())
+    embed = discord.Embed(title="test", description="description", color = discord.Color.blurple())
     embed.set_author(name = "author_name", url = "test_url", icon_url = "test_icon_url")
     embed.add_field(name = "test_field", value = "test_value", inline=False)
     await ctx.send(embed=testembed)
