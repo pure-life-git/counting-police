@@ -301,6 +301,28 @@ async def on_ready():
 
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
+#   _    _  ______  _       _____  
+#  | |  | ||  ____|| |     |  __ \ 
+#  | |__| || |__   | |     | |__) |
+#  |  __  ||  __|  | |     |  ___/ 
+#  | |  | || |____ | |____ | |     
+#  |_|  |_||______||______||_|
+
+
+@bot.group(name='help', invoke_without_command = True)
+async def help(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
+    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the bot", color = discord.Color.from_rgb(231, 76, 60))
+    helpEmbed.add_field(name = ":video_game: Game", value = "Help with the game features of this bot.", inline = True)
+    helpEmbed.add_field(name = ":slot_machine: Gambling", value = "Get help with the various gambling features of this bot.", inline = True)
+    helpEmbed.add_field(name = ":crossed_swords: Moderation", value = "Help with some of the available moderation commands.", inline = False)
+    helpEmbed.add_field(name = ":game_die: Miscellaneous", value = "Help with the other miscellaneous commands", inline = True)
+    await ctx.send(embed=helpEmbed)
+
+
+#--------------------------------------------------------------------------------------------------------------------------------------#
 #   _____            __  __  ______ 
 #  / ____|    /\    |  \/  ||  ____|
 # | |  __    /  \   | \  / || |__   
