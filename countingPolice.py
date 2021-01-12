@@ -37,6 +37,7 @@ from youtube_search import YoutubeSearch
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix = '.', description = 'Help for the H Welding Machine Bot', intents = intents)
 bot.remove_command('help')
+bot_color = discord.Color.from_rgb(231, 76, 60)
 
 #initializes connections to postgresql database
 DATABASE_URL = os.environ['DATABASE_URL']
@@ -315,12 +316,79 @@ async def help(ctx):
     if str(ctx.channel) not in channelList:
         await ctx.message.delete()
         return
-    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "The prefix of the bot is `.`", color = discord.Color.from_rgb(231, 76, 60))
+    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "The prefix of the bot is `.`", color = bot_color)
     helpEmbed.add_field(name = ":video_game: **Game - 5**", value = "`add`, `remove`, `clear`, `choose`, `list`", inline = False)
     helpEmbed.add_field(name = ":slot_machine: **Gambling - 9**", value = "`blackjack`, `roulette`, `slots`, `points`, `claim`, `pay`, `leaderboard`, `totalpointslb`, `store`", inline = False)
-    helpEmbed.add_field(name = ":game_die: **Miscellaneous**", value = "`rps`, `wolfram`, `wolframfull`, `tictactoe`, `finn`, `poll`, `copypasta`, `suggestion`, `dog`, `cat`, `purge`, `operator`, `decide`, `dice`, `source`, `ytsearch`", inline = False)
+    helpEmbed.add_field(name = ":game_die: **Miscellaneous - 16**", value = "`rps`, `wolfram`, `wolframfull`, `tictactoe`, `finn`, `poll`, `copypasta`, `suggestion`, `dog`, `cat`, `purge`, `operator`, `decide`, `dice`, `source`, `ytsearch`", inline = False)
     helpEmbed.set_footer(text = "For more information try .help (command) or .help (category), ex: .help rps or .help gambling")
     await ctx.send(embed=helpEmbed)
+
+@help.command(name = "add")
+async def add_help(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
+    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the .game add command", color = bot_color)
+    helpEmbed.add_field(name = ".game add `<game>`", value = ".game add adds whatever game you enter into the Game List")
+    await ctx.send(embed=helpEmbed)
+
+@help.command(name = "remove")
+async def remove_help(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
+    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the .game remove command", color = bot_color)
+    helpEmbed.add_field(name = ".game remove <game>", value = ".game remove removes whatever game you enter from the Game List")
+    await ctx.send(embed=helpEmbed)
+
+@help.command(name = "clear")
+async def clear_help(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
+    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the .game clear command", color = bot_color)
+    helpEmbed.add_field(name = ".game clear", description = "Clears the Game List")
+    await ctx.send(embed=helpEmbed)
+
+@help.command(name = "choose")
+async def choose_help(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
+    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the .game choose command", color = bot_color)
+    helpEmbed.add_field(name = ".game clear", value = ".game choose randomly chooses a game from the Game List")
+    await ctx.send(embed=helpEmbed)
+
+@help.command(name = "list")
+async def list_help(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
+    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the .game list command", color = bot_color)
+    helpEmbed.add_field(name = ".game list", value = ".game list displays the Game List")
+    await ctx.send(embed=helpEmbed)
+
+@help.command(name = "blackjack")
+async def blackjack_help(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
+    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the .blackjack command", color = bot_color)
+    helpEmbed.add_field(name = ".blackjack <bet>", value = ".blackjack lets you bet your hard earned points on a game of blackjack")
+    helpEmbed.set_footer(text = "All allegations of stacked decks or unfair odds will be ignored")
+    await ctx.send(embed=helpEmbed)
+
+@help.command(name = "roulette")
+async def roulette_help(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
+    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the .roulette command", color = bot_color)
+    helpEmbed.add_field(name = ".roulette <type of bet> <bet>", value = ".roulette lets you bet your hard earned points on a game of roulette")
+    helpEmbed.add_field(name = "Types of Bets", value = "Red - Whether the ball will land on a red space\nBlack - Whether the ball will land on a black space\nEven - Whether the ball will land on an even space\nOdd - Whether the ball will land on an odd space\nLower - Whether the ball will land on a space whose value is less than 19\nGreater - Whether the ball will land on a space whose value is greater than 18", inline = False)
+    await ctx.send(embed=helpEmbed)
+
+
 
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
