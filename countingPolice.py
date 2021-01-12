@@ -338,7 +338,7 @@ async def remove_help(ctx):
         await ctx.message.delete()
         return
     helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the .game remove command", color = bot_color)
-    helpEmbed.add_field(name = ".game remove <game>", value = ".game remove removes whatever game you enter from the Game List")
+    helpEmbed.add_field(name = ".game remove `<game>`", value = ".game remove removes whatever game you enter from the Game List")
     await ctx.send(embed=helpEmbed)
 
 @help.command(name = "clear")
@@ -374,7 +374,7 @@ async def blackjack_help(ctx):
         await ctx.message.delete()
         return
     helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the .blackjack command", color = bot_color)
-    helpEmbed.add_field(name = ".blackjack <bet>", value = ".blackjack lets you bet your hard earned points on a game of blackjack")
+    helpEmbed.add_field(name = ".blackjack `<bet>`", value = ".blackjack lets you bet your hard earned points on a game of blackjack")
     helpEmbed.set_footer(text = "All allegations of stacked decks or unfair odds will be ignored")
     await ctx.send(embed=helpEmbed)
 
@@ -384,11 +384,37 @@ async def roulette_help(ctx):
         await ctx.message.delete()
         return
     helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the .roulette command", color = bot_color)
-    helpEmbed.add_field(name = ".roulette <type of bet> <bet>", value = ".roulette lets you bet your hard earned points on a game of roulette")
-    helpEmbed.add_field(name = "Types of Bets", value = "Red - Whether the ball will land on a red space\nBlack - Whether the ball will land on a black space\nEven - Whether the ball will land on an even space\nOdd - Whether the ball will land on an odd space\nLower - Whether the ball will land on a space whose value is less than 19\nGreater - Whether the ball will land on a space whose value is greater than 18", inline = False)
+    helpEmbed.add_field(name = ".roulette `<type of bet>` `<bet>`", value = ".roulette lets you bet your hard earned points on a game of roulette")
+    helpEmbed.add_field(name = "Types of Bets", value = "- Red: Whether the ball will land on a red space\n- Black: Whether the ball will land on a black space\n- Even: Whether the ball will land on an even space\n- Odd: Whether the ball will land on an odd space\n- Lower: Whether the ball will land on a space whose value is less than 19\n- Greater: Whether the ball will land on a space whose value is greater than 18", inline = False)
     await ctx.send(embed=helpEmbed)
 
+@help.command(name = "slots")
+async def slots_help(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
+    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the .slots command", color = bot_color)
+    helpEmbed.add_field(name = ".slots", value = ".slots lets you spend 10 of your hard earned points for a chance at big winnings")
+    helpEmbed.add_field(name = "Payouts", value = "- 🍒🍒🍒: 20 points\n- 🍊🍊🍊: 35 points\n- 🍋🍋🍋: 50 points\n- 🍑🍑🍑: 75 points\n- 🔔🔔🔔: 150 points\n- :seven::seven::seven:: JACKPOT 250 points")
+    await ctx.send(embed=helpEmbed)
 
+@help.command(name = "points")
+async def points_help(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
+    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the .points command", color = bot_color)
+    helpEmbed.add_field(name = ".points", value = ".points allows you to see how many points you have")
+    await ctx.send(embed=helpEmbed)
+
+@help.command(name = "claim")
+async def claim_help(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
+    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the .claim command", color = bot_color)
+    helpEmbed.add_field(name = ".claim", value = "Lets you claim 25 points every 24 hours")
+    await ctx.send(embed=helpEmbed)
 
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
