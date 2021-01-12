@@ -20,8 +20,7 @@ import wolframalpha
 import datetime
 import praw
 import requests
-import nltk
-from nltk.corpus import cmudict
+from youtube_search import YoutubeSearch
 
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
@@ -217,10 +216,14 @@ def total(hand):
         else:
             total += card
     for i in range(aces):
-        if total >= 11: 
-            total += 1
-        else: 
-            total += 11
+        if aces > 1:
+            if total >= 10:
+                total += 1
+        else:
+            if total >= 11: 
+                total += 1
+            else: 
+                total += 11
     return total
 
 #lets the player "hit" in blackjack
@@ -1775,13 +1778,13 @@ async def claim(ctx):
         return
 
 
-@bot.command(name = "createrole", help_command=None)
-async def createrole(ctx, name: str, r: int, g: int, b: int):
-    if ctx.author.id not in modID:
-        await ctx.send("You do not have the permissions to use this command.")
-        return
-    await ctx.guild.create_role(name=name, color=discord.Color.from_rgb(r, g, b)) #creates a role with "name" name and "r,g,b" color
-    await ctx.send(f"Role created with name {name} and color from rgb({r}, {g}, {b})")
+# @bot.command(name = "createrole", help_command=None)
+# async def createrole(ctx, name: str, r: int, g: int, b: int):
+#     if ctx.author.id not in modID:
+#         await ctx.send("You do not have the permissions to use this command.")
+#         return
+#     await ctx.guild.create_role(name=name, color=discord.Color.from_rgb(r, g, b)) #creates a role with "name" name and "r,g,b" color
+#     await ctx.send(f"Role created with name {name} and color from rgb({r}, {g}, {b})")
 
 
 @bot.group(invoke_without_command = True, help_command=None)
@@ -1855,7 +1858,7 @@ async def devsql(ctx, statement: str):
 @commands.cooldown(1, 15, commands.BucketType.user)
 @bot.command(name = 'operator', description = 'Picks a random Rainbow Six Siege operator from either attack or defense')
 async def operator(ctx,arg1):
-    if str(ctx.channel) != "bot":
+    if str(ctx.channel) not in channelList:
         await ctx.message.delete()
         return
     #checks if the user want an attacker or defender
@@ -1880,7 +1883,7 @@ async def operator(ctx,arg1):
 @commands.cooldown(1, 10, commands.BucketType.user)
 @bot.command(name = 'decide', description = 'Picks a random number between two numbers')
 async def decide(ctx,arg1,arg2):
-    if str(ctx.channel) != "bot":
+    if str(ctx.channel) not in channelList:
         await ctx.message.delete()
         return
     try:
@@ -1896,7 +1899,7 @@ async def decide(ctx,arg1,arg2):
 #common dice roller with parsing
 @bot.command(name = 'dice', description = 'Rolls dice for the user\nFormat: [# of dice]d[# of sides] Separate different dice with spaces')
 async def dice(ctx, *args):
-    if str(ctx.channel) != "bot":
+    if str(ctx.channel) not in channelList:
         await ctx.message.delete()
         return
     #converts all the arguments the user passes into a list
@@ -1927,6 +1930,30 @@ async def dice(ctx, *args):
 @bot.command(name = "source", brief = "Links the source code hastebin")
 async def source(ctx):
     await ctx.send("https://hastebin.com/eyiyamosaq.py")
+
+
+@commands.cooldown(1, 5, commands.BucketType.user)
+@bot.command(name = "ytsearch", brief="Search youtube", description="Displays the first five results for a search term on youtube")
+async def ytsearch(ctx, *args):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
+    searchTerm = " ".join(args)
+    resultsDICT = YoutubeSearch(searchTerm, max_results=5).to_dict()
+    if len(resultsDICT) == 0:
+        noResultEmbed = discord.Embed(title = "YtSearch", description = "No results", color = discord.Color.from_rgb(255, 0, 0))
+        await ctx.send(embed = noResultEmbed)
+        return
+    resultsEmbed = discord.Embed(title = "YtSearch", description = "First five results", color = discord.Color.from_rgb(255,0,0))
+    for result in resultsDICT[0]:
+        video_title = result["title"]
+        video_url = "".join(("https://www.youtube.com", result["url_suffix"]))
+        video_channel = result["channel"]
+        video_runtime = result["duration"]
+        video_views = result["views"]
+        resultsEmbed.add_field(name=video_title, value = f"Link: {video_url}\nChannel: {video_channel}\nDuration: {video_runtime}\nViews: {video_views}", inline=False)
+    await ctx.send(embed=resultsEmbed)
+
 
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
