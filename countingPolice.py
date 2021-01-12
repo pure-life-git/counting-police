@@ -46,8 +46,8 @@ cur = conn.cursor()
 conn.autocommit = True
 
 #sets up wolfram api
-wolframID = os.environ['WOLFRAM_ID']
-wolframClient = wolframalpha.Client(wolframID)
+# wolframID = os.environ['WOLFRAM_ID']
+# wolframClient = wolframalpha.Client(wolframID)
 
 reddit = praw.Reddit(
     client_id = os.environ['REDDIT_ID'], 
@@ -319,7 +319,7 @@ async def help(ctx):
     helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "The prefix of the bot is `.`", color = bot_color)
     helpEmbed.add_field(name = ":video_game: **Game - 5**", value = "`add`, `remove`, `clear`, `choose`, `list`", inline = False)
     helpEmbed.add_field(name = ":slot_machine: **Gambling - 9**", value = "`blackjack`, `roulette`, `slots`, `points`, `claim`, `pay`, `leaderboard`, `totalpointslb`, `store`", inline = False)
-    helpEmbed.add_field(name = ":game_die: **Miscellaneous - 16**", value = "`rps`, `wolfram`, `wolframfull`, `tictactoe`, `finn`, `poll`, `copypasta`, `suggestion`, `dog`, `cat`, `purge`, `operator`, `decide`, `dice`, `source`, `ytsearch`", inline = False)
+    helpEmbed.add_field(name = ":game_die: **Miscellaneous - 16**", value = "`rps`, `tictactoe`, `finn`, `poll`, `copypasta`, `suggestion`, `dog`, `cat`, `purge`, `operator`, `decide`, `dice`, `source`, `ytsearch`", inline = False)
     helpEmbed.set_footer(text = "For more information try .help (command) or .help (category), ex: .help rps or .help gambling")
     await ctx.send(embed=helpEmbed)
 
@@ -384,7 +384,7 @@ async def roulette_help(ctx):
         await ctx.message.delete()
         return
     helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the .roulette command", color = bot_color)
-    helpEmbed.add_field(name = ".roulette `<type of bet>` `<bet>`", value = ".roulette lets you bet your hard earned points on a game of roulette")
+    helpEmbed.add_field(name = ".roulette `<type of bet>` `<bet>`", value = ".roulette lets you bet your hard earned points on a game of roulette", inline = False)
     helpEmbed.add_field(name = "Types of Bets", value = "- Red: Whether the ball will land on a red space\n- Black: Whether the ball will land on a black space\n- Even: Whether the ball will land on an even space\n- Odd: Whether the ball will land on an odd space\n- Lower: Whether the ball will land on a space whose value is less than 19\n- Greater: Whether the ball will land on a space whose value is greater than 18", inline = False)
     await ctx.send(embed=helpEmbed)
 
@@ -394,8 +394,8 @@ async def slots_help(ctx):
         await ctx.message.delete()
         return
     helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the .slots command", color = bot_color)
-    helpEmbed.add_field(name = ".slots", value = ".slots lets you spend 10 of your hard earned points for a chance at big winnings")
-    helpEmbed.add_field(name = "Payouts", value = "- 🍒🍒🍒: 20 points\n- 🍊🍊🍊: 35 points\n- 🍋🍋🍋: 50 points\n- 🍑🍑🍑: 75 points\n- 🔔🔔🔔: 150 points\n- :seven::seven::seven:: JACKPOT 250 points")
+    helpEmbed.add_field(name = ".slots", value = ".slots lets you spend 10 of your hard earned points for a chance at big winnings", inline = False)
+    helpEmbed.add_field(name = "Payouts", value = "- 🍒🍒🍒: 20 points\n- 🍊🍊🍊: 35 points\n- 🍋🍋🍋: 50 points\n- 🍑🍑🍑: 75 points\n- 🔔🔔🔔: 150 points\n- :seven::seven::seven:: JACKPOT 250 points", inline = False)
     await ctx.send(embed=helpEmbed)
 
 @help.command(name = "points")
@@ -414,6 +414,124 @@ async def claim_help(ctx):
         return
     helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the .claim command", color = bot_color)
     helpEmbed.add_field(name = ".claim", value = "Lets you claim 25 points every 24 hours")
+    await ctx.send(embed=helpEmbed)
+
+@help.command(name = "pay")
+async def pay_help(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
+    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the .pay command", color = bot_color)
+    helpEmbed.add_field(name = ".pay `<player>` `<points>`", value = "Lets you give some of your hard earned points to another player")
+    await ctx.send(embed=helpEmbed)
+
+@help.command(name = "leaderboard")
+async def leaderboard_help(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
+    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the .leaderboard command", color = bot_color)
+    helpEmbed.add_field(name = ".leaderboard", value = "Lets you see the leaderboard of people with the most points")
+    await ctx.send(embed=helpEmbed)
+
+@help.command(name = "totalpointslb")
+async def totalpointslb_help(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
+    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the .totalpointslb command", color = bot_color)
+    helpEmbed.add_field(name = ".totalpointslb", value = "Lets you see the leaderboard of total gained points")
+    await ctx.send(embed=helpEmbed)
+
+@help.command(name = "store")
+async def store_help(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
+    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the .store command", color = bot_color)
+    helpEmbed.add_field(name = ".store `<item>`", value = "Lets you see what items are available to buy at the store\nYou can also see a specific item by doing `.store <item>` where item is one, two, etc. as displayed on the main store page")
+    await ctx.send(embed=helpEmbed)
+
+@help.command(name = "rps")
+async def rps_help(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
+    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with .rps command", color = bot_color)
+    helpEmbed.add_field(name = ".rps `<choice>`", value = "Lets you play a game of rock paper scissors with the bot", inline = False)
+    helpEmbed.add_field(name = "Valid Choices", value = "`rock`, `paper`, `scissors`")
+    await ctx.send(embed=helpEmbed)
+
+@help.command(name = "tictactoe")
+async def tictactoe_help(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
+    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with .tictactoe command", color = bot_color)
+    helpEmbed.add_field(name = ".tictactoe `<player>`", value = "Challenge another player to tic-tac-toe. Use 1-9 to indicate the space you would like to place your piece")
+    await ctx.send(embed=helpEmbed)
+
+@help.command(name = "finn")
+async def finn_help(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
+    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with .finn command", color = bot_color)
+    helpEmbed.add_field(name = ".finn", value = "Sends a picture of feet to Finn")
+    await ctx.send(embed=helpEmbed)
+
+@help.command(name = "poll")
+async def poll_help(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
+    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with .poll command", color = bot_color)
+    helpEmbed.add_field(name = ".poll `<question>` `<seconds>`", value = "Starts a poll with a default time limit of 2 minutes")
+    await ctx.send(embed=helpEmbed)
+
+@help.command(name = "copypasta")
+async def copypasta_help(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
+    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with .copypasta command", color = bot_color)
+    helpEmbed.add_field(name = ".copypasta", value = "Posts a random 'hot' post from r/copypasta")
+    await ctx.send(embed=helpEmbed)
+
+@help.command(name = "suggestion")
+async def suggestion_help(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
+    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with .suggestion command", color = bot_color)
+    helpEmbed.add_field(name = ".suggestion `<suggestion>`", value = "Lets you suggest a feature for the bot")
+    await ctx.send(embed=helpEmbed)
+
+@help.command(name = "dog")
+async def dog_help(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
+    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with .dog command", color = bot_color)
+    helpEmbed.add_field(name = ".dog `<breed>`", value = "Sends a random dog picture. You can also specify a breed")
+    await ctx.send(embed=helpEmbed)
+
+@help.command(name = "cat")
+async def cat_help(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
+    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with .cat command", color = bot_color)
+    helpEmbed.add_field(name = ".cat", value = "Sends a random cat picture")
+    await ctx.send(embed=helpEmbed)
+
+@help.command(name = "purge")
+async def purge_help(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
+    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with .purge commnad", color = bot_color)
+    helpEmbed.add_field(name = ".purge `<# of messages>`", value = "Deletes all bot messages within the given number of messages")
     await ctx.send(embed=helpEmbed)
 
 
@@ -663,48 +781,48 @@ async def rps(ctx, userPick):
 
 
 #sends user input to the wolframalpha api and prints out the answer
-@commands.cooldown(1, 20, commands.BucketType.user)
-@bot.command(name = 'wolfram', description='Returns the simple answer to a query from Wolfram|Alpha')
-async def wolfram(ctx,*args):
-    if str(ctx.channel) not in channelList:
-        await ctx.message.delete()
-        return
-    question = ' '.join(args) #joins the user args into a single string
-    response = wolframClient.query(question) #gets a query from the wolfram api using the question
-    wolframEmbed = discord.Embed(title="Wolfram|Alpha API", description=" ", color=discord.Color.from_rgb(255,125,0))
-    try:
-        for pod in response.results: #for each returned pod from the query, adds a new field to the answer embed
-            wolframEmbed.add_field(name=pod.title,value=pod.text,inline=False)
-        #wolframEmbed.add_field(name="Result", value=response.results.text,inline=False)
-        if len(wolframEmbed.fields) == 0:
-            await ctx.send("Wolfram|Alpha could not find any simple results for that query.")
-            return
-        else:
-            await ctx.channel.send(embed=wolframEmbed)
-    except KeyError:
-        await ctx.send("Something went wrong. Please try a different query.")
+# @commands.cooldown(1, 20, commands.BucketType.user)
+# @bot.command(name = 'wolfram', description='Returns the simple answer to a query from Wolfram|Alpha')
+# async def wolfram(ctx,*args):
+#     if str(ctx.channel) not in channelList:
+#         await ctx.message.delete()
+#         return
+#     question = ' '.join(args) #joins the user args into a single string
+#     response = wolframClient.query(question) #gets a query from the wolfram api using the question
+#     wolframEmbed = discord.Embed(title="Wolfram|Alpha API", description=" ", color=discord.Color.from_rgb(255,125,0))
+#     try:
+#         for pod in response.results: #for each returned pod from the query, adds a new field to the answer embed
+#             wolframEmbed.add_field(name=pod.title,value=pod.text,inline=False)
+#         #wolframEmbed.add_field(name="Result", value=response.results.text,inline=False)
+#         if len(wolframEmbed.fields) == 0:
+#             await ctx.send("Wolfram|Alpha could not find any simple results for that query.")
+#             return
+#         else:
+#             await ctx.channel.send(embed=wolframEmbed)
+#     except KeyError:
+#         await ctx.send("Something went wrong. Please try a different query.")
 
 
-#sends user input to the wolframalpha api and prints out a full answer
-@commands.cooldown(1, 120, commands.BucketType.user)
-@bot.command(name = 'wolframfull', description = 'Returns the full answer to a query from Wolfram|Alpha')
-async def wolframfull(ctx,*args):
-    if str(ctx.channel) not in channelList:
-        await ctx.message.delete()
-        return
-    question = ' '.join(args) #joins all the user passed args into a single string
-    res = wolframClient.query(question) #sends the question to be queried from the wolfram api
-    wolframEmbed = discord.Embed(title="Wolfram|Alpha API", description=" ", color=discord.Color.from_rgb(255,125,0))
-    for pod in res.pods:
-        if pod.text:
-            #printPod
-            wolframEmbed.add_field(name=pod.title,value=pod.text,inline=False)
-        for sub in pod.subpods: #checks to see if any of the returned queries subpods contain images
-            if sub['img']['@src']: #if there is an image, creates a new embed and adds the image
-                wolframImgEmbed = discord.Embed(title=pod.title,description=" ", color=discord.Color.from_rgb(255,125,0))
-                wolframImgEmbed.set_image(url=sub['img']['@src'])
-                await ctx.send(embed=wolframImgEmbed)
-    await ctx.send(embed=wolframEmbed)
+# #sends user input to the wolframalpha api and prints out a full answer
+# @commands.cooldown(1, 120, commands.BucketType.user)
+# @bot.command(name = 'wolframfull', description = 'Returns the full answer to a query from Wolfram|Alpha')
+# async def wolframfull(ctx,*args):
+#     if str(ctx.channel) not in channelList:
+#         await ctx.message.delete()
+#         return
+#     question = ' '.join(args) #joins all the user passed args into a single string
+#     res = wolframClient.query(question) #sends the question to be queried from the wolfram api
+#     wolframEmbed = discord.Embed(title="Wolfram|Alpha API", description=" ", color=discord.Color.from_rgb(255,125,0))
+#     for pod in res.pods:
+#         if pod.text:
+#             #printPod
+#             wolframEmbed.add_field(name=pod.title,value=pod.text,inline=False)
+#         for sub in pod.subpods: #checks to see if any of the returned queries subpods contain images
+#             if sub['img']['@src']: #if there is an image, creates a new embed and adds the image
+#                 wolframImgEmbed = discord.Embed(title=pod.title,description=" ", color=discord.Color.from_rgb(255,125,0))
+#                 wolframImgEmbed.set_image(url=sub['img']['@src'])
+#                 await ctx.send(embed=wolframImgEmbed)
+#     await ctx.send(embed=wolframEmbed)
 
 
 #facilitates a tic-tac-toe game between two users
@@ -2081,22 +2199,22 @@ async def ytsearch(ctx, *args):
 # |______||_|  \_\|_|  \_\ \____/ |_|  \_\                                                                                  
 
 
-@wolfram.error
-async def wolfram_error(ctx,error):
-    if isinstance(error, commands.CommandOnCooldown):
-        await ctx.message.delete()
-        errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:.2f}s')
-        await asyncio.sleep(error.retry_after)
-        await errMess.delete()
+# @wolfram.error
+# async def wolfram_error(ctx,error):
+#     if isinstance(error, commands.CommandOnCooldown):
+#         await ctx.message.delete()
+#         errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:.2f}s')
+#         await asyncio.sleep(error.retry_after)
+#         await errMess.delete()
 
 
-@wolframfull.error
-async def wolframfull_error(ctx,error):
-    if isinstance(error, commands.CommandOnCooldown):
-        await ctx.message.delete()
-        errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:.2f}s')
-        await asyncio.sleep(error.retry_after)
-        await errMess.delete()
+# @wolframfull.error
+# async def wolframfull_error(ctx,error):
+#     if isinstance(error, commands.CommandOnCooldown):
+#         await ctx.message.delete()
+#         errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:.2f}s')
+#         await asyncio.sleep(error.retry_after)
+#         await errMess.delete()
 
 
 @operator.error
