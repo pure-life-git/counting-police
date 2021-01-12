@@ -36,6 +36,7 @@ from youtube_search import YoutubeSearch
 #client = discord.Client()
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix = '.', description = 'Help for the H Welding Machine Bot', intents = intents)
+bot.remove_command('help')
 
 #initializes connections to postgresql database
 DATABASE_URL = os.environ['DATABASE_URL']
