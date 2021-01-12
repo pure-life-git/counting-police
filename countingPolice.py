@@ -2079,7 +2079,15 @@ async def dog_error(ctx, error):
 async def cat_error(ctx,error):
     if isinstance(error, commands.CommandOnCooldown):
         await ctx.message.delete()
-        errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:>2f}s')
+        errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:.2f}s')
+        await asyncio.sleep(error.retry_after)
+        await errMess.delete()
+
+@ytsearch.error
+async def ytsearch_error(ctx, error):
+    if isinstance(error, commands.CommandOnCooldown):
+        await ctx.message.delete()
+        errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:.2f}s')
         await asyncio.sleep(error.retry_after)
         await errMess.delete()
 
