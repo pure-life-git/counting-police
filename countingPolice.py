@@ -578,7 +578,7 @@ async def ytsearch_help(ctx):
     helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with .ytsearch command")
     helpEmbed.add_field(name = ".ytsearch `<search terms>`", value = "Sends the first five results from youtube for the provided search term(s)")
     await ctx.send(embed=helpEmbed)
-    
+
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
 #   _____            __  __  ______ 
@@ -2209,7 +2209,7 @@ async def dice(ctx, *args):
 @commands.cooldown(1, 15, commands.BucketType.user)
 @bot.command(name = "source", brief = "Links the source code hastebin")
 async def source(ctx):
-    await ctx.send("https://hastebin.com/eyiyamosaq.py")
+    await ctx.send("https://hastebin.com/wipegubase.py")
 
 
 @commands.cooldown(1, 5, commands.BucketType.user)
