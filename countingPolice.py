@@ -530,10 +530,55 @@ async def purge_help(ctx):
     if str(ctx.channel) not in channelList:
         await ctx.message.delete()
         return
-    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with .purge commnad", color = bot_color)
+    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with .purge command", color = bot_color)
     helpEmbed.add_field(name = ".purge `<# of messages>`", value = "Deletes all bot messages within the given number of messages")
     await ctx.send(embed=helpEmbed)
 
+@help.command(name = "operator")
+async def operator_help(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
+    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with .operator command", color = bot_color)
+    helpEmbed.add_field(name = ".operator `<attacker or defender>`", value = "Randomly chooses either an attacker or defender from R6 Siege")
+    await ctx.send(embed=helpEmbed)
+
+@help.command(name = "decide")
+async def decide_help(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
+    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with .decide command", color = bot_color)
+    helpEmbed.add_field(name = ".decide `<integer>` `<integer>`", value = "Picks a number between two given numbers")
+    await ctx.send(embed=helpEmbed)
+
+@help.command(name = "dice")
+async def dice_help(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
+    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with .dice command")
+    helpEmbed.add_field(name = ".dice `<dice>`", value = "Rolls dice for the user. The format for dice is `# of dice` d `# of sides`. Separate multiple dice by spaces")
+    await ctx.send(embed=helpEmbed)
+
+@help.command(name = "source")
+async def source_help(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
+    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with .source command")
+    helpEmbed.add_field(name = ".source", value = "Sends a hastebin link to the source code. Not updated with every new push")
+    await ctx.send(embed=helpEmbed)
+
+@help.command(name = "ytsearch")
+async def ytsearch_help(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
+    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with .ytsearch command")
+    helpEmbed.add_field(name = ".ytsearch `<search terms>`", value = "Sends the first five results from youtube for the provided search term(s)")
+    await ctx.send(embed=helpEmbed)
+    
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
 #   _____            __  __  ______ 
