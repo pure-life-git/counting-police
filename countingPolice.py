@@ -75,6 +75,13 @@ AutParams = {'client_id': CLIENT_ID,
              'grant_type': 'client_credentials'
              }
 
+key = os.environ['PASTEBIN_KEY']
+login_data = {
+        'api_dev_key': key,
+        'api_user_name': 'TRGoodman',
+        'api_user_password': os.environ['PASTEBIN_PASS']
+        }
+
 channelList = [
     "bot", "admins-only"
 ]
@@ -2210,6 +2217,29 @@ async def dice(ctx, *args):
 @bot.command(name = "source", brief = "Links the source code hastebin")
 async def source(ctx):
     await ctx.send("https://hastebin.com/wipegubase.py")
+    with open('CountingPolice.py', 'r') as file:
+        data = file.read()
+
+
+    data = {
+        'api_option': 'paste',
+        'api_dev_key':key,
+        'api_paste_code':data,
+        'api_paste_name':"test_title",
+        'api_paste_expire_date': 'N',
+        'api_user_key': None,
+        'api_paste_format': 'python'
+        }
+    
+    login = requests.post("https://pastebin.com/api/api_login.php", data=login_data)
+    print("Login status: ", login.status_code if login.status_code != 200 else "OK/200")
+    print("User token: ", login.text)
+    data['api_user_key'] = login.text
+    
+    r = requests.post("https://pastebin.com/api/api_post.php", data=data)
+    print("Paste send: ", r.status_code if r.status_code != 200 else "OK/200")
+    await ctx.send(r.text)
+    #print("Paste URL: ", r.text)
 
 
 @commands.cooldown(1, 5, commands.BucketType.user)
