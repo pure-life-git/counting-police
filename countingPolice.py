@@ -2225,7 +2225,7 @@ async def source(ctx):
         'api_option': 'paste',
         'api_dev_key':key,
         'api_paste_code':data,
-        'api_paste_name':"test_title",
+        'api_paste_name':"H Welding Machine Source Code",
         'api_paste_expire_date': 'N',
         'api_user_key': None,
         'api_paste_format': 'python'
