@@ -2216,7 +2216,7 @@ async def dice(ctx, *args):
 @commands.cooldown(1, 15, commands.BucketType.user)
 @bot.command(name = "source", brief = "Links the source code hastebin")
 async def source(ctx):
-    await ctx.send("https://hastebin.com/wipegubase.py")
+    #await ctx.send("https://hastebin.com/wipegubase.py")
     with open('CountingPolice.py', 'r') as file:
         data = file.read()
 
