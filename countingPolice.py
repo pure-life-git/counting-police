@@ -2214,9 +2214,8 @@ async def dice(ctx, *args):
 
 
 @commands.cooldown(1, 15, commands.BucketType.user)
-@bot.command(name = "source", brief = "Links the source code hastebin")
+@bot.command(name = "source", brief = "Links the source code in pastebin")
 async def source(ctx):
-    #await ctx.send("https://hastebin.com/wipegubase.py")
     with open('countingPolice.py', 'r') as file:
         data = file.read()
 
@@ -2232,14 +2231,13 @@ async def source(ctx):
         }
     
     login = requests.post("https://pastebin.com/api/api_login.php", data=login_data)
-    print("Login status: ", login.status_code if login.status_code != 200 else "OK/200")
-    print("User token: ", login.text)
+    print("Login status: ", login.status_code if login.status_code != 200 else "200")
     data['api_user_key'] = login.text
     
     r = requests.post("https://pastebin.com/api/api_post.php", data=data)
-    print("Paste send: ", r.status_code if r.status_code != 200 else "OK/200")
+    print("Paste send: ", r.status_code if r.status_code != 200 else "200")
     await ctx.send(r.text)
-    #print("Paste URL: ", r.text)
+
 
 
 @commands.cooldown(1, 5, commands.BucketType.user)
