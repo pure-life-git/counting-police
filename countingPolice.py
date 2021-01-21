@@ -837,6 +837,7 @@ async def parker(ctx):
     cur.execute(SQL)
 
     SQL = "SELECT * FROM parker;"
+    cur.execute()
     res = cur.fetchall()
     await ctx.send(f"Parker has said some derivative of PogChamp {len(res)} times.")
 
@@ -844,6 +845,7 @@ async def parker(ctx):
 @parker.command
 async def count(ctx):
     SQL = "SELECT * FROM parker;"
+    cur.execute()
     res = cur.fetchall()
     await ctx.send(f"Parker has said some derivative of PogChamp {len(res)} times.")
     
