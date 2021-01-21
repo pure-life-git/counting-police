@@ -11,7 +11,7 @@ The main feature of this bot is its ability to monitor a counting channel.
 - [x] Make a README
 - [x] Implement subcommands for the game system
 - [x] Make a user-interactive game
-- [ ] Make a gambling system with different games
+- [x] Make a gambling system with different games
 - [ ] Make the bot able to detect if someone edits or deletes their message and reprimand them for it
 - [ ] Come up with other cool features
 # Feature List
@@ -22,13 +22,24 @@ The main feature of this bot is its ability to monitor a counting channel.
 * .game clear - clears the Game List
 * .game list - iterates through and prints out the Game List
 * .choose game - chooses a random game from the Game List
-## Moderation Commands
-* .mute [user mention] [amount of time] - server mutes the mentioned user for the specified amount of time
-* .purge [# of messages] - deletes the bot messages within the specified number of messages
-## Other Features
+## Gambling Commands
+* .blackjack - allows you to gamble your points on a game of blackjack
+* .roulette - allows you to gamble your point on a game of roulette
+* .slots - allows to spend your point on a slot machine
+* .points - lets you check your point balance
+* .claim - allows you to claim 25 points every 24 hours
+* .pay - lets you give money to another user
+* .leaderboard - displays a leaderboard of the people with the most points on the server
+* .totalpointslb - displays a leaderboard of the people with the most overall gained points
+* .store - displays the store where you can spend your points
+## Misc. Commands
 * .poll [option 1] [option 2] [# of seconds] - creates a poll with two options that will defaulty run for 120 seconds unless otherwise specified
-* .wolfram [query] - returns a simple query from Wolfram|Alpha
-* .wolframfull [query] - returns a full query w/ images from Wolfram|Alpha
+* .copypasta - posts a random copypasta from r/copypasta
+* .suggestion - lets you suggest a feature for the bot (with a little surprise)
+* .dog [breed] - posts a random picture of a dog
+* .cat - posts a random picture of a cat
+* .source - posts an auto-updated pastebin link to the source code
+* .ytsearch [search term] - displays the first 5 results from YouTube for a given search term
 * .operator [attacker/defender] - returns a random operator from Rainbow Six Siege basesd on whether the user is attacking or defending
 * .rps [rock/paper/scissors] - plays a game of rock paper scissors with the user. There is a 1 in 100 chance the bot picks gun and automatically wins
 * .tictactoe [user mention] - challenges another user on the server to a game of tic-tac-toe
