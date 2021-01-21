@@ -832,7 +832,11 @@ async def rps(ctx, userPick):
 
 
 @bot.command(name = "parker")
+@commands.cooldown(1, 5, commands.BucketType.user)
 async def parker(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
     SQL = "INSERT INTO parker VALUES (1)"
     cur.execute(SQL)
 
@@ -840,7 +844,11 @@ async def parker(ctx):
 
 
 @bot.command(name = "parkercount")
+@commands.cooldown(1, 5, commands.BucketType.user)
 async def parkercount(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
     SQL = "SELECT * FROM parker;"
     cur.execute(SQL)
     res = cur.fetchall()
