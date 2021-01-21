@@ -831,7 +831,7 @@ async def rps(ctx, userPick):
             return
 
 
-@bot.group(name = "parker", invoke_without_command = True)
+@bot.command(name = "parker")
 async def parker(ctx):
     SQL = "INSERT INTO parker VALUES (1)"
     cur.execute(SQL)
@@ -842,8 +842,8 @@ async def parker(ctx):
     await ctx.send(f"Parker has said some derivative of PogChamp {len(res)} times.")
 
 
-@parker.command
-async def count(ctx):
+@bot.command(name = "parkercount")
+async def parkercount(ctx):
     SQL = "SELECT * FROM parker;"
     cur.execute(SQL)
     res = cur.fetchall()
