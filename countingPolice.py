@@ -831,6 +831,24 @@ async def rps(ctx, userPick):
             return
 
 
+@bot.group(name = "parker", invoke_without_command = True)
+async def parker(ctx):
+    SQL = "INSERT INTO parker VALUES (1)"
+    cur.execute(SQL)
+
+    SQL = "SELECT * FROM parker;"
+    res = cur.fetchall()
+    await ctx.send(f"Parker has said some derivative of PogChamp {len(res)} times.")
+
+
+@parker.command
+async def count(ctx):
+    SQL = "SELECT * FROM parker;"
+    res = cur.fetchall()
+    await ctx.send(f"Parker has said some derivative of PogChamp {len(res)} times.")
+    
+
+
 
 #sends user input to the wolframalpha api and prints out the answer
 # @commands.cooldown(1, 20, commands.BucketType.user)
@@ -1192,7 +1210,6 @@ async def dog(ctx,*args):
                 breed = "/".join((args[1], args[0]))
                 await ctx.send(getPics(breed))
                 return
-
     
     try:
         await ctx.send(getPics("".join(args)))
