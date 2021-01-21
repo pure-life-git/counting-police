@@ -836,10 +836,7 @@ async def parker(ctx):
     SQL = "INSERT INTO parker VALUES (1)"
     cur.execute(SQL)
 
-    SQL = "SELECT * FROM parker;"
-    cur.execute(SQL)
-    res = cur.fetchall()
-    await ctx.send(f"Parker has said some derivative of PogChamp {len(res)} times.")
+    await ctx.message.add_reaction('👍')
 
 
 @bot.command(name = "parkercount")
