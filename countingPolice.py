@@ -228,6 +228,8 @@ def total(hand):
         if aces > 1:
             if total >= 10:
                 total += 1
+            else:
+                total += 11
         else:
             if total >= 11: 
                 total += 1
