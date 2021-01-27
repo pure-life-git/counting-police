@@ -838,7 +838,10 @@ async def rps(ctx, userPick):
 async def parker(ctx):
     if str(ctx.channel) not in channelList:
         await ctx.message.delete()
+        return 
+    elif ctx.author.id not in modID:
         return
+
     SQL = "INSERT INTO parker VALUES (1)"
     cur.execute(SQL)
 
