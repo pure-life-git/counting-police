@@ -144,7 +144,10 @@ defenderList = [
                                                                       
 
 def reestablish():
+    conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+    global cur 
     cur = conn.cursor()
+    conn.autocommit = True
 
 
 #enters a message from the #counting channel into the postgresql DB
