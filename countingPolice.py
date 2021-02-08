@@ -2605,20 +2605,15 @@ async def connectfour(ctx):
         return
     keys = ["1","2","3","4","5","6","7"]
     def printBoard(board):
-        return(f"""```
+        return(f"""
         |{board[0][0]}|{board[1][0]}|{board[2][0]}|{board[3][0]}|{board[4][0]}|{board[5][0]}|{board[6][0]}|\n
-        |-+-+-+-+-+-+-|\n
         |{board[0][1]}|{board[1][1]}|{board[2][1]}|{board[3][1]}|{board[4][1]}|{board[5][1]}|{board[6][1]}|\n
-        |-+-+-+-+-+-+-|\n
         |{board[0][2]}|{board[1][2]}|{board[2][2]}|{board[3][2]}|{board[4][2]}|{board[5][2]}|{board[6][2]}|\n
-        |-+-+-+-+-+-+-|\n
         |{board[0][3]}|{board[1][3]}|{board[2][3]}|{board[3][3]}|{board[4][3]}|{board[5][3]}|{board[6][3]}|\n
-        |-+-+-+-+-+-+-|\n
         |{board[0][4]}|{board[1][4]}|{board[2][4]}|{board[3][4]}|{board[4][4]}|{board[5][4]}|{board[6][4]}|\n
-        |-+-+-+-+-+-+-|\n
         |{board[0][5]}|{board[1][5]}|{board[2][5]}|{board[3][5]}|{board[4][5]}|{board[5][5]}|{board[6][5]}|\n
-        |-+-+-+-+-+-+-|\n
-        ```""")
+        |:one:|:two:|:three:|:four:|:five:|:six:|:seven:|
+        """)
 
     def winconds(board, move: tuple, piece: str):
         col, row = move
@@ -2692,7 +2687,7 @@ async def connectfour(ctx):
         print("done with winconds")
         return False
 
-    board = [[" " for i in range(6)] for i in range(7)]
+    board = [[":white_circle:" for i in range(6)] for i in range(7)]
 
     printBoard(board)
     playerone = ctx.author
@@ -2711,17 +2706,22 @@ async def connectfour(ctx):
         await challMsg.delete()
         await ctx.send("Challenge timed out.")
         return
-    plays = [(playerone, "X"), (playertwo, "O")]
-    await ctx.send(printBoard(board))
+    plays = [(playerone, ":red_circle:"), (playertwo, ":yellow_circle:")]
+    boardEmbed = discord.Embed(title = "Connect 4", color = discord.Color.red())
+    boardEmbed.add_field(name="Board", value=printBoard(board), inline=False)
+    boardEmbed.add_field(name="Turn:", value=":red_circle:", inline=False)
+    await ctx.send(embed=boardEmbed)
     game = True
     movecount = 0
     while game:
         if movecount % 2 == 0:
             player = playerone
             piece = plays[0][1]
+            embedColor = discord.Color.red()
         else: 
             player = playertwo
             piece = plays[1][1]
+            embedColor = discord.Color.gold()
         move = await bot.wait_for('message', check = lambda m: m.author == player)
         if move.content.lower() == 'end':
             game = False
@@ -2730,7 +2730,7 @@ async def connectfour(ctx):
         elif move.content.lower() not in keys:
             await ctx.send("That is not a valid column. Please enter a number 1-7.")
             continue
-        elif all(x is not " " for x in board[int(move.content)-1][1:]) == False:
+        elif all(x is not ":white_circle:" for x in board[int(move.content)-1][1:]) == False:
             await ctx.send("That column is full. Please choose another.")
             continue
 
@@ -2751,14 +2751,17 @@ async def connectfour(ctx):
                 break
         stalecount = 0
         for cols in range(6):
-            if all(elem != " " for elem in board[cols]):
+            if all(elem != ":white_circle:" for elem in board[cols]):
                 stalecount += 1
                 if stalecount == 7:
                     await ctx.send("The game is a stalemate!")
                     return
             else: break
         movecount += 1
-        await ctx.send(printBoard(board))
+        boardEmbed = discord.Embed(title = "Connect 4", color = embedColor)
+        boardEmbed.add_field(name="Board", value=printBoard(board), inline=False)
+        boardEmbed.add_field(name="Turn:", value=piece, inline=False)
+        await ctx.send(embed=boardEmbed)
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
 #runs the bot using the discord bot token provided within Heroku
