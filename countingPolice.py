@@ -2699,7 +2699,7 @@ async def connectfour(ctx):
     playertwo = ctx.message.mentions[0]
     challMsg = await ctx.send(f"{playerone.name} has challenged {playertwo.name} to a game of Connect 4! Do you accept? Y/N")
     try:
-        msg = await bot.wait_for('message', check = lambda m: m.author == playertwo, timout = 30.0)
+        msg = await bot.wait_for('message', check = lambda m: m.author == playertwo, timeout = 30.0)
         if msg.content.lower() in ['y', 'yes']:
             await ctx.send(f"Challenge accepted! {playerone.name} goes first.")
             await challMsg.delete()
