@@ -2730,7 +2730,7 @@ async def connectfour(ctx):
         elif move.content.lower() not in keys:
             await ctx.send("That is not a valid column. Please enter a number 1-7.")
             continue
-        elif board[int(move.content)].count(" ") == 0:
+        elif all(x is " " for x in board[int(move.content)-1]) == False:
             await ctx.send("That column is full. Please choose another.")
             continue
 
