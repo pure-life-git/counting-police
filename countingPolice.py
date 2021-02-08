@@ -2712,6 +2712,7 @@ async def connectfour(ctx):
         await ctx.send("Challenge timed out.")
         return
     plays = [(playerone, ":red_circle:"), (playertwo, ":yellow_circle:")]
+    await ctx.send(printBoard(board))
     game = True
     movecount = 0
     while game:
@@ -2729,28 +2730,27 @@ async def connectfour(ctx):
         elif move.content.lower() not in keys:
             await ctx.send("That is not a valid column. Please enter a number 1-7.")
             continue
-        elif all(elem != " " for elem in board[int(move)]):
+        elif all(elem != " " for elem in board[int(move.content)]):
             await ctx.send("That column is full. Please choose another.")
             continue
 
-        column = board[int(move)-1]
+        column = board[int(move.content)-1]
         for count, row in enumerate(column): 
             if row != " ":
                 column[count-1] = piece
-                if winconds(board, (int(move)-1, count-1), piece):
+                if winconds(board, (int(move.content)-1, count-1), piece):
                     game = False
                     print("You win!")
                 break
             elif count == 5:
-                board[int(move)-1][5] = piece
+                board[int(move.content)-1][5] = piece
                 print("count")
-                win = winconds(board, (int(move)-1, 5), piece)
+                win = winconds(board, (int(move.content)-1, 5), piece)
                 print("winconds")
                 if win:
                     game = False
                     print("You win!")
                 break
-        stalemate = False
         stalecount = 0
         for cols in range(6):
             if all(elem != " " for elem in board[cols]):
