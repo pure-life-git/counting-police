@@ -2711,7 +2711,7 @@ async def connectfour(ctx):
         await challMsg.delete()
         await ctx.send("Challenge timed out.")
         return
-    plays = [(playerone, ":red_circle:"), (playertwo, ":yellow_circle:")]
+    plays = [(playerone, "X"), (playertwo, "O")]
     await ctx.send(printBoard(board))
     game = True
     movecount = 0
@@ -2725,7 +2725,7 @@ async def connectfour(ctx):
         move = await bot.wait_for('message', check = lambda m: m.author == player)
         if move.content.lower() == 'end':
             game = False
-            await ctx.send(f"Game ended by {playerone}.")
+            await ctx.send(f"Game ended by {player}.")
             return
         elif move.content.lower() not in keys:
             await ctx.send("That is not a valid column. Please enter a number 1-7.")
