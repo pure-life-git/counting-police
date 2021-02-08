@@ -2639,7 +2639,7 @@ async def connectfour(ctx):
             except IndexError:
                 break
         
-        print("done checking for vertical")
+
         #check for left/right win
         horWin = False
         count = 0
@@ -2654,7 +2654,7 @@ async def connectfour(ctx):
                     count = 0
             except IndexError:
                 break
-        print("done checking horizontal")
+
 
         #check for bot. left -> top right
         topleft = row < 3 and col < 3
@@ -2671,7 +2671,7 @@ async def connectfour(ctx):
                             return bltrWin
                     except IndexError:
                         continue
-        print("done checking bltr")
+
 
 
         #check for top left -> bot. right
@@ -2689,7 +2689,7 @@ async def connectfour(ctx):
                             return tlbrWin
                     except IndexError:
                         continue
-        print("done checking tlbr")
+        print("done with winconds")
         return False
 
     board = [[" " for i in range(6)] for i in range(7)]
@@ -2730,7 +2730,7 @@ async def connectfour(ctx):
         elif move.content.lower() not in keys:
             await ctx.send("That is not a valid column. Please enter a number 1-7.")
             continue
-        elif all(elem is not " " for elem in board[int(move.content)]):
+        elif board[int(move.content)].count(" ") == 0:
             await ctx.send("That column is full. Please choose another.")
             continue
 
@@ -2740,16 +2740,14 @@ async def connectfour(ctx):
                 column[count-1] = piece
                 if winconds(board, (int(move.content)-1, count-1), piece):
                     game = False
-                    print("You win!")
+                    await ctx.send("You win!")
                 break
             elif count == 5:
                 board[int(move.content)-1][5] = piece
-                print("count")
                 win = winconds(board, (int(move.content)-1, 5), piece)
-                print("winconds")
                 if win:
                     game = False
-                    print("You win!")
+                    await ctx.send("You win!")
                 break
         stalecount = 0
         for cols in range(6):
