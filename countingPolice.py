@@ -2720,7 +2720,7 @@ async def connectfour(ctx):
     game = True
     movecount = 0
     while game:
-        boardmessage = bot.user.fetch_message(allimportantid)
+        boardmessage = await ctx.fetch_message(allimportantid)
         if movecount % 2 == 0:
             player = playerone
             piece = plays[0][1]
