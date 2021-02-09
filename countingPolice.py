@@ -2695,7 +2695,6 @@ async def connectfour(ctx):
 
     board = [["   " for i in range(6)] for i in range(7)]
 
-    printBoard(board)
     playerone = ctx.author
     playertwo = ctx.message.mentions[0]
     challMsg = await ctx.send(f"{playerone.name} has challenged {playertwo.name} to a game of Connect 4! Do you accept? Y/N")
@@ -2716,10 +2715,12 @@ async def connectfour(ctx):
     boardEmbed = discord.Embed(title = "Connect 4", color = discord.Color.red())
     boardEmbed.add_field(name="Board", value=printBoard(board), inline=False)
     boardEmbed.add_field(name="Turn:", value=f"{playerone.name}", inline=False)
-    await ctx.send(embed=boardEmbed)
+    ogmessage = await ctx.send(embed=boardEmbed)
+    allimportantid = ogmessage.id
     game = True
     movecount = 0
     while game:
+        boardmessage = bot.user.fetch_message(allimportantid)
         if movecount % 2 == 0:
             player = playerone
             piece = plays[0][1]
@@ -2732,7 +2733,7 @@ async def connectfour(ctx):
             boardEmbed = discord.Embed(title = "Connect 4", color = embedColor)
             boardEmbed.add_field(name="Board", value=printBoard(board), inline=False)
             boardEmbed.add_field(name="Turn:", value=f"{player.name}", inline=False)
-            await ctx.send(embed=boardEmbed)
+            await boardmessage.edit(embed=boardEmbed)
 
         move = await bot.wait_for('message', check = lambda m: m.author == player)
         if move.content.lower() == 'end':
@@ -2751,7 +2752,12 @@ async def connectfour(ctx):
             if row != "   ":
                 column[count-1] = piece
                 if winconds(board, (int(move.content)-1, count-1), piece):
+                    await move.delete()
                     game = False
+                    boardEmbed = discord.Embed(title = "Connect 4", color = embedColor)
+                    boardEmbed.add_field(name="Board", value=printBoard(board), inline=False)
+                    boardEmbed.add_field(name="Turn:", value=f"{player.name}", inline=False)
+                    await boardmessage.edit(embed=boardEmbed)
                     await ctx.send("You win!")
                     return
                 break
@@ -2759,7 +2765,12 @@ async def connectfour(ctx):
                 board[int(move.content)-1][5] = piece
                 win = winconds(board, (int(move.content)-1, 5), piece)
                 if win:
+                    await move.delete()
                     game = False
+                    boardEmbed = discord.Embed(title = "Connect 4", color = embedColor)
+                    boardEmbed.add_field(name="Board", value=printBoard(board), inline=False)
+                    boardEmbed.add_field(name="Turn:", value=f"{player.name}", inline=False)
+                    await boardmessage.edit(embed=boardEmbed)
                     await ctx.send("You win!")
                     return
                 break
@@ -2768,10 +2779,16 @@ async def connectfour(ctx):
             if all(elem != "   " for elem in board[cols]):
                 stalecount += 1
                 if stalecount == 7:
+                    await move.delete()
                     game = False
+                    boardEmbed = discord.Embed(title = "Connect 4", color = embedColor)
+                    boardEmbed.add_field(name="Board", value=printBoard(board), inline=False)
+                    boardEmbed.add_field(name="Turn:", value=f"{player.name}", inline=False)
+                    await boardmessage.edit(embed=boardEmbed)
                     await ctx.send("The game is a stalemate!")
                     return
             else: break
+        await move.delete()
         movecount += 1
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
