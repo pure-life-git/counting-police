@@ -2605,7 +2605,7 @@ async def connectfour(ctx):
         return
     keys = ["1","2","3","4","5","6","7"]
     def printBoard(board):
-        return(f"""
+        return(f"""```
         |{board[0][0]}|{board[1][0]}|{board[2][0]}|{board[3][0]}|{board[4][0]}|{board[5][0]}|{board[6][0]}|
         |-+-+-+-+-+-+-|
         |{board[0][1]}|{board[1][1]}|{board[2][1]}|{board[3][1]}|{board[4][1]}|{board[5][1]}|{board[6][1]}|
@@ -2619,7 +2619,7 @@ async def connectfour(ctx):
         |{board[0][5]}|{board[1][5]}|{board[2][5]}|{board[3][5]}|{board[4][5]}|{board[5][5]}|{board[6][5]}|
         |-+-+-+-+-+-+-|
         |1|2|3|4|5|6|7|
-        """)
+        ```""")
 
     def winconds(board, move: tuple, piece: str):
         col, row = move
