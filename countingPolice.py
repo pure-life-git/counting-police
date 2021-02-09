@@ -2693,7 +2693,7 @@ async def connectfour(ctx):
         print("done with winconds")
         return False
 
-    board = [[":white_circle:" for i in range(6)] for i in range(7)]
+    board = [[" " for i in range(6)] for i in range(7)]
 
     printBoard(board)
     playerone = ctx.author
