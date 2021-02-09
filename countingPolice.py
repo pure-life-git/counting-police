@@ -2742,7 +2742,7 @@ async def connectfour(ctx):
 
         column = board[int(move.content)-1]
         for count, row in enumerate(column): 
-            if row != " ":
+            if row != "   ":
                 column[count-1] = piece
                 if winconds(board, (int(move.content)-1, count-1), piece):
                     game = False
