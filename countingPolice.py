@@ -2728,6 +2728,12 @@ async def connectfour(ctx):
             player = playertwo
             piece = plays[1][1]
             embedColor = discord.Color.gold()
+        if movecount > 0:
+            boardEmbed = discord.Embed(title = "Connect 4", color = embedColor)
+            boardEmbed.add_field(name="Board", value=printBoard(board), inline=False)
+            boardEmbed.add_field(name="Turn:", value=f"{player.name}", inline=False)
+            await ctx.send(embed=boardEmbed)
+
         move = await bot.wait_for('message', check = lambda m: m.author == player)
         if move.content.lower() == 'end':
             game = False
@@ -2767,10 +2773,6 @@ async def connectfour(ctx):
                     return
             else: break
         movecount += 1
-        boardEmbed = discord.Embed(title = "Connect 4", color = embedColor)
-        boardEmbed.add_field(name="Board", value=printBoard(board), inline=False)
-        boardEmbed.add_field(name="Turn:", value=f"{player.name}", inline=False)
-        await ctx.send(embed=boardEmbed)
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
 #runs the bot using the discord bot token provided within Heroku
