@@ -2715,7 +2715,7 @@ async def connectfour(ctx):
     plays = [(playerone, " X "), (playertwo, " O ")]
     boardEmbed = discord.Embed(title = "Connect 4", color = discord.Color.red())
     boardEmbed.add_field(name="Board", value=printBoard(board), inline=False)
-    boardEmbed.add_field(name="Turn:", value=":red_circle:", inline=False)
+    boardEmbed.add_field(name="Turn:", value=f"{playerone.name}", inline=False)
     await ctx.send(embed=boardEmbed)
     game = True
     movecount = 0
@@ -2747,6 +2747,7 @@ async def connectfour(ctx):
                 if winconds(board, (int(move.content)-1, count-1), piece):
                     game = False
                     await ctx.send("You win!")
+                    return
                 break
             elif count == 5:
                 board[int(move.content)-1][5] = piece
@@ -2754,19 +2755,21 @@ async def connectfour(ctx):
                 if win:
                     game = False
                     await ctx.send("You win!")
+                    return
                 break
         stalecount = 0
         for cols in range(6):
             if all(elem != ":white_circle:" for elem in board[cols]):
                 stalecount += 1
                 if stalecount == 7:
+                    game = False
                     await ctx.send("The game is a stalemate!")
                     return
             else: break
         movecount += 1
         boardEmbed = discord.Embed(title = "Connect 4", color = embedColor)
         boardEmbed.add_field(name="Board", value=printBoard(board), inline=False)
-        boardEmbed.add_field(name="Turn:", value=piece, inline=False)
+        boardEmbed.add_field(name="Turn:", value=f"{player.name}", inline=False)
         await ctx.send(embed=boardEmbed)
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
