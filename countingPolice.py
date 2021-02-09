@@ -2765,7 +2765,7 @@ async def connectfour(ctx):
                 break
         stalecount = 0
         for cols in range(6):
-            if all(elem != ":white_circle:" for elem in board[cols]):
+            if all(elem != "   " for elem in board[cols]):
                 stalecount += 1
                 if stalecount == 7:
                     game = False
