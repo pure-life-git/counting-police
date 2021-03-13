@@ -591,6 +591,15 @@ async def ytsearch_help(ctx):
     helpEmbed.add_field(name = ".ytsearch `<search terms>`", value = "Sends the first five results from youtube for the provided search term(s)")
     await ctx.send(embed=helpEmbed)
 
+@help.command(name = "asa")
+async def asa_help(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
+    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with .asa command")
+    helpEmbed.add_field(name = ".asa", value = "Displays the amount of time Asa has spent deafened in a VC")
+    await ctx.send(embed=helpEmbed)
+
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
 #   _____            __  __  ______ 
@@ -2637,10 +2646,11 @@ async def asa(ctx):
     if str(ctx.channel) not in channelList:
         await ctx.message.delete()
         return
-    
+    asa = bot.get_user(227250029788790785)
+
     SQL = f"SELECT idleTime from asa;"
     cur.execute(SQL)
-    time = int(cur.fetchall()[0][0])
+    time = int(cur.fetchone()[0])
 
     hours = time // 3600 #gets number of hours until next claim time
 
@@ -2651,6 +2661,21 @@ async def asa(ctx):
     seconds = time #gets number of seconds until next claim time minus hours and minutes
 
     await ctx.send(f"Asa has been deafened in a VC for {hours}h {minutes}m {seconds}s.")
+
+    if asa.voice.self_deaf and asa.voice.channel != None:
+        SQL = f"SELECT deafenstart FROM asa;"
+        cur.execute(SQL)
+        deafen_start = int(cur.fetchone()[0])
+        cur_deaf = int(datetime.datetime.now().timestamp()-deafen_start)
+        hours = cur_deaf // 3600 #gets number of hours until next claim time
+
+        cur_deaf %= 3600
+        minutes = cur_deaf // 60 #gets number of minutes until next claim time minus hours
+
+        cur_deaf %= 60
+        seconds = cur_deaf #gets number of seconds until next claim time minus hours and minutes
+        await ctx.send(f"Asa is on a {hours}h {minutes}m {seconds}s streak.")
+
     return
         
 
