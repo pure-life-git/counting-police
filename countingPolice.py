@@ -2575,6 +2575,31 @@ async def on_message(message):
 
 @bot.event
 async def on_voice_state_update(member, before, after):
+    asa = bot.get_user(227250029788790785)
+
+    #if the member is asa
+    if member == asa:
+        #if asa starts a deafen
+        if after.self_deaf and not before.self_deaf:
+            deafen_start = datetime.datetime.now(datetime.datetime.utc)
+        
+        #if asa ends a deafen
+        if before.self_deaf and not after.self_deaf:
+            deafen_end = datetime.datetime.now(datetime.datetime.utc)
+            deafen_time = (deafen_end - deafen_start).total_seconds()
+            SQL = f"UPDATE asa SET idleTime = idleTime + {int(deafen_time)};"
+            cur.execute(SQL)
+            conn.commit()
+
+        #if asa leaves all channels
+        if after.channel == None:
+            if before.self_deaf:
+                deafen_end = datetime.datetime.now(datetime.datetime.utc)
+                deafen_time = (deafen_end - deafen_start).total_seconds()
+                SQL = f"UPDATE asa SET idleTime = idleTime + {int(deafen_time)};"
+                cur.execute(SQL)
+                conn.commit()
+
     if before.channel != after.channel and after.channel is not None:
         vc = after.channel
         #print(vc.name)
@@ -2596,6 +2621,28 @@ async def on_voice_state_update(member, before, after):
             await mess.delete()
     else:
         return
+
+
+@bot.command(name="asa")
+async def asa(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
+    
+    SQL = f"SELECT idleTime from asa;"
+    cur.execute(SQL)
+    time = int(cur.fetchall()[0])
+
+    hours = time // 3600 #gets number of hours until next claim time
+
+    time %= 3600
+    minutes = time // 60 #gets number of minutes until next claim time minus hours
+
+    time %= 60
+    seconds = time #gets number of seconds until next claim time minus hours and minutes
+
+    await ctx.send(f"Asa has been idle in this server for {hours}h {minutes}m {seconds}s.")
+    return
         
 
 @bot.command(name="connect4")
