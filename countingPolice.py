@@ -2631,7 +2631,7 @@ async def asa(ctx):
     
     SQL = f"SELECT idleTime from asa;"
     cur.execute(SQL)
-    time = int(cur.fetchall()[0])
+    time = int(cur.fetchall()[0][0])
 
     hours = time // 3600 #gets number of hours until next claim time
 
