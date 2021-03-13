@@ -2646,7 +2646,8 @@ async def asa(ctx):
     if str(ctx.channel) not in channelList:
         await ctx.message.delete()
         return
-    asa = bot.get_user(227250029788790785)
+    server = bot.get_guild(270384027330936835)
+    asa = server.get_member(227250029788790785)
 
     SQL = f"SELECT idleTime from asa;"
     cur.execute(SQL)
