@@ -2576,10 +2576,9 @@ async def on_message(message):
 @bot.event
 async def on_voice_state_update(member, before, after):
     asa = bot.get_user(227250029788790785)
-    theo = bot.get_user(288710564367171595)
 
     #if the member is asa
-    if member == asa or member == theo:
+    if member == asa:
         #if asa starts a deafen
         if after.self_deaf:
             deafen_start = datetime.datetime.now().timestamp()
