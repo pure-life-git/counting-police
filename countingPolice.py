@@ -2593,7 +2593,7 @@ async def on_voice_state_update(member, before, after):
             cur.execute(SQL)
             deafen_start = int(cur.fetchone()[0])
             deafen_end = datetime.datetime.now().timestamp()
-            deafen_time = (deafen_end - deafen_start).total_seconds()
+            deafen_time = (deafen_end - deafen_start)
             SQL = f"UPDATE asa SET idleTime = idleTime + {int(deafen_time)};"
             cur.execute(SQL)
             conn.commit()
@@ -2605,7 +2605,7 @@ async def on_voice_state_update(member, before, after):
                 cur.execute(SQL)
                 deafen_start = int(cur.fetchone()[0])
                 deafen_end = datetime.datetime.now().timestamp()
-                deafen_time = (deafen_end - deafen_start).total_seconds()
+                deafen_time = (deafen_end - deafen_start)
                 SQL = f"UPDATE asa SET idleTime = idleTime + {int(deafen_time)};"
                 cur.execute(SQL)
                 conn.commit()
