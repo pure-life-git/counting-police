@@ -2647,7 +2647,7 @@ async def asa(ctx):
         await ctx.message.delete()
         return
     asa = bot.get_guild(270384027330936835).get_member(227250029788790785)
-    print(type(asa), asa.voice)
+    print(type(asa), asa.voice())
 
     SQL = f"SELECT idleTime from asa;"
     cur.execute(SQL)
