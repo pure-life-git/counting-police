@@ -2580,7 +2580,7 @@ async def on_voice_state_update(member, before, after):
     #if the member is asa
     if member == asa:
         #if asa starts a deafen
-        if after.self_deaf and not before.self_deaf:
+        if after.self_deaf:
             deafen_start = datetime.datetime.now(datetime.timezone.utc)
         
         #if asa ends a deafen
