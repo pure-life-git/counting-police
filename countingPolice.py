@@ -2650,7 +2650,7 @@ async def asa(ctx):
     time %= 60
     seconds = time #gets number of seconds until next claim time minus hours and minutes
 
-    await ctx.send(f"Asa has been idle in this server for {hours}h {minutes}m {seconds}s.")
+    await ctx.send(f"Asa has been deafened in a VC for {hours}h {minutes}m {seconds}s.")
     return
         
 
