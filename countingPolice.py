@@ -2581,11 +2581,11 @@ async def on_voice_state_update(member, before, after):
     if member == asa:
         #if asa starts a deafen
         if after.self_deaf and not before.self_deaf:
-            deafen_start = datetime.datetime.now(datetime.datetime.utc)
+            deafen_start = datetime.datetime.now(datetime.timezone.utc)
         
         #if asa ends a deafen
         if before.self_deaf and not after.self_deaf:
-            deafen_end = datetime.datetime.now(datetime.datetime.utc)
+            deafen_end = datetime.datetime.now(datetime.timezone.utc)
             deafen_time = (deafen_end - deafen_start).total_seconds()
             SQL = f"UPDATE asa SET idleTime = idleTime + {int(deafen_time)};"
             cur.execute(SQL)
@@ -2594,7 +2594,7 @@ async def on_voice_state_update(member, before, after):
         #if asa leaves all channels
         if after.channel == None:
             if before.self_deaf:
-                deafen_end = datetime.datetime.now(datetime.datetime.utc)
+                deafen_end = datetime.datetime.now(datetime.timezone.utc)
                 deafen_time = (deafen_end - deafen_start).total_seconds()
                 SQL = f"UPDATE asa SET idleTime = idleTime + {int(deafen_time)};"
                 cur.execute(SQL)
