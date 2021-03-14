@@ -2655,8 +2655,12 @@ async def asa(ctx):
         cur_deaf = int(datetime.datetime.now().timestamp()-deafen_start)
         
         SQL = f"UPDATE asa SET idletime = idletime + {cur_deaf};"
+        cur.execute(SQL)
+        conn.commit()
 
         SQL = f"UPDATE asa SET deafenstart = {int(datetime.datetime.now().timestamp())};"
+        cur.execute(SQL)
+        conn.commit()
 
         hours = cur_deaf // 3600 #gets number of hours until next claim time
 
@@ -2682,7 +2686,8 @@ async def asa(ctx):
         seconds = cur_time #gets number of seconds until next claim time minus hours and minutes
 
         
-        await ctx.send(f"Asa is on a {hours}h {minutes}m {seconds}s streak.")
+        await ctx.send(f"Asa has been deafened in a VC for {hours}h {minutes}m {seconds}s.")
+        return
 
     SQL = f"SELECT idleTime from asa;"
     cur.execute(SQL)
