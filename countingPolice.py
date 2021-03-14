@@ -1950,16 +1950,17 @@ async def asa(ctx):
         SQL = f"SELECT deafenstart FROM asa;"
         cur.execute(SQL)
         deafen_start = int(cur.fetchone()[0])
-        cur_deaf = int(datetime.datetime.now().timestamp()-deafen_start)
-        
 
-        hours = cur_deaf // 3600 #gets number of hours until next claim time
+        cur_deaf = int(datetime.datetime.now().timestamp() - deafen_start)
+        cur_deaf_orig = cur_deaf
+
+        hours = cur_deaf // 3600 #gets number of hours asa has been deafened for this session
 
         cur_deaf %= 3600
-        minutes = cur_deaf // 60 #gets number of minutes until next claim time minus hours
+        minutes = cur_deaf // 60 #gets number of minutes asa has been deafened for this session
 
         cur_deaf %= 60
-        seconds = cur_deaf #gets number of seconds until next claim time minus hours and minutes
+        seconds = cur_deaf #gets number of seconds asa has been deafened for this session
 
         
         await ctx.send(f"Asa is on a {hours}h {minutes}m {seconds}s streak.")
@@ -1967,7 +1968,7 @@ async def asa(ctx):
         SQL = f"SELECT idletime FROM asa;"
         cur.execute(SQL)
         cur_time = cur.fetchone()[0]
-        cur_time += cur_deaf
+        cur_time += cur_deaf_orig
 
         hours = cur_time // 3600 #gets number of hours until next claim time
 
@@ -1979,6 +1980,7 @@ async def asa(ctx):
 
         
         await ctx.send(f"Asa has been deafened in a VC for {hours}h {minutes}m {seconds}s.")
+
         return
 
     SQL = f"SELECT idleTime from asa;"
