@@ -1938,6 +1938,262 @@ async def totalpointslb(ctx):
     await ctx.send(embed=leaderboardEmbed)
 
 
+@commands.cooldown(1, 15, commands.BucketType.user)
+@bot.command(name="asa")
+async def asa(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
+    asa = bot.get_guild(270384027330936835).get_member(227250029788790785)
+
+    if asa.voice != None and asa.voice.self_deaf:
+        SQL = f"SELECT deafenstart FROM asa;"
+        cur.execute(SQL)
+        deafen_start = int(cur.fetchone()[0])
+        cur_deaf = int(datetime.datetime.now().timestamp()-deafen_start)
+        
+
+        hours = cur_deaf // 3600 #gets number of hours until next claim time
+
+        cur_deaf %= 3600
+        minutes = cur_deaf // 60 #gets number of minutes until next claim time minus hours
+
+        cur_deaf %= 60
+        seconds = cur_deaf #gets number of seconds until next claim time minus hours and minutes
+
+        
+        await ctx.send(f"Asa is on a {hours}h {minutes}m {seconds}s streak.")
+
+        SQL = f"SELECT idletime FROM asa;"
+        cur.execute(SQL)
+        cur_time = cur.fetchone()[0]
+        cur_time += cur_deaf
+
+        hours = cur_time // 3600 #gets number of hours until next claim time
+
+        cur_time %= 3600
+        minutes = cur_time // 60 #gets number of minutes until next claim time minus hours
+
+        cur_time %= 60
+        seconds = cur_time #gets number of seconds until next claim time minus hours and minutes
+
+        
+        await ctx.send(f"Asa has been deafened in a VC for {hours}h {minutes}m {seconds}s.")
+        return
+
+    SQL = f"SELECT idleTime from asa;"
+    cur.execute(SQL)
+    time = int(cur.fetchone()[0])
+
+    hours = time // 3600 #gets number of hours until next claim time
+
+    time %= 3600
+    minutes = time // 60 #gets number of minutes until next claim time minus hours
+
+    time %= 60
+    seconds = time #gets number of seconds until next claim time minus hours and minutes
+
+    await ctx.send(f"Asa has been deafened in a VC for {hours}h {minutes}m {seconds}s.")
+
+
+
+    return
+        
+@commands.cooldown(1, 15, commands.BucketType.user)
+@bot.command(name="connect4")
+async def connectfour(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
+    keys = ["1","2","3","4","5","6","7"]
+    def printBoard(board):
+        return(f"""```
+|{board[0][0]}|{board[1][0]}|{board[2][0]}|{board[3][0]}|{board[4][0]}|{board[5][0]}|{board[6][0]}|
+|---+---+---+---+---+---+---|
+|{board[0][1]}|{board[1][1]}|{board[2][1]}|{board[3][1]}|{board[4][1]}|{board[5][1]}|{board[6][1]}|
+|---+---+---+---+---+---+---|
+|{board[0][2]}|{board[1][2]}|{board[2][2]}|{board[3][2]}|{board[4][2]}|{board[5][2]}|{board[6][2]}|
+|---+---+---+---+---+---+---|
+|{board[0][3]}|{board[1][3]}|{board[2][3]}|{board[3][3]}|{board[4][3]}|{board[5][3]}|{board[6][3]}|
+|---+---+---+---+---+---+---|
+|{board[0][4]}|{board[1][4]}|{board[2][4]}|{board[3][4]}|{board[4][4]}|{board[5][4]}|{board[6][4]}|
+|---+---+---+---+---+---+---|
+|{board[0][5]}|{board[1][5]}|{board[2][5]}|{board[3][5]}|{board[4][5]}|{board[5][5]}|{board[6][5]}|
+|---+---+---+---+---+---+---|
+| 1 | 2 | 3 | 4 | 5 | 6 | 7 |
+        ```""")
+
+    def winconds(board, move: tuple, piece: str):
+        col, row = move
+
+        # check for 4 in up/down
+        vertWin = False
+        count = 0
+        for i in range(4):
+            try:
+                if board[col][row+i] == piece:
+                    count+= 1
+                    if count == 4:
+                        vertWin = True
+                        return vertWin
+                
+                else:
+                    break
+            except IndexError:
+                break
+        
+
+        #check for left/right win
+        horWin = False
+        count = 0
+        for i in range(6):
+            try:
+                if board[i][row] == piece:
+                    count += 1
+                    if count == 4:
+                        horWin = True
+                        return horWin
+                else:
+                    count = 0
+            except IndexError:
+                break
+
+
+        #check for bot. left -> top right
+        topleft = row < 3 and col < 3
+        bottomright = row > 2 and col  > 3
+        if topleft or bottomright:
+            bltrWin = False
+        else:
+            for x in range(3):
+                for y in reversed(range(3,6)):
+                    try:
+                        # print("Spaces: \n", x,y,": ",board[x][y], "\n", x+1, y-1,": ", board[x+1][y-1],"\n",x+2,y-2,": ",board[x+2][y-2],"\n",x+3,y-3,": ",board[x+3][y-3])
+                        if board[x][y] == piece and board[x+1][y-1] == piece and board[x+2][y-2] == piece and board[x+3][y-3] == piece:
+                            bltrWin = True
+                            return bltrWin
+                    except IndexError:
+                        continue
+
+
+
+        #check for top left -> bot. right
+        bottomleft = row > 2 and col < 3
+        topright = row < 3 and col > 3
+        if bottomleft or topright:
+            tlbrWin = False
+        else:
+            for x in range(4):
+                for y in range(3):
+                    try:
+                        # print("Spaces: \n", x,y,": ",board[x][y], "\n", x+1, y+1,": ", board[x+1][y+1],"\n",x+2,y+2,": ",board[x+2][y+2],"\n",x+3,y+3,": ",board[x+3][y+3])
+                        if board[x][y] == piece and board[x+1][y+1] == piece and board[x+2][y+2] == piece and board[x+3][y+3] == piece:
+                            tlbrWin = True
+                            return tlbrWin
+                    except IndexError:
+                        continue
+        print("done with winconds")
+        return False
+
+    board = [["   " for i in range(6)] for i in range(7)]
+
+    playerone = ctx.author
+    playertwo = ctx.message.mentions[0]
+    challMsg = await ctx.send(f"{playerone.name} has challenged {playertwo.name} to a game of Connect 4! Do you accept? Y/N")
+    try:
+        msg = await bot.wait_for('message', check = lambda m: m.author == playertwo, timeout = 30.0)
+        if msg.content.lower() in ['y', 'yes']:
+            await ctx.send(f"Challenge accepted! {playerone.name} goes first.")
+            await challMsg.delete()
+        else:
+            await ctx.send('Challenge declined.')
+            await challMsg.delete()
+            return
+    except asyncio.TimeoutError:
+        await challMsg.delete()
+        await ctx.send("Challenge timed out.")
+        return
+    plays = [(playerone, " X "), (playertwo, " O ")]
+    boardEmbed = discord.Embed(title = "Connect 4", color = discord.Color.red())
+    boardEmbed.add_field(name="Board", value=printBoard(board), inline=False)
+    boardEmbed.add_field(name="Turn:", value=f"{playerone.name}", inline=False)
+    ogmessage = await ctx.send(embed=boardEmbed)
+    allimportantid = ogmessage.id
+    game = True
+    movecount = 0
+    while game:
+        boardmessage = await ctx.fetch_message(allimportantid)
+        if movecount % 2 == 0:
+            player = playerone
+            piece = plays[0][1]
+            embedColor = discord.Color.red()
+        else: 
+            player = playertwo
+            piece = plays[1][1]
+            embedColor = discord.Color.gold()
+        if movecount > 0:
+            boardEmbed = discord.Embed(title = "Connect 4", color = embedColor)
+            boardEmbed.add_field(name="Board", value=printBoard(board), inline=False)
+            boardEmbed.add_field(name="Turn:", value=f"{player.name}", inline=False)
+            await boardmessage.edit(embed=boardEmbed)
+
+        move = await bot.wait_for('message', check = lambda m: m.author == player)
+        if move.content.lower() == 'end':
+            game = False
+            await ctx.send(f"Game ended by {player}.")
+            return
+        elif move.content.lower() not in keys:
+            await ctx.send("That is not a valid column. Please enter a number 1-7.")
+            continue
+        elif all(x is not "   " for x in board[int(move.content)-1][1:]) == False:
+            await ctx.send("That column is full. Please choose another.")
+            continue
+
+        column = board[int(move.content)-1]
+        for count, row in enumerate(column): 
+            if row != "   ":
+                column[count-1] = piece
+                if winconds(board, (int(move.content)-1, count-1), piece):
+                    await move.delete()
+                    game = False
+                    boardEmbed = discord.Embed(title = "Connect 4", color = embedColor)
+                    boardEmbed.add_field(name="Board", value=printBoard(board), inline=False)
+                    boardEmbed.add_field(name="Turn:", value=f"{player.name}", inline=False)
+                    await boardmessage.edit(embed=boardEmbed)
+                    await ctx.send("You win!")
+                    return
+                break
+            elif count == 5:
+                board[int(move.content)-1][5] = piece
+                win = winconds(board, (int(move.content)-1, 5), piece)
+                if win:
+                    await move.delete()
+                    game = False
+                    boardEmbed = discord.Embed(title = "Connect 4", color = embedColor)
+                    boardEmbed.add_field(name="Board", value=printBoard(board), inline=False)
+                    boardEmbed.add_field(name="Turn:", value=f"{player.name}", inline=False)
+                    await boardmessage.edit(embed=boardEmbed)
+                    await ctx.send("You win!")
+                    return
+                break
+        stalecount = 0
+        for cols in range(6):
+            if all(elem != "   " for elem in board[cols]):
+                stalecount += 1
+                if stalecount == 7:
+                    await move.delete()
+                    game = False
+                    boardEmbed = discord.Embed(title = "Connect 4", color = embedColor)
+                    boardEmbed.add_field(name="Board", value=printBoard(board), inline=False)
+                    boardEmbed.add_field(name="Turn:", value=f"{player.name}", inline=False)
+                    await boardmessage.edit(embed=boardEmbed)
+                    await ctx.send("The game is a stalemate!")
+                    return
+            else: break
+        await move.delete()
+        movecount += 1
+
+
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
 #  __  __   ____   _____   ______  _____          _______  _____  ____   _   _ 
@@ -2449,6 +2705,30 @@ async def ytsearch_error(ctx, error):
         await asyncio.sleep(error.retry_after)
         await errMess.delete()
 
+@points.error
+async def points_error(ctx, error):
+    if isinstance(error, commands.CommandOnCooldown):
+        await ctx.message.delete()
+        errMess = await ctx.send(f"You are on cooldown for this command. Try again in {error.retry_after:.2f}s")
+        await asyncio.sleep(error.retry_after)
+        await errMess.delete()
+
+@asa.error
+async def asa_error(ctx, error):
+    if isinstance(error, commands.CommandOnCooldown):
+        await ctx.message.delete()
+        errMess = await ctx.send(f"You are on cooldown for this command. Try again in {error.retry_after:.2f}s")
+        await asyncio.sleep(error.retry_after)
+        await errMess.delete()
+
+@connectfour.error
+async def connectfour_error(ctx, error):
+    if isinstance(error, commands.CommandOnCooldown):
+        await ctx.message.delete()
+        errMess = await ctx.send(f"You are on cooldown for this command. Try again in {error.retry_after:.2f}s")
+        await asyncio.sleep(error.retry_after)
+        await errMess.delete()
+
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
 #   ____   _   _            __  __  ______   _____  _____           _____  ______ 
@@ -2641,259 +2921,6 @@ async def on_voice_state_update(member, before, after):
         return
 
 
-@bot.command(name="asa")
-async def asa(ctx):
-    if str(ctx.channel) not in channelList:
-        await ctx.message.delete()
-        return
-    asa = bot.get_guild(270384027330936835).get_member(227250029788790785)
-
-    if asa.voice != None and asa.voice.self_deaf:
-        SQL = f"SELECT deafenstart FROM asa;"
-        cur.execute(SQL)
-        deafen_start = int(cur.fetchone()[0])
-        cur_deaf = int(datetime.datetime.now().timestamp()-deafen_start)
-        
-
-        hours = cur_deaf // 3600 #gets number of hours until next claim time
-
-        cur_deaf %= 3600
-        minutes = cur_deaf // 60 #gets number of minutes until next claim time minus hours
-
-        cur_deaf %= 60
-        seconds = cur_deaf #gets number of seconds until next claim time minus hours and minutes
-
-        
-        await ctx.send(f"Asa is on a {hours}h {minutes}m {seconds}s streak.")
-
-        SQL = f"SELECT idletime FROM asa;"
-        cur.execute(SQL)
-        cur_time = cur.fetchone()[0]
-        cur_time += cur_deaf
-
-        hours = cur_time // 3600 #gets number of hours until next claim time
-
-        cur_time %= 3600
-        minutes = cur_time // 60 #gets number of minutes until next claim time minus hours
-
-        cur_time %= 60
-        seconds = cur_time #gets number of seconds until next claim time minus hours and minutes
-
-        
-        await ctx.send(f"Asa has been deafened in a VC for {hours}h {minutes}m {seconds}s.")
-        return
-
-    SQL = f"SELECT idleTime from asa;"
-    cur.execute(SQL)
-    time = int(cur.fetchone()[0])
-
-    hours = time // 3600 #gets number of hours until next claim time
-
-    time %= 3600
-    minutes = time // 60 #gets number of minutes until next claim time minus hours
-
-    time %= 60
-    seconds = time #gets number of seconds until next claim time minus hours and minutes
-
-    await ctx.send(f"Asa has been deafened in a VC for {hours}h {minutes}m {seconds}s.")
-
-
-
-    return
-        
-
-@bot.command(name="connect4")
-async def connectfour(ctx):
-    if str(ctx.channel) not in channelList:
-        await ctx.message.delete()
-        return
-    keys = ["1","2","3","4","5","6","7"]
-    def printBoard(board):
-        return(f"""```
-|{board[0][0]}|{board[1][0]}|{board[2][0]}|{board[3][0]}|{board[4][0]}|{board[5][0]}|{board[6][0]}|
-|---+---+---+---+---+---+---|
-|{board[0][1]}|{board[1][1]}|{board[2][1]}|{board[3][1]}|{board[4][1]}|{board[5][1]}|{board[6][1]}|
-|---+---+---+---+---+---+---|
-|{board[0][2]}|{board[1][2]}|{board[2][2]}|{board[3][2]}|{board[4][2]}|{board[5][2]}|{board[6][2]}|
-|---+---+---+---+---+---+---|
-|{board[0][3]}|{board[1][3]}|{board[2][3]}|{board[3][3]}|{board[4][3]}|{board[5][3]}|{board[6][3]}|
-|---+---+---+---+---+---+---|
-|{board[0][4]}|{board[1][4]}|{board[2][4]}|{board[3][4]}|{board[4][4]}|{board[5][4]}|{board[6][4]}|
-|---+---+---+---+---+---+---|
-|{board[0][5]}|{board[1][5]}|{board[2][5]}|{board[3][5]}|{board[4][5]}|{board[5][5]}|{board[6][5]}|
-|---+---+---+---+---+---+---|
-| 1 | 2 | 3 | 4 | 5 | 6 | 7 |
-        ```""")
-
-    def winconds(board, move: tuple, piece: str):
-        col, row = move
-
-        # check for 4 in up/down
-        vertWin = False
-        count = 0
-        for i in range(4):
-            try:
-                if board[col][row+i] == piece:
-                    count+= 1
-                    if count == 4:
-                        vertWin = True
-                        return vertWin
-                
-                else:
-                    break
-            except IndexError:
-                break
-        
-
-        #check for left/right win
-        horWin = False
-        count = 0
-        for i in range(6):
-            try:
-                if board[i][row] == piece:
-                    count += 1
-                    if count == 4:
-                        horWin = True
-                        return horWin
-                else:
-                    count = 0
-            except IndexError:
-                break
-
-
-        #check for bot. left -> top right
-        topleft = row < 3 and col < 3
-        bottomright = row > 2 and col  > 3
-        if topleft or bottomright:
-            bltrWin = False
-        else:
-            for x in range(3):
-                for y in reversed(range(3,6)):
-                    try:
-                        # print("Spaces: \n", x,y,": ",board[x][y], "\n", x+1, y-1,": ", board[x+1][y-1],"\n",x+2,y-2,": ",board[x+2][y-2],"\n",x+3,y-3,": ",board[x+3][y-3])
-                        if board[x][y] == piece and board[x+1][y-1] == piece and board[x+2][y-2] == piece and board[x+3][y-3] == piece:
-                            bltrWin = True
-                            return bltrWin
-                    except IndexError:
-                        continue
-
-
-
-        #check for top left -> bot. right
-        bottomleft = row > 2 and col < 3
-        topright = row < 3 and col > 3
-        if bottomleft or topright:
-            tlbrWin = False
-        else:
-            for x in range(4):
-                for y in range(3):
-                    try:
-                        # print("Spaces: \n", x,y,": ",board[x][y], "\n", x+1, y+1,": ", board[x+1][y+1],"\n",x+2,y+2,": ",board[x+2][y+2],"\n",x+3,y+3,": ",board[x+3][y+3])
-                        if board[x][y] == piece and board[x+1][y+1] == piece and board[x+2][y+2] == piece and board[x+3][y+3] == piece:
-                            tlbrWin = True
-                            return tlbrWin
-                    except IndexError:
-                        continue
-        print("done with winconds")
-        return False
-
-    board = [["   " for i in range(6)] for i in range(7)]
-
-    playerone = ctx.author
-    playertwo = ctx.message.mentions[0]
-    challMsg = await ctx.send(f"{playerone.name} has challenged {playertwo.name} to a game of Connect 4! Do you accept? Y/N")
-    try:
-        msg = await bot.wait_for('message', check = lambda m: m.author == playertwo, timeout = 30.0)
-        if msg.content.lower() in ['y', 'yes']:
-            await ctx.send(f"Challenge accepted! {playerone.name} goes first.")
-            await challMsg.delete()
-        else:
-            await ctx.send('Challenge declined.')
-            await challMsg.delete()
-            return
-    except asyncio.TimeoutError:
-        await challMsg.delete()
-        await ctx.send("Challenge timed out.")
-        return
-    plays = [(playerone, " X "), (playertwo, " O ")]
-    boardEmbed = discord.Embed(title = "Connect 4", color = discord.Color.red())
-    boardEmbed.add_field(name="Board", value=printBoard(board), inline=False)
-    boardEmbed.add_field(name="Turn:", value=f"{playerone.name}", inline=False)
-    ogmessage = await ctx.send(embed=boardEmbed)
-    allimportantid = ogmessage.id
-    game = True
-    movecount = 0
-    while game:
-        boardmessage = await ctx.fetch_message(allimportantid)
-        if movecount % 2 == 0:
-            player = playerone
-            piece = plays[0][1]
-            embedColor = discord.Color.red()
-        else: 
-            player = playertwo
-            piece = plays[1][1]
-            embedColor = discord.Color.gold()
-        if movecount > 0:
-            boardEmbed = discord.Embed(title = "Connect 4", color = embedColor)
-            boardEmbed.add_field(name="Board", value=printBoard(board), inline=False)
-            boardEmbed.add_field(name="Turn:", value=f"{player.name}", inline=False)
-            await boardmessage.edit(embed=boardEmbed)
-
-        move = await bot.wait_for('message', check = lambda m: m.author == player)
-        if move.content.lower() == 'end':
-            game = False
-            await ctx.send(f"Game ended by {player}.")
-            return
-        elif move.content.lower() not in keys:
-            await ctx.send("That is not a valid column. Please enter a number 1-7.")
-            continue
-        elif all(x is not "   " for x in board[int(move.content)-1][1:]) == False:
-            await ctx.send("That column is full. Please choose another.")
-            continue
-
-        column = board[int(move.content)-1]
-        for count, row in enumerate(column): 
-            if row != "   ":
-                column[count-1] = piece
-                if winconds(board, (int(move.content)-1, count-1), piece):
-                    await move.delete()
-                    game = False
-                    boardEmbed = discord.Embed(title = "Connect 4", color = embedColor)
-                    boardEmbed.add_field(name="Board", value=printBoard(board), inline=False)
-                    boardEmbed.add_field(name="Turn:", value=f"{player.name}", inline=False)
-                    await boardmessage.edit(embed=boardEmbed)
-                    await ctx.send("You win!")
-                    return
-                break
-            elif count == 5:
-                board[int(move.content)-1][5] = piece
-                win = winconds(board, (int(move.content)-1, 5), piece)
-                if win:
-                    await move.delete()
-                    game = False
-                    boardEmbed = discord.Embed(title = "Connect 4", color = embedColor)
-                    boardEmbed.add_field(name="Board", value=printBoard(board), inline=False)
-                    boardEmbed.add_field(name="Turn:", value=f"{player.name}", inline=False)
-                    await boardmessage.edit(embed=boardEmbed)
-                    await ctx.send("You win!")
-                    return
-                break
-        stalecount = 0
-        for cols in range(6):
-            if all(elem != "   " for elem in board[cols]):
-                stalecount += 1
-                if stalecount == 7:
-                    await move.delete()
-                    game = False
-                    boardEmbed = discord.Embed(title = "Connect 4", color = embedColor)
-                    boardEmbed.add_field(name="Board", value=printBoard(board), inline=False)
-                    boardEmbed.add_field(name="Turn:", value=f"{player.name}", inline=False)
-                    await boardmessage.edit(embed=boardEmbed)
-                    await ctx.send("The game is a stalemate!")
-                    return
-            else: break
-        await move.delete()
-        movecount += 1
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
 #runs the bot using the discord bot token provided within Heroku
