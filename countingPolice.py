@@ -2647,7 +2647,42 @@ async def asa(ctx):
         await ctx.message.delete()
         return
     asa = bot.get_guild(270384027330936835).get_member(227250029788790785)
-    print(type(asa), asa.voice)
+
+    if asa.voice != None and asa.voice.self_deaf:
+        SQL = f"SELECT deafenstart FROM asa;"
+        cur.execute(SQL)
+        deafen_start = int(cur.fetchone()[0])
+        cur_deaf = int(datetime.datetime.now().timestamp()-deafen_start)
+        
+        SQL = f"UPDATE asa SET idletime = idletime + {cur_deaf};"
+
+        SQL = f"UPDATE asa SET deafenstart = {int(datetime.datetime.now().timestamp())};"
+
+        hours = cur_deaf // 3600 #gets number of hours until next claim time
+
+        cur_deaf %= 3600
+        minutes = cur_deaf // 60 #gets number of minutes until next claim time minus hours
+
+        cur_deaf %= 60
+        seconds = cur_deaf #gets number of seconds until next claim time minus hours and minutes
+
+        
+        await ctx.send(f"Asa is on a {hours}h {minutes}m {seconds}s streak.")
+
+        SQL = f"SELECT idletime FROM asa;"
+        cur.execute(SQL)
+        cur_time = cur.fetchone()[0]
+
+        hours = cur_time // 3600 #gets number of hours until next claim time
+
+        cur_time %= 3600
+        minutes = cur_time // 60 #gets number of minutes until next claim time minus hours
+
+        cur_time %= 60
+        seconds = cur_time #gets number of seconds until next claim time minus hours and minutes
+
+        
+        await ctx.send(f"Asa is on a {hours}h {minutes}m {seconds}s streak.")
 
     SQL = f"SELECT idleTime from asa;"
     cur.execute(SQL)
@@ -2663,19 +2698,7 @@ async def asa(ctx):
 
     await ctx.send(f"Asa has been deafened in a VC for {hours}h {minutes}m {seconds}s.")
 
-    if asa.voice.self_deaf and asa.voice.channel != None:
-        SQL = f"SELECT deafenstart FROM asa;"
-        cur.execute(SQL)
-        deafen_start = int(cur.fetchone()[0])
-        cur_deaf = int(datetime.datetime.now().timestamp()-deafen_start)
-        hours = cur_deaf // 3600 #gets number of hours until next claim time
 
-        cur_deaf %= 3600
-        minutes = cur_deaf // 60 #gets number of minutes until next claim time minus hours
-
-        cur_deaf %= 60
-        seconds = cur_deaf #gets number of seconds until next claim time minus hours and minutes
-        await ctx.send(f"Asa is on a {hours}h {minutes}m {seconds}s streak.")
 
     return
         
