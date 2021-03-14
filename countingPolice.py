@@ -2654,13 +2654,6 @@ async def asa(ctx):
         deafen_start = int(cur.fetchone()[0])
         cur_deaf = int(datetime.datetime.now().timestamp()-deafen_start)
         
-        SQL = f"UPDATE asa SET idletime = idletime + {cur_deaf};"
-        cur.execute(SQL)
-        conn.commit()
-
-        SQL = f"UPDATE asa SET deafenstart = {int(datetime.datetime.now().timestamp())};"
-        cur.execute(SQL)
-        conn.commit()
 
         hours = cur_deaf // 3600 #gets number of hours until next claim time
 
@@ -2676,6 +2669,7 @@ async def asa(ctx):
         SQL = f"SELECT idletime FROM asa;"
         cur.execute(SQL)
         cur_time = cur.fetchone()[0]
+        cur_time += cur_deaf
 
         hours = cur_time // 3600 #gets number of hours until next claim time
 
