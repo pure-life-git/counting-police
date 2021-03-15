@@ -7,7 +7,6 @@
 # |_____||_|  |_||_|      \____/ |_|  \_\  |_|  |_____/ 
 
 
-from logging import exception
 import discord
 import os
 import re
@@ -16,7 +15,6 @@ from discord.ext import commands
 import asyncio
 from discord.ext.commands.errors import CommandOnCooldown
 import psycopg2
-import wolframalpha
 import datetime
 import praw
 import requests
@@ -2483,7 +2481,7 @@ async def decide(ctx,arg1,arg2):
         await ctx.message.delete()
         return
     try:
-        if isinstance(arg1, int) == False or isinstance(arg2,int) == False: #checks if either argument isn't an int
+        if isinstance(int(arg1), int) == False or isinstance(int(arg2),int) == False: #checks if either argument isn't an int
             await ctx.send("Please enter whole numbers")
             return
         number = random.randint(int(arg1),int(arg2))
@@ -2921,7 +2919,6 @@ async def on_voice_state_update(member, before, after):
             await mess.delete()
     else:
         return
-
 
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
