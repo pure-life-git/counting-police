@@ -2768,7 +2768,7 @@ async def on_message(message):
                 SQL = f"INSERT INTO sentence VALUES ('{str(message.content)}');"
                 cur.execute(SQL)
                 return
-        if message.content.lower().startswith('im') or str(message.content).lower().startswith("i'm"):
+        if message.content.lower().startswith('im ') or str(message.content).lower().startswith("i'm"):
             dad = await message.channel.send('Hi ' + message.content.split(' ',1)[1] + ", I'm dad!")
             await dad.add_reaction('👌')
         if message.content.lower().startswith('i am'):
@@ -2864,6 +2864,9 @@ async def on_message(message):
 
 @bot.event
 async def on_voice_state_update(member, before, after):
+    #checks for octave bot joining the vc
+    if member == bot.get_user(201503408652419073):
+        return
     asa = bot.get_user(227250029788790785)
 
     #if the member is asa
