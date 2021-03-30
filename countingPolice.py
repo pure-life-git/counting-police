@@ -1833,6 +1833,7 @@ async def leaderboard(ctx):
     conn.commit()
     fullList = cur.fetchall()
     for pair in fullList:
+        print(pair[0])
         user = await ctx.message.guild.fetch_member(pair[0])
         point = pair[1]
         wins = pair[2]
