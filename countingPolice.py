@@ -1277,7 +1277,7 @@ async def points(ctx):
         return
         
     lower_limit = random.randint(0,50)
-    upper_limit = random.randing(0,50)
+    upper_limit = random.randint(0,50)
 
     while int(numPoints[0])-lower_limit < 0:
         lower_limit = random.randint(0,50)
