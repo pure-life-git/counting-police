@@ -120,7 +120,7 @@ attackerList = [
     "Zero", "Ace", "Iana", "Kali", "Amaru", "Nøkk", "Gridlock", "Nomad",
     "Maverick", "Lion", "Finka", "Dokkaebi", "Zofia", "Ying", "Jackal",
     "Hibana", "Capitão", "Blackbeard", "Buck", "Sledge", "Thatcher", "Ash",
-    "Thermite", "Montagne", "Twitch", "Blitz", "IQ", "Fuze", "Glaz"
+    "Thermite", "Montagne", "Twitch", "Blitz", "IQ", "Fuze", "Glaz", "Flores"
 ]
 
 #defender list for .operator
@@ -1272,7 +1272,17 @@ async def points(ctx):
             reestablish()
     numPoints = cur.fetchone()
     conn.commit()
-    await ctx.send(f'You have {numPoints[0]} points.') #sends a message with the point value
+    if int(numPoints[0]) == 0:
+        await ctx.send("You're broke.")
+        return
+        
+    lower_limit = random.randint(0,50)
+    upper_limit = random.randing(0,50)
+
+    while int(numPoints[0])-lower_limit < 0:
+        lower_limit = random.randint(0,50)
+
+    await ctx.send(f'You have between {int(numPoints[0])-lower_limit} and {int(numPoints[0])+upper_limit} points.') #sends a message with the point value
 
 
 #lets the user play blackjack and gamble their points
@@ -2750,6 +2760,7 @@ async def on_message(message):
             return
     
     print('Message recieved: ', message.content, 'by', message.author, 'in '+ str(message.channel))
+    await message.add_reaction("<:amongsus:826690527138938911>")
 
     #if the message is from a channel other than counting, it checks to see if it can make a dad joke
     if str(message.channel) != 'counting':
