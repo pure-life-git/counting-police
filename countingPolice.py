@@ -1198,6 +1198,18 @@ async def suggestion(ctx, *args):
     await ctx.channel.send(f"This --> ({' '.join(args)}) fucking sucks. You should be ashamed.")
 
 
+@commands.cooldown(1, 10, commands.BucketType.user)
+@bot.command(name="joke", brief="Sends a random joke", description="Sends a random joke to the bot channel")
+async def joke(ctx):
+    response = requests.get("https://official-joke-api.appspot.com/jokes/random")
+    setup = response.json()['setup']
+    punchline = response.json()['punchline']
+    joke_embed = discord.Embed(title="Joke", description = " ", color = bot_color)
+    joke_embed.add_field(name="Setup", value=setup, inline=False)
+    joke_embed.add_field(name="Punchline", value=f"||{punchline}||", inline=False)
+    await ctx.send(embed=joke_embed)
+
+
 @commands.cooldown(1, 30, commands.BucketType.user)
 @bot.command(name="dog", brief="Posts a random picture of a dog", description="When used without an arguments, the command will post a picture of a random dog. If given an argument, it will send a random picture of a dog from that breed.")
 async def dog(ctx,*args):
