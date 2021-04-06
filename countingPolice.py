@@ -329,7 +329,7 @@ async def help(ctx):
     helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "The prefix of the bot is `.`", color = bot_color)
     helpEmbed.add_field(name = ":video_game: **Game - 5**", value = "`add`, `remove`, `clear`, `choose`, `list`", inline = False)
     helpEmbed.add_field(name = ":slot_machine: **Gambling - 9**", value = "`blackjack`, `roulette`, `slots`, `points`, `claim`, `pay`, `leaderboard`, `totalpointslb`, `store`", inline = False)
-    helpEmbed.add_field(name = ":game_die: **Miscellaneous - 16**", value = "`rps`, `tictactoe`, `finn`, `poll`, `copypasta`, `suggestion`, `dog`, `cat`, `purge`, `operator`, `decide`, `dice`, `source`, `ytsearch`", inline = False)
+    helpEmbed.add_field(name = ":game_die: **Miscellaneous - 16**", value = "`rps`, `tictactoe`, `finn`, `poll`, `copypasta`, `suggestion`, `dog`, `cat`, `purge`, `operator`, `decide`, `dice`, `source`, `ytsearch`, `joke`", inline = False)
     helpEmbed.set_footer(text = "For more information try .help (command) or .help (category), ex: .help rps or .help gambling")
     await ctx.send(embed=helpEmbed)
 
@@ -596,6 +596,15 @@ async def asa_help(ctx):
         return
     helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with .asa command")
     helpEmbed.add_field(name = ".asa", value = "Displays the amount of time Asa has spent deafened in a VC")
+    await ctx.send(embed=helpEmbed)
+
+@help.command(name = "joke")
+async def joke_help(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
+    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Hel with .joke command")
+    helpEmbed.add_field(name = ".joke", value = "Sends a random joke to the text channel")
     await ctx.send(embed=helpEmbed)
 
 
