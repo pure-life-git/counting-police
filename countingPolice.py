@@ -2568,7 +2568,8 @@ async def source(ctx):
         'api_paste_name':"H Welding Machine Source Code",
         'api_paste_expire_date': 'N',
         'api_user_key': None,
-        'api_paste_format': 'python'
+        'api_paste_format': 'python',
+        'api_paste_private': 'private'
         }
     
     login = requests.post("https://pastebin.com/api/api_login.php", data=login_data)
