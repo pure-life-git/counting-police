@@ -2557,6 +2557,8 @@ async def dice(ctx, *args):
 @commands.cooldown(1, 15, commands.BucketType.user)
 @bot.command(name = "source", brief = "Links the source code in pastebin")
 async def source(ctx):
+    await ctx.send("This command is under construction")
+    return
     with open('countingPolice.py', 'r') as file:
         data = file.read()
 
