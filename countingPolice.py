@@ -1269,61 +1269,6 @@ async def cat(ctx):
 
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
-#  __  __   _    _    _____   _____    _____ 
-# |  \/  | | |  | |  / ____| |_   _|  / ____|
-# | \  / | | |  | | | (___     | |   | |     
-# | |\/| | | |  | |  \___ \    | |   | |     
-# | |  | | | |__| |  ____) |  _| |_  | |____ 
-# |_|  |_|  \____/  |_____/  |_____|  \_____|
-
-@bot.command(name="play", description="Lets the user play a song")
-async def play(ctx, song: str):
-    song_there = os.path.isfile("song.mp3")
-    if song_there:
-        os.remove("song.mp3")
-    vc = ctx.author.voice.channel
-    if vc is None:
-        await ctx.send("You are not in a channel.")
-        return
-    if vc.name == "Out to Lunch - AFK":
-        await ctx.send("You are in the AFK channel.")
-        return
-
-    voice = discord.utils.get(bot.voice_clients, guild = ctx.guild)
-    if voice.channel != vc:
-        await vc.connect()
-    
-    ydl_opts = {
-        'format': 'bestaudio/best',
-        'postprocessors': [{
-            'key': 'FFmpegExtractAudio',
-            'preferredcodec': 'mp3',
-            'preferredquality': '192',
-        }]
-    }
-
-    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([song])
-    for file in os.listdir("./"):
-        if file.endswith(".mp3"):
-            os.rename(file, "song.mp3")
-    
-    voice.play(discord.FFmpegPCMAudio("song.mp3"))
-
-
-@bot.command(name="leave", description="Makes the bot leave a voice channel")
-async def leave(ctx):
-    voice = discord.utils.get(bot.voice_clients, guild=ctx.guild)
-    if not voice.is_connected():
-        await ctx.send("The bot is not in a voice channel.")
-        return
-    else:
-        await voice.disconnect()
-
-
-    
-
-#--------------------------------------------------------------------------------------------------------------------------------------#
 #   _____            __  __  ____   _       _____  _   _   _____ 
 #  / ____|    /\    |  \/  ||  _ \ | |     |_   _|| \ | | / ____|
 # | |  __    /  \   | \  / || |_) || |       | |  |  \| || |  __ 
