@@ -1281,7 +1281,7 @@ async def play(ctx, song: str):
     song_there = os.path.isfile("song.mp3")
     if song_there:
         os.remove("song.mp3")
-    vc = ctx.member.voice.channel
+    vc = ctx.author.voice.channel
     if vc is None:
         await ctx.send("You are not in a channel.")
         return
