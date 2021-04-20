@@ -1287,8 +1287,8 @@ async def play(ctx, song: str):
         await ctx.message.delete()
         return
 
-    user = bot.get_user(ctx.author.id)
-    channel = user.channel
+    user = ctx.guild.get_member(ctx.author.id)
+    channel = user.voice.channel
 
     if channel is None or channel.name == "Out to Lunch - AFK":
         await ctx.send("You must be in an active voice channel to play music.")
