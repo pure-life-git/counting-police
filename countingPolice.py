@@ -1280,7 +1280,7 @@ async def cat(ctx):
 
 
 
-@bot.command(name="play", description="Plays a song in a voice channel")
+@bot.command(name="play", description="Plays a song in a voice channel", aliases=["p", "play"])
 async def play(ctx, song: str):
     if str(ctx.channel) not in channelList:
         await ctx.message.delete()
@@ -1331,9 +1331,21 @@ async def play(ctx, song: str):
     await ctx.send(f"**Now Playing:** {title} - {channel}")
     voice.play(FFmpegPCMAudio("song.mp3"))
 
+@bot.command(name="skip", description="Skips the currently playing song", aliases=["s", "skip"])
+async def skip(ctx):
+    voice = discord.utils.get(bot.voice_clients, guild=ctx.guild)
+    if voice.is_connected():
+        if voice.is_playing:
+            voice.stop()
+        else:
+            await ctx.send("The bot is not currently playing anything")
+            return
+    else:
+        await ctx.send("The bot is not connected to an active voice channel.")
 
 
-@bot.command(name="leave", description="Makes the bot leave an active voice channel")
+
+@bot.command(name="leave", description="Makes the bot leave an active voice channel", aliases=["l","leave"])
 async def leave(ctx):
     voice = discord.utils.get(bot.voice_clients, guild=ctx.guild)
     if voice.is_connected():
