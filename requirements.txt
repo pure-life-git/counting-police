@@ -5,3 +5,4 @@ praw
 requests
 youtube-search
 youtube_dl
+pynacl
