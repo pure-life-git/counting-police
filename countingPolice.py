@@ -1287,7 +1287,8 @@ async def play(ctx, song: str):
         await ctx.message.delete()
         return
 
-    user = ctx.guild.get_member(ctx.author.id)
+    user = ctx.author
+    print(type(user))
     channel = user.voice.channel
 
     if channel is None or channel.name == "Out to Lunch - AFK":
