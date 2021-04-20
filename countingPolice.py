@@ -1316,9 +1316,6 @@ async def play(ctx, song: str):
     
     voice = uservoice.channel.connect()
 
-    if not voice.is_connected():
-        voice.connect()
-
     if voice.is_playing():
         music_queue.append(song)
         await ctx.send(f"**Added to Queue:** {title} - {channel}")
