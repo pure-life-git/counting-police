@@ -137,6 +137,8 @@ defenderList = [
     "Rook", "Jäger", "Bandit", "Tachanka", "Kapkan"
 ]
 
+music_queue = []
+
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
 #  ______  _    _  _   _   _____  _______  _____  ____   _   _   _____ 
@@ -1311,7 +1313,16 @@ async def play(ctx, song: str):
         song = "".join(("https://www.youtube.com", ytresults[0]["url_suffix"]))
         title = ytresults[0]["title"]
         channel = ytresults[0]["channel"]
-    voice = await uservoice.channel.connect()
+    
+    voice = discord.utils.get(bot.voice_clients, guild=ctx.guild)
+
+    if not voice.is_connected():
+        voice.connect()
+
+    if voice.is_playing():
+        music_queue.append(song)
+        await ctx.send(f"**Added to Queue:** {title} - {channel}")
+        return
 
     ydl_opts = {
         'format': 'bestaudio/best',
@@ -1335,8 +1346,10 @@ async def play(ctx, song: str):
 async def skip(ctx):
     voice = discord.utils.get(bot.voice_clients, guild=ctx.guild)
     if voice.is_connected():
-        if voice.is_playing:
+        if voice.is_playing():
             voice.stop()
+            if music_queue:
+                play(ctx, song=music_queue[0])
         else:
             await ctx.send("The bot is not currently playing anything")
             return
