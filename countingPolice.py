@@ -1282,7 +1282,10 @@ async def cat(ctx):
 
 @bot.command(name="play", description="Plays a song in a voice channel")
 async def play(ctx, song: str):
-
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
+    
     song_there = os.path.isfile("song.mp3")
     if song_there:
         os.remove("song.mp3")
@@ -1299,6 +1302,15 @@ async def play(ctx, song: str):
         await ctx.send("You must be in an active voice channel to play music.")
         return
     
+    ytresults = YoutubeSearch(song, max_results=1).to_dict()
+
+    if len(ytresults) == 0:
+        await ctx.send("No results.")
+        return
+    else:
+        song = "".join(("https://www.youtube.com", ytsearch[0]["url_suffix"]))
+        title = ytsearch[0]["title"]
+        channel = ytsearch[0]["channel"]
     voice = await uservoice.channel.connect()
 
     ydl_opts = {
@@ -1316,7 +1328,9 @@ async def play(ctx, song: str):
             if file.endswith(".mp3"):
                 os.rename(file, "song.mp3")
     
+    await ctx.send(f"**Now Playing:** {title} - {channel}")
     voice.play(FFmpegPCMAudio("song.mp3"))
+
 
 
 @bot.command(name="leave", description="Makes the bot leave an active voice channel")
