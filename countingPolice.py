@@ -21,6 +21,8 @@ import praw
 import requests
 from youtube_search import YoutubeSearch
 import youtube_dl
+import ctypes
+import ctypes.util
 
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
@@ -55,6 +57,8 @@ reddit = praw.Reddit(
     user_agent = "windows:counting-police:v1.0 (by/u/TheosOldUsername)"
 )
 
+find = ctypes.util.find_library('opus')
+discord.opus.load_opus(find)
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
 #   _____  _       ____   ____            _      
