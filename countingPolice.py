@@ -1314,7 +1314,7 @@ async def play(ctx, song: str):
         title = ytresults[0]["title"]
         channel = ytresults[0]["channel"]
     
-    voice = discord.utils.get(bot.voice_clients, guild=ctx.guild)
+    voice = uservoice.channel.connect()
 
     if not voice.is_connected():
         voice.connect()
