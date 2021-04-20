@@ -1289,13 +1289,13 @@ async def play(ctx, song: str):
 
     user = ctx.author
     print(type(user))
-    channel = user.voice.channel
+    uservoice = user.voice
 
-    if channel is None or channel.name == "Out to Lunch - AFK":
+    if uservoice is None or uservoice.channel.name == "Out to Lunch - AFK":
         await ctx.send("You must be in an active voice channel to play music.")
         return
     
-    voice = await channel.connect()
+    voice = await uservoice.channel.connect()
 
     ydl_opts = {
         'format': 'bestaudio/best',
