@@ -1308,9 +1308,9 @@ async def play(ctx, song: str):
         await ctx.send("No results.")
         return
     else:
-        song = "".join(("https://www.youtube.com", ytsearch[0]["url_suffix"]))
-        title = ytsearch[0]["title"]
-        channel = ytsearch[0]["channel"]
+        song = "".join(("https://www.youtube.com", ytresults[0]["url_suffix"]))
+        title = ytresults[0]["title"]
+        channel = ytresults[0]["channel"]
     voice = await uservoice.channel.connect()
 
     ydl_opts = {
