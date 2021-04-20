@@ -1317,7 +1317,7 @@ async def play(ctx, song: str):
     try:
         voice = await uservoice.channel.connect()
     except ClientException:
-        voice = discord.utils.get(bot.voice_clients, guild=ctx.guild)
+        voice = uservoice.channel.voice_client
 
     if voice.is_playing():
         music_queue.append(song)
