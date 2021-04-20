@@ -11,6 +11,7 @@ import discord
 import os
 import re
 import random
+from discord.errors import ClientException
 from discord.ext import commands
 import asyncio
 from discord.ext.commands.errors import CommandOnCooldown
@@ -1313,8 +1314,10 @@ async def play(ctx, song: str):
         song = "".join(("https://www.youtube.com", ytresults[0]["url_suffix"]))
         title = ytresults[0]["title"]
         channel = ytresults[0]["channel"]
-    
-    voice = await uservoice.channel.connect()
+    try:
+        voice = await uservoice.channel.connect()
+    except ClientException:
+        voice = discord.utils.get(bot.voice_clients, guild=ctx.guild)
 
     if voice.is_playing():
         music_queue.append(song)
