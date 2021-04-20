@@ -95,7 +95,7 @@ modID = [
 streamerList = {
     173202512977854466: "AGallonofRaccoons",
     221115052038684683: "smartinmoose",
-    288710564367171595: "ctrlaltdel_"
+    288710564367171595: "purelife_tv"
 }
 
 #foot picture list for .finn
@@ -1287,7 +1287,8 @@ async def play(ctx, song: str):
         await ctx.message.delete()
         return
 
-    channel = ctx.author.voice.channel
+    user = bot.get_user(ctx.author.id)
+    channel = user.channel
 
     if channel is None or channel.name == "Out to Lunch - AFK":
         await ctx.send("You must be in an active voice channel to play music.")
