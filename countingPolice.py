@@ -14,6 +14,7 @@ import random
 from discord.ext import commands
 import asyncio
 from discord.ext.commands.errors import CommandOnCooldown
+from discord.player import FFmpegPCMAudio
 import psycopg2
 import datetime
 import praw
@@ -1264,9 +1265,67 @@ async def dog(ctx,*args):
 @commands.cooldown(1, 30, commands.BucketType.user)
 @bot.command(name="cat", brief="Posts a random picture of a cat", description = "Posts a random picture of a cat into the channel. You cannot specify breeds")
 async def cat(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
     response = requests.get("https://aws.random.cat/meow").json()['file']
     await ctx.send(response)
 
+
+
+
+
+
+@bot.command(name="play", description="Plays a song in a voice channel")
+async def play(ctx, song: str):
+
+    song_there = os.path.isfile("song.mp3")
+    if song_there:
+        os.remove("song.mp3")
+
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
+
+    channel = ctx.author.voice.channel
+
+    if channel is None or channel.name == "Out to Lunch - AFK":
+        await ctx.send("You must be in an active voice channel to play music.")
+        return
+    
+    voice = await channel.connect()
+
+    ydl_opts = {
+        'format': 'bestaudio/best',
+        'postprocessors': [{
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': 'mp3',
+            'preferredquality': '192',
+        }]
+    }
+
+    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+        ydl.download([song])
+        for file in os.listdir("./"):
+            if file.endswith(".mp3"):
+                os.rename(file, "song.mp3")
+    
+    voice.play(FFmpegPCMAudio("song.mp3"))
+
+
+@bot.command(name="leave", description="Makes the bot leave an active voice channel")
+async def leave(ctx):
+    voice = discord.utils.get(bot.voice_clients, guild=ctx.guild)
+    if voice.is_connected():
+        await voice.disconnect()
+    else:
+        await ctx.send("The bot is not connected to an active voice channel.")
+        return
+
+
+
+
+        
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
 #   _____            __  __  ____   _       _____  _   _   _____ 
@@ -2179,7 +2238,7 @@ async def connectfour(ctx):
         elif move.content.lower() not in keys:
             await ctx.send("That is not a valid column. Please enter a number 1-7.")
             continue
-        elif all(x is not "   " for x in board[int(move.content)-1][1:]) == False:
+        elif all(x != "   " for x in board[int(move.content)-1][1:]) == False:
             await ctx.send("That column is full. Please choose another.")
             continue
 
