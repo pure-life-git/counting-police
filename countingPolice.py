@@ -1289,6 +1289,7 @@ async def cat(ctx):
 
 
 async def play_music(ctx,song):
+    print(song)
     title=song[1]
     channel=song[2]
     song=song[0]
@@ -1335,7 +1336,7 @@ async def play(ctx, *args):
 
     if voice:
         if voice.is_playing():
-            music_queue.append(song)
+            music_queue.append((song, title, channel))
             await ctx.send(f"**Added to Queue:** {title} - {channel}")
             return
         else:
