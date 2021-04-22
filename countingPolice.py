@@ -1354,7 +1354,7 @@ async def skip(ctx):
     if voice.is_connected():
         if voice.is_playing():
             if music_queue:
-                play_music(ctx, song=music_queue.pop(0))
+                await play_music(ctx, song=music_queue.pop(0))
             else:
                 voice.stop()
         else:
@@ -1374,7 +1374,11 @@ async def leave(ctx):
         await ctx.send("The bot is not connected to an active voice channel.")
         return
 
-
+@bot.command(name="clear", description="Clears the queue", aliases=["c"])
+async def clear(ctx):
+    num_songs = len(music_queue)
+    music_queue = []
+    await ctx.send(f"The queue has been cleared of {num_songs} songs.")
 
 
         
