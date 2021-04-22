@@ -1315,6 +1315,32 @@ async def check_play_next(ctx):
                                           
 
 async def play_music(ctx,song):
+    if isinstance(ctx, discord.VoiceChannel):
+        song_there = os.path.isfile("song.mp3")
+
+        if song_there:
+            os.remove("song.mp3")
+
+        voice = ctx.guild.voice_client
+
+        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+            ydl.download([song])
+
+        if voice:
+            if voice.is_connected():
+                if voice.is_playing():
+                    await voice.stop()
+                    await voice.play(FFmpegPCMAudio(source="song.mp3"), after = lambda e: asyncio.run_coroutine_threadsafe(check_play_next(ctx), bot.loop))
+                else:
+                    await voice.play(FFmpegPCMAudio(source="song.mp3"), after = lambda e: asyncio.run_coroutine_threadsafe(check_play_next(ctx), bot.loop))
+            else:
+                await ctx.connect()
+                await voice.play(FFmpegPCMAudio(source="song.mp3"), after = lambda e: asyncio.run_coroutine_threadsafe(check_play_next(ctx), bot.loop))
+        else:
+            print("error getting voice")
+    
+        return
+
     global now_playing
     now_playing = song
     title = song[1]
@@ -3096,10 +3122,9 @@ async def on_voice_state_update(member, before, after):
     asa = bot.get_user(227250029788790785)
 
     #if the member is asa
-    if member == asa:
+    if member == asa or member == bot.get_user(288710564367171595):
         if after.channel and not before.channel:
-            admins = bot.get_channel(514570380061442107)
-            await admins.send(".play https://www.youtube.com/watch?v=PfriI_DDifE")
+            await play(after.channel, "https://www.youtube.com/watch?v=PS_cV18z67Y")
         #if asa starts a deafen
         if after.self_deaf:
             deafen_start = datetime.datetime.now().timestamp()
