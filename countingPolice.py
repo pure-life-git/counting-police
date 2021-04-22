@@ -1339,7 +1339,9 @@ async def play_music(ctx,song):
         else:
             voice = await ctx.connect()
             await voice.play(FFmpegPCMAudio(source="song.mp3"))
-    
+        await asyncio.sleep(120)
+        if not voice.is_playing():
+            voice.disconnect()
         return
 
     global now_playing
@@ -3123,7 +3125,7 @@ async def on_voice_state_update(member, before, after):
     asa = bot.get_user(227250029788790785)
 
     #if the member is asa
-    if member == asa or member == bot.get_user(288710564367171595):
+    if member == asa:
         if after.channel and not before.channel:
             await play_music(after.channel, "https://www.youtube.com/watch?v=PS_cV18z67Y")
         #if asa starts a deafen
