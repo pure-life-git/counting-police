@@ -1355,6 +1355,7 @@ async def skip(ctx):
     if voice.is_connected():
         if voice.is_playing():
             if music_queue:
+                voice.stop()
                 await play_music(ctx, song=music_queue.pop(0))
             else:
                 voice.stop()
