@@ -1295,9 +1295,10 @@ async def cat(ctx):
 
 async def play_music(ctx,song):
     now_playing=song
-    title=song[1]
-    channel=song[2]
-    song=song[0]
+    title = song[1]
+    channel = song[2]
+    runtime = song[3]
+    song = song[0]
 
     song_there = os.path.isfile("song.mp3")
 
@@ -1336,19 +1337,20 @@ async def play(ctx, *args):
         song = "".join(("https://www.youtube.com", ytresults[0]["url_suffix"]))
         title = ytresults[0]["title"]
         channel = ytresults[0]["channel"]
+        runtime = ytresults[0]["duration"]
 
     voice = ctx.guild.voice_client
 
     if voice:
         if voice.is_playing():
-            music_queue.append((song, title, channel))
+            music_queue.append((song, title, channel, runtime, ctx.author.name))
             await ctx.send(f"**Added to Queue:** {title} - {channel}")
             return
         else:
-            await play_music(ctx, (song,title,channel))
+            await play_music(ctx, (song,title,channel, runtime, ctx.author.name))
     else:
         await uservoice.channel.connect()
-        await play_music(ctx,(song,title,channel))
+        await play_music(ctx,(song,title,channel, runtime, ctx.author.name))
 
 
 
@@ -1392,7 +1394,7 @@ async def clear(ctx):
 async def queue(ctx):
     queue_embed = discord.Embed(title="Music Queue", description=":musical_note: :notes: :musical_note:", color=bot_color)
     for num,song in enumerate(music_queue):
-        queue_embed.add_field(name=num+1, value=f"{song[1]} - {song[2]}", inline=False)
+        queue_embed.add_field(name=f"{num+1} - {song[1]} | {song[2]}", value=f"Runtime: {song[3]}  |  Played by: {song[4]}", inline=False)
     
     queue_embed.add_field(name="Length", value=f"{len(music_queue)}", inline = False)
     queue_embed.add_field(name="Repeating", value=repeating, inline=True)
