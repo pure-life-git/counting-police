@@ -1293,6 +1293,16 @@ async def cat(ctx):
     await ctx.send(response)
 
 
+#--------------------------------------------------------------------------------------------------------------------------------------#
+#   __  __   _    _    _____   _____    _____ 
+#  |  \/  | | |  | |  / ____| |_   _|  / ____|
+#  | \  / | | |  | | | (___     | |   | |     
+#  | |\/| | | |  | |  \___ \    | |   | |     
+#  | |  | | | |__| |  ____) |  _| |_  | |____ 
+#  |_|  |_|  \____/  |_____/  |_____|  \_____|
+                                            
+                                          
+
 async def play_music(ctx,song):
     now_playing=song
     title = song[1]
@@ -1310,18 +1320,18 @@ async def play_music(ctx,song):
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         ydl.download([song])
     
-    await ctx.send(f"**Now Playing:** {title} - {channel}")
+    await ctx.send(f"**Now Playing:** {title} - {channel} | {runtime}")
     voice.play(FFmpegPCMAudio(source="song.mp3"), after = lambda e: asyncio.run_coroutine_threadsafe(play_music(ctx,music_queue.pop(0)), bot.loop))
 
 
 @bot.command(name="play", description="Plays a song in a voice channel", aliases=["p"])
 async def play(ctx, *args):
-    song = " ".join(args)
-    
-    if str(ctx.channel) not in channelList:
+    if str(ctx.channel) != "Jukebox":
         await ctx.message.delete()
         return
 
+    song = " ".join(args)
+    
     uservoice = ctx.author.voice
 
     if uservoice is None or uservoice.channel.name == "Out to Lunch - AFK":
@@ -1358,6 +1368,10 @@ async def play(ctx, *args):
 
 @bot.command(name="skip", description="Skips the currently playing song", aliases=["s"])
 async def skip(ctx):
+    if str(ctx.channel) != "Jukebox":
+        await ctx.message.delete()
+        return
+
     voice = discord.utils.get(bot.voice_clients, guild=ctx.guild)
     if voice.is_connected():
         if voice.is_playing():
@@ -1376,6 +1390,9 @@ async def skip(ctx):
 
 @bot.command(name="leave", description="Makes the bot leave an active voice channel", aliases=["l"])
 async def leave(ctx):
+    if str(ctx.channel) != "Jukebox":
+        await ctx.message.delete()
+        return
     voice = discord.utils.get(bot.voice_clients, guild=ctx.guild)
     if voice.is_connected():
         await voice.disconnect()
@@ -1386,13 +1403,20 @@ async def leave(ctx):
 
 @bot.command(name="clear", description="Clears the queue", aliases=["c"])
 async def clear(ctx):
+    if str(ctx.channel) != "Jukebox":
+        await ctx.message.delete()
+        return
     num_songs = len(music_queue)
     music_queue.clear()
     await ctx.send(f"The queue has been cleared of {num_songs} songs.")
 
 @bot.command(name="queue", description="Displays the queue of songs", aliases=["q"])
 async def queue(ctx):
-    queue_embed = discord.Embed(title="Music Queue", description=":musical_note: :notes: :musical_note:", color=bot_color)
+    if str(ctx.channel) != "Jukebox":
+        await ctx.message.delete()
+        return
+    queue_embed = discord.Embed(title="Music Queue", description="", color=bot_color)
+    queue_embed.add_field(name=":musical_note: Now Playing :musical_note:", value=f"Title: {now_playing[1]}  |  Channel: {now_playing[2]}\nRuntime: {now_playing[3]}  |  Played by: {now_playing[4]}")
     for num,song in enumerate(music_queue):
         queue_embed.add_field(name=f"{num+1} - {song[1]} | {song[2]}", value=f"Runtime: {song[3]}  |  Played by: {song[4]}", inline=False)
     
