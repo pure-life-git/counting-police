@@ -1341,7 +1341,7 @@ async def play(ctx, *args):
         else:
             play_music(ctx, (song,title,channel))
     else:
-        await ctx.channel.connect()
+        await uservoice.channel.connect()
         play_music(ctx,(song,title,channel))
 
 
