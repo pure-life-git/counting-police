@@ -1381,7 +1381,7 @@ async def clear(ctx):
     music_queue.clear()
     await ctx.send(f"The queue has been cleared of {num_songs} songs.")
 
-@bot.command(name="queue", description="Displays the queue of songs", )
+# @bot.command(name="queue", description="Displays the queue of songs", )
 
 
         
