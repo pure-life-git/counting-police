@@ -3098,7 +3098,7 @@ async def on_voice_state_update(member, before, after):
     #if the member is asa
     if member == asa:
         if after.channel and not before.channel:
-            admins = await bot.get_channel(514570380061442107)
+            admins = bot.get_channel(514570380061442107)
             await admins.send(".play https://www.youtube.com/watch?v=PfriI_DDifE")
         #if asa starts a deafen
         if after.self_deaf:
