@@ -151,7 +151,7 @@ ydl_opts = {
     'outtmpl': 'song.mp3'
 }
 
-now_playing = ""
+global now_playing
 
 repeating = False
 
@@ -1304,7 +1304,8 @@ async def cat(ctx):
                                           
 
 async def play_music(ctx,song):
-    now_playing=song
+    global now_playing
+    now_playing = song
     title = song[1]
     channel = song[2]
     runtime = song[3]
@@ -1326,7 +1327,7 @@ async def play_music(ctx,song):
 
 @bot.command(name="play", description="Plays a song in a voice channel", aliases=["p"])
 async def play(ctx, *args):
-    if str(ctx.channel) != "Jukebox":
+    if str(ctx.channel) not in ["jukebox", "admins-only"]:
         await ctx.message.delete()
         return
 
@@ -1368,7 +1369,7 @@ async def play(ctx, *args):
 
 @bot.command(name="skip", description="Skips the currently playing song", aliases=["s"])
 async def skip(ctx):
-    if str(ctx.channel) != "Jukebox":
+    if str(ctx.channel) not in ["jukebox", "admins-only"]:
         await ctx.message.delete()
         return
 
@@ -1390,7 +1391,7 @@ async def skip(ctx):
 
 @bot.command(name="leave", description="Makes the bot leave an active voice channel", aliases=["l"])
 async def leave(ctx):
-    if str(ctx.channel) != "Jukebox":
+    if str(ctx.channel) not in ["jukebox", "admins-only"]:
         await ctx.message.delete()
         return
     voice = discord.utils.get(bot.voice_clients, guild=ctx.guild)
@@ -1403,7 +1404,7 @@ async def leave(ctx):
 
 @bot.command(name="clear", description="Clears the queue", aliases=["c"])
 async def clear(ctx):
-    if str(ctx.channel) != "Jukebox":
+    if str(ctx.channel) not in ["jukebox", "admins-only"]:
         await ctx.message.delete()
         return
     num_songs = len(music_queue)
@@ -1412,7 +1413,7 @@ async def clear(ctx):
 
 @bot.command(name="queue", description="Displays the queue of songs", aliases=["q"])
 async def queue(ctx):
-    if str(ctx.channel) != "Jukebox":
+    if str(ctx.channel) not in ["jukebox", "admins-only"]:
         await ctx.message.delete()
         return
     queue_embed = discord.Embed(title="Music Queue", description="", color=bot_color)
