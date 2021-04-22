@@ -1339,10 +1339,10 @@ async def play(ctx, *args):
             await ctx.send(f"**Added to Queue:** {title} - {channel}")
             return
         else:
-            play_music(ctx, (song,title,channel))
+            await play_music(ctx, (song,title,channel))
     else:
         await uservoice.channel.connect()
-        play_music(ctx,(song,title,channel))
+        await play_music(ctx,(song,title,channel))
 
 
 
