@@ -88,7 +88,7 @@ login_data = {
         }
 
 channelList = [
-    "bot", "admins-only"
+    "bot", "admins-only", "testing"
 ]
 
 #list of mod ids
@@ -140,6 +140,15 @@ defenderList = [
 
 music_queue = []
 
+ydl_opts = {
+    'format': 'bestaudio/best',
+    'postprocessors': [{
+        'key': 'FFmpegExtractAudio',
+        'preferredcodec': 'mp3',
+        'preferredquality': '192',
+    }],
+    'outtmpl': 'song.mp3'
+}
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
 #  ______  _    _  _   _   _____  _______  _____  ____   _   _   _____ 
@@ -1279,27 +1288,34 @@ async def cat(ctx):
     await ctx.send(response)
 
 
+async def play_music(ctx,song):
+    title=song[1]
+    channel=song[2]
+    song=song[0]
 
-
-
-
-@bot.command(name="play", description="Plays a song in a voice channel", aliases=["p"])
-async def play(ctx, song: str):
-    if str(ctx.channel) not in channelList:
-        await ctx.message.delete()
-        return
-    
     song_there = os.path.isfile("song.mp3")
+
     if song_there:
         os.remove("song.mp3")
 
+    voice = ctx.guild.voice_client
+
+    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+        ydl.download([song])
+    
+    await ctx.send(f"**Now Playing:** {title} - {channel}")
+    voice.play(FFmpegPCMAudio("song.mp3"))
+
+
+@bot.command(name="play", description="Plays a song in a voice channel", aliases=["p"])
+async def play(ctx, *args):
+    song = " ".join(args)
+    
     if str(ctx.channel) not in channelList:
         await ctx.message.delete()
         return
 
-    user = ctx.author
-    print(type(user))
-    uservoice = user.voice
+    uservoice = ctx.author.voice
 
     if uservoice is None or uservoice.channel.name == "Out to Lunch - AFK":
         await ctx.send("You must be in an active voice channel to play music.")
@@ -1314,33 +1330,23 @@ async def play(ctx, song: str):
         song = "".join(("https://www.youtube.com", ytresults[0]["url_suffix"]))
         title = ytresults[0]["title"]
         channel = ytresults[0]["channel"]
-    try:
-        voice = await uservoice.channel.connect()
-    except ClientException:
-        voice = uservoice.channel.voice_client
 
-    if voice.is_playing():
-        music_queue.append(song)
-        await ctx.send(f"**Added to Queue:** {title} - {channel}")
-        return
+    voice = ctx.guild.voice_client
 
-    ydl_opts = {
-        'format': 'bestaudio/best',
-        'postprocessors': [{
-            'key': 'FFmpegExtractAudio',
-            'preferredcodec': 'mp3',
-            'preferredquality': '192',
-        }]
-    }
+    if voice:
+        if voice.is_playing():
+            music_queue.append(song)
+            await ctx.send(f"**Added to Queue:** {title} - {channel}")
+            return
+        else:
+            play_music(ctx, (song,title,channel))
+    else:
+        await ctx.channel.connect()
+        play_music(ctx,(song,title,channel))
 
-    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([song])
-        for file in os.listdir("./"):
-            if file.endswith(".mp3"):
-                os.rename(file, "song.mp3")
+
+
     
-    await ctx.send(f"**Now Playing:** {title} - {channel}")
-    voice.play(FFmpegPCMAudio("song.mp3"))
 
 @bot.command(name="skip", description="Skips the currently playing song", aliases=["s"])
 async def skip(ctx):
@@ -1349,7 +1355,7 @@ async def skip(ctx):
         if voice.is_playing():
             voice.stop()
             if music_queue:
-                play(ctx, song=music_queue[0])
+                play_music(ctx, song=music_queue.pop(0))
         else:
             await ctx.send("The bot is not currently playing anything")
             return
