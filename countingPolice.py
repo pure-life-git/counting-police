@@ -1337,7 +1337,7 @@ async def play_music(ctx,song):
                 await ctx.connect()
                 await voice.play(FFmpegPCMAudio(source="song.mp3"))
         else:
-            voice = ctx.connect()
+            voice = await ctx.connect()
             await voice.play(FFmpegPCMAudio(source="song.mp3"))
     
         return
