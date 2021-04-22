@@ -1361,6 +1361,13 @@ async def play(ctx, *args):
         channel = ytresults[0]["channel"]
         runtime = ytresults[0]["duration"]
 
+    h, m, s = runtime.split(':')
+    runtime_sec = int(h) * 3600 + int(m) * 60 + int(s)
+
+    if runtime_sec > 7200:
+        await ctx.send("Cannot queue a song longer than 2 hours.")
+        return
+
     voice = ctx.guild.voice_client
 
     if voice:
@@ -1422,18 +1429,25 @@ async def clear(ctx):
     music_queue.clear()
     await ctx.send(f"The queue has been cleared of {num_songs} songs.")
 
+
 @bot.command(name="queue", description="Displays the queue of songs", aliases=["q"])
 async def queue(ctx):
     if str(ctx.channel) not in ["jukebox", "admins-only"]:
         await ctx.message.delete()
         return
+    
+    total_runtime = 0
     queue_embed = discord.Embed(title="Music Queue", description="", color=bot_color)
     queue_embed.add_field(name=":musical_note: Now Playing :musical_note:", value=f"Title: {now_playing[1]}  |  Channel: {now_playing[2]}\nRuntime: {now_playing[3]}  |  Played by: {now_playing[4]}")
     for num,song in enumerate(music_queue):
         queue_embed.add_field(name=f"{num+1} - {song[1]} | {song[2]}", value=f"Runtime: {song[3]}  |  Played by: {song[4]}", inline=False)
+        total_runtime += song[3]
     
+    hms_runtime = str(datetime.timedelta(seconds = total_runtime))
+
     queue_embed.add_field(name="Length", value=f"{len(music_queue)}", inline = False)
     queue_embed.add_field(name="Repeating", value=repeating, inline=True)
+    queue_embed.add_field(name = "Runtime", value = hms_runtime, inline=True)
 
     await ctx.send(embed=queue_embed)
 
