@@ -1379,7 +1379,7 @@ async def leave(ctx):
 @bot.command(name="clear", description="Clears the queue", aliases=["c"])
 async def clear(ctx):
     num_songs = len(music_queue)
-    music_queue = []
+    music_queue.clear()
     await ctx.send(f"The queue has been cleared of {num_songs} songs.")
 
 
