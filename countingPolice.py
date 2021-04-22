@@ -11,6 +11,7 @@ import discord
 import os
 import re
 import random
+from discord import colour
 from discord.errors import ClientException
 from discord.ext import commands
 import asyncio
@@ -149,6 +150,10 @@ ydl_opts = {
     }],
     'outtmpl': 'song.mp3'
 }
+
+now_playing = ""
+
+repeating = False
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
 #  ______  _    _  _   _   _____  _______  _____  ____   _   _   _____ 
@@ -1289,6 +1294,7 @@ async def cat(ctx):
 
 
 async def play_music(ctx,song):
+    now_playing=song
     title=song[1]
     channel=song[2]
     song=song[0]
@@ -1371,6 +1377,7 @@ async def leave(ctx):
     voice = discord.utils.get(bot.voice_clients, guild=ctx.guild)
     if voice.is_connected():
         await voice.disconnect()
+        music_queue.clear()
     else:
         await ctx.send("The bot is not connected to an active voice channel.")
         return
@@ -1381,7 +1388,17 @@ async def clear(ctx):
     music_queue.clear()
     await ctx.send(f"The queue has been cleared of {num_songs} songs.")
 
-# @bot.command(name="queue", description="Displays the queue of songs", )
+@bot.command(name="queue", description="Displays the queue of songs", aliases=["q"])
+async def queue(ctx):
+    queue_embed = discord.Embed(title="Music Queue", description=":musical_note: :notes: :musical_note:", color=bot_color)
+    for num,song in enumerate(music_queue):
+        queue_embed.add_field(name=num+1, value=f"{song[1]} - {song[2]}", inline=False)
+    
+    queue_embed.add_field(name="Length", value=f"{len(music_queue)}", inline = False)
+    queue_embed.add_field(name="Repeating", value=repeating, inline=True)
+
+    await ctx.send(embed=queue_embed)
+
 
 
         
