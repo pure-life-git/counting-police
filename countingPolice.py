@@ -1308,7 +1308,7 @@ async def check_play_next(ctx):
     if len(music_queue) > 0:
         await play_music(ctx, music_queue.pop(0))
     else:
-        asyncio.sleep(120)
+        await asyncio.sleep(120000)
         if not voice.is_playing():
             asyncio.run_coroutine_threadsafe(voice.disconnect(), bot.loop)                              
                                           
