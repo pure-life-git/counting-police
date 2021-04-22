@@ -2969,8 +2969,8 @@ async def connectfour_error(ctx, error):
 async def on_message(message):
     await bot.process_commands(message)
     
-    if message.author == bot.user: #checks to see if the message author is the bot and returns
-            return
+    if message.author == bot.user and str(message.channel) != "admins-only": #checks to see if the message author is the bot and returns
+        return
     
     print('Message recieved: ', message.content, 'by', message.author, 'in '+ str(message.channel))
     # april fools
