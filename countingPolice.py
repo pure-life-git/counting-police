@@ -1300,7 +1300,17 @@ async def cat(ctx):
 #  | |\/| | | |  | |  \___ \    | |   | |     
 #  | |  | | | |__| |  ____) |  _| |_  | |____ 
 #  |_|  |_|  \____/  |_____/  |_____|  \_____|
-                                            
+# 
+
+async def check_play_next(ctx):
+    voice = ctx.guild.voice_client
+
+    if len(music_queue) > 0:
+        await play_music(ctx, music_queue.pop(0))
+    else:
+        asyncio.sleep(120)
+        if not voice.is_playing():
+            asyncio.run_coroutine_threadsafe(voice.disconnect(), bot.loop)                              
                                           
 
 async def play_music(ctx,song):
@@ -1322,7 +1332,7 @@ async def play_music(ctx,song):
         ydl.download([song])
     
     await ctx.send(f"**Now Playing:** {title} - {channel} | {runtime}")
-    voice.play(FFmpegPCMAudio(source="song.mp3"), after = lambda e: asyncio.run_coroutine_threadsafe(play_music(ctx,music_queue.pop(0)), bot.loop))
+    voice.play(FFmpegPCMAudio(source="song.mp3"), after = lambda e: asyncio.run_coroutine_threadsafe(check_play_next(ctx), bot.loop))
 
 
 @bot.command(name="play", description="Plays a song in a voice channel", aliases=["p"])
