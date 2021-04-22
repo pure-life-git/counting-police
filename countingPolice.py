@@ -1329,19 +1329,19 @@ async def play_music(ctx,song):
         if voice:
             if voice.is_connected():
                 if voice.is_playing():
-                    await voice.stop()
-                    await voice.play(FFmpegPCMAudio(source="song.mp3"))
+                    voice.stop()
+                    voice.play(FFmpegPCMAudio(source="song.mp3"))
                 else:
-                    await voice.play(FFmpegPCMAudio(source="song.mp3"))
+                    voice.play(FFmpegPCMAudio(source="song.mp3"))
             else:
                 await ctx.connect()
-                await voice.play(FFmpegPCMAudio(source="song.mp3"))
+                voice.play(FFmpegPCMAudio(source="song.mp3"))
         else:
             voice = await ctx.connect()
-            await voice.play(FFmpegPCMAudio(source="song.mp3"))
+            voice.play(FFmpegPCMAudio(source="song.mp3"))
         await asyncio.sleep(120)
         if not voice.is_playing():
-            voice.disconnect()
+            asyncio.run_coroutine_threadsafe(voice.disconnect(), bot.loop)    
         return
 
     global now_playing
