@@ -1305,7 +1305,7 @@ async def play_music(ctx,song):
         ydl.download([song])
     
     await ctx.send(f"**Now Playing:** {title} - {channel}")
-    voice.play(FFmpegPCMAudio("song.mp3"))
+    voice.play(FFmpegPCMAudio(source="song.mp3"), after = lambda e: asyncio.run_coroutine_threadsage(play_music(ctx,music_queue.pop(0)), bot.loop))
 
 
 @bot.command(name="play", description="Plays a song in a voice channel", aliases=["p"])
