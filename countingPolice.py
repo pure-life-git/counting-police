@@ -1543,7 +1543,8 @@ async def queue(ctx):
     queue_embed = discord.Embed(title="Music Queue", description="", color=bot_color)
     queue_embed.add_field(name=":musical_note: Now Playing :musical_note:", value=f"Title: {now_playing[1]}  |  Channel: {now_playing[2]}\nRuntime: {now_playing[3]}  |  Played by: {now_playing[4]}")
     for num,song in enumerate(music_queue):
-        queue_embed.add_field(name=f"{num+1} - {song[1]} | {song[2]}", value=f"Runtime: {song[3]}  |  Played by: {song[4]}", inline=False)
+        if num < 6:
+            queue_embed.add_field(name=f"{num+1} - {song[1]} | {song[2]}", value=f"Runtime: {song[3]}  |  Played by: {song[4]}", inline=False)
         if len(song[3].split(":")) == 2:
             h=0
             m,s = song[3].split(':')
@@ -1555,12 +1556,14 @@ async def queue(ctx):
 
         runtime_sec = int(h) * 3600 + int(m) * 60 + int(s)
         total_runtime += runtime_sec
+    if len(music_queue) > 7:
+        queue_embed.add_field(name="", value=f"+ {len(music_queue)-5} more")
     
     hms_runtime = str(datetime.timedelta(seconds = total_runtime))
 
     queue_embed.add_field(name="Length", value=f"{len(music_queue)}", inline = False)
     queue_embed.add_field(name="Repeating", value=repeating, inline=True)
-    queue_embed.add_field(name = "Runtime", value = hms_runtime, inline=True)
+    queue_embed.add_field(name = "Total Playtime", value = hms_runtime, inline=True)
 
     await ctx.send(embed=queue_embed)
 
@@ -1569,6 +1572,12 @@ async def queue(ctx):
 async def repeat(ctx):
     repeating = not repeating
     await ctx.send(f"**Repeating:** {repeating}")
+
+
+@bot.command(name="shuffle", description="Shuffles the music queue")
+async def shuffle(ctx):
+    random.shuffle(music_queue)
+    await ctx.send("Queue successfully shuffled.")
 
 
 
