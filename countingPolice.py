@@ -1557,7 +1557,7 @@ async def queue(ctx):
         runtime_sec = int(h) * 3600 + int(m) * 60 + int(s)
         total_runtime += runtime_sec
     if len(music_queue) > 7:
-        queue_embed.add_field(name="", value=f"+ {len(music_queue)-5} more")
+        queue_embed.add_field(name="-=-=-=-=-=-=-=-=-=-=-==-=-=-=-", value=f"+ {len(music_queue)-5} more")
     
     hms_runtime = str(datetime.timedelta(seconds = total_runtime))
 
