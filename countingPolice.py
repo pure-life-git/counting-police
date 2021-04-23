@@ -1440,7 +1440,7 @@ async def play(ctx, *args):
     if song.startswith("https://open.spotify.com/playlist"):
         track_names = get_track_names('spotify', song.split('playlist/')[1].split('?')[0])
         for track in track_names:
-            await play(ctx, track)
+            await play_spotify(ctx, track)
         
         await ctx.send(f"Added `{len(track_names)}` songs to the queue.")
         return
@@ -1544,7 +1544,17 @@ async def queue(ctx):
     queue_embed.add_field(name=":musical_note: Now Playing :musical_note:", value=f"Title: {now_playing[1]}  |  Channel: {now_playing[2]}\nRuntime: {now_playing[3]}  |  Played by: {now_playing[4]}")
     for num,song in enumerate(music_queue):
         queue_embed.add_field(name=f"{num+1} - {song[1]} | {song[2]}", value=f"Runtime: {song[3]}  |  Played by: {song[4]}", inline=False)
-        total_runtime += int(song[3])
+        if len(song[3].split(":")) == 2:
+            h=0
+            m,s = song[3].split(':')
+        elif len(song[3].split(":")) == 1:
+            h,m = 0,0
+            s=song[3]
+        else:
+            h, m, s = song[3].split(':')
+
+        runtime_sec = int(h) * 3600 + int(m) * 60 + int(s)
+        total_runtime += runtime_sec
     
     hms_runtime = str(datetime.timedelta(seconds = total_runtime))
 
