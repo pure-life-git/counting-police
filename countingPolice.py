@@ -25,6 +25,10 @@ from youtube_search import YoutubeSearch
 import youtube_dl
 import ctypes
 import ctypes.util
+import spotipy
+import spotipy.oauth2 as oauth2
+from spotipy.oauth2 import SpotifyOAuth
+from spotipy.oauth2 import SpotifyClientCredentials
 
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
@@ -61,6 +65,9 @@ reddit = praw.Reddit(
 
 find = ctypes.util.find_library('opus')
 discord.opus.load_opus(find)
+
+auth_manager = SpotifyClientCredentials(client_id=os.environ['spot_id'], client_secret=os.environ['spot_secret'])
+sp = spotipy.Spotify(auth_manager=auth_manager)
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
 #   _____  _       ____   ____            _      
@@ -1301,6 +1308,15 @@ async def cat(ctx):
 #  | |  | | | |__| |  ____) |  _| |_  | |____ 
 #  |_|  |_|  \____/  |_____/  |_____|  \_____|
 # 
+def get_track_names(user, playlist_id):
+    track_names = []
+    playlist = sp.user_playlist(user, playlist_id)
+    for item in playlist['tracks']['items']:
+        track = item['track']
+        track_names.append(sp.track(track['id'])['name'])
+    return track_names
+
+
 
 async def check_play_next(ctx):
     voice = ctx.guild.voice_client
@@ -1379,6 +1395,14 @@ async def play(ctx, *args):
         await ctx.send("You must be in an active voice channel to play music.")
         return
     
+    if song.startswith("https://open.spotify.com/playlist"):
+        track_names = get_track_names('spotify', song.split('playlist/')[1].split('?')[0])
+        for track in track_names:
+            await play(ctx, track)
+        
+        await ctx.send(f"Added `{len(track_names)}` songs to the queue.")
+        return
+
     ytresults = YoutubeSearch(song, max_results=1).to_dict()
 
     if len(ytresults) == 0:
@@ -1481,8 +1505,6 @@ async def queue(ctx):
     await ctx.send(embed=queue_embed)
 
 
-
-        
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
 #   _____            __  __  ____   _       _____  _   _   _____ 
