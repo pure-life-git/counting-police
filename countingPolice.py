@@ -1413,8 +1413,16 @@ async def play(ctx, *args):
         title = ytresults[0]["title"]
         channel = ytresults[0]["channel"]
         runtime = ytresults[0]["duration"]
+        
+    if len(runtime.split(":")) == 2:
+        h=0
+        m,s = runtime.split(':')
+    elif len(runtime.split(":")) == 1:
+        h,m = 0,0
+        s=runtime
+    else:
+        h, m, s = runtime.split(':')
 
-    h, m, s = runtime.split(':')
     runtime_sec = int(h) * 3600 + int(m) * 60 + int(s)
 
     if runtime_sec > 7200:
