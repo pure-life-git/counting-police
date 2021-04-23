@@ -1361,7 +1361,10 @@ async def check_play_next(ctx):
     voice = ctx.guild.voice_client
 
     if len(music_queue) > 0:
-        await play_music(ctx, music_queue.pop(0))
+        if repeating:
+            await play_music(ctx, now_playing)
+        else:
+            await play_music(ctx, music_queue.pop(0))
     else:
         if repeating:
             await play_music(ctx,now_playing)
@@ -1499,7 +1502,7 @@ async def skip(ctx):
         if voice.is_playing():
             if music_queue:
                 voice.stop()
-                await play_music(ctx, song=music_queue.pop(0))
+                await check_play_next(ctx)
             else:
                 voice.stop()
         else:
