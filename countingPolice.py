@@ -160,6 +160,7 @@ ydl_opts = {
 
 global now_playing
 
+global repeating
 repeating = False
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
@@ -1316,6 +1317,44 @@ def get_track_names(user, playlist_id):
         track_names.append(sp.track(track['id'])['name'])
     return track_names
 
+async def play_spotify(ctx, song):
+    ytresults = YoutubeSearch(song, max_results=1).to_dict()
+
+    if len(ytresults) == 0:
+        await ctx.send("No results.")
+        return
+    else:
+        song = "".join(("https://www.youtube.com", ytresults[0]["url_suffix"]))
+        title = ytresults[0]["title"]
+        channel = ytresults[0]["channel"]
+        runtime = ytresults[0]["duration"]
+
+    if len(runtime.split(":")) == 2:
+        h=0
+        m,s = runtime.split(':')
+    elif len(runtime.split(":")) == 1:
+        h,m = 0,0
+        s=runtime
+    else:
+        h, m, s = runtime.split(':')
+
+    runtime_sec = int(h) * 3600 + int(m) * 60 + int(s)
+
+    if runtime_sec > 7200:
+        await ctx.send("Cannot queue a song longer than 2 hours.")
+        return
+
+    voice = ctx.guild.voice_client
+
+    if voice:
+        if voice.is_playing():
+            music_queue.append((song, title, channel, runtime, ctx.author.name))
+            return
+        else:
+            await play_music(ctx, (song,title,channel, runtime, ctx.author.name))
+    else:
+        await ctx.author.voice.channel.connect()
+        await play_music(ctx,(song,title,channel, runtime, ctx.author.name))
 
 
 async def check_play_next(ctx):
@@ -1324,10 +1363,13 @@ async def check_play_next(ctx):
     if len(music_queue) > 0:
         await play_music(ctx, music_queue.pop(0))
     else:
-        await asyncio.sleep(120)
-        print("idling...")
-        if not voice.is_playing():
-            asyncio.run_coroutine_threadsafe(voice.disconnect(), bot.loop)                              
+        if repeating:
+            await play_music(ctx,now_playing)
+        else:
+            await asyncio.sleep(120)
+            print("idling...")
+            if not voice.is_playing():
+                asyncio.run_coroutine_threadsafe(voice.disconnect(), bot.loop)
                                           
 
 async def play_music(ctx,song):
@@ -1413,7 +1455,7 @@ async def play(ctx, *args):
         title = ytresults[0]["title"]
         channel = ytresults[0]["channel"]
         runtime = ytresults[0]["duration"]
-        
+
     if len(runtime.split(":")) == 2:
         h=0
         m,s = runtime.split(':')
@@ -1502,7 +1544,7 @@ async def queue(ctx):
     queue_embed.add_field(name=":musical_note: Now Playing :musical_note:", value=f"Title: {now_playing[1]}  |  Channel: {now_playing[2]}\nRuntime: {now_playing[3]}  |  Played by: {now_playing[4]}")
     for num,song in enumerate(music_queue):
         queue_embed.add_field(name=f"{num+1} - {song[1]} | {song[2]}", value=f"Runtime: {song[3]}  |  Played by: {song[4]}", inline=False)
-        total_runtime += song[3]
+        total_runtime += int(song[3])
     
     hms_runtime = str(datetime.timedelta(seconds = total_runtime))
 
@@ -1511,6 +1553,11 @@ async def queue(ctx):
     queue_embed.add_field(name = "Runtime", value = hms_runtime, inline=True)
 
     await ctx.send(embed=queue_embed)
+
+
+@bot.command(name="repeat", description="Toggles song repeating", aliases=["r"])
+async def repeat(ctx):
+    repeating = not repeating
 
 
 
