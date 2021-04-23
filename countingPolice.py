@@ -158,9 +158,9 @@ ydl_opts = {
     'outtmpl': 'song.mp3'
 }
 
-global now_playing
+now_playing = ""
 
-global repeating
+
 repeating = False
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
@@ -1362,13 +1362,26 @@ async def check_play_next(ctx):
 
     if len(music_queue) > 0:
         if repeating:
-            await play_music(ctx, now_playing)
+            if voice.is_playing():
+                voice.stop()
+                await play_music(ctx, now_playing)
+            else:
+                await play_music(ctx, now_playing)
         else:
-            await play_music(ctx, music_queue.pop(0))
+            if voice.is_playing():
+                voice.stop()
+                await play_music(ctx, music_queue.pop(0))
+            else:
+                await play_music(ctx, music_queue.pop(0))
     else:
         if repeating:
-            await play_music(ctx,now_playing)
+            if voice.is_playing():
+                voice.stop()
+                await play_music(ctx,now_playing)
+            else:
+                await play_music(ctx, now_playing)
         else:
+            voice.stop()
             await asyncio.sleep(120)
             print("idling...")
             if not voice.is_playing():
@@ -1404,9 +1417,10 @@ async def play_music(ctx,song):
         if not voice.is_playing():
             asyncio.run_coroutine_threadsafe(voice.disconnect(), bot.loop)    
         return
-
+        
     global now_playing
-    now_playing = song
+    if song != now_playing:
+        now_playing = song
     title = song[1]
     channel = song[2]
     runtime = song[3]
@@ -1500,11 +1514,7 @@ async def skip(ctx):
     voice = discord.utils.get(bot.voice_clients, guild=ctx.guild)
     if voice.is_connected():
         if voice.is_playing():
-            if music_queue:
-                voice.stop()
-                await check_play_next(ctx)
-            else:
-                voice.stop()
+            await check_play_next(ctx)
         else:
             await ctx.send("The bot is not currently playing anything")
             return
