@@ -1570,6 +1570,7 @@ async def queue(ctx):
 
 @bot.command(name="repeat", description="Toggles song repeating", aliases=["r"])
 async def repeat(ctx):
+    global repeating
     repeating = not repeating
     await ctx.send(f"**Repeating:** {repeating}")
 
