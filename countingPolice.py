@@ -1599,14 +1599,16 @@ async def shuffle(ctx):
 async def ignore(ctx, user: discord.Member):
     name = user.name
     id = int(user.id)
+    print(id)
     SQL = f"UPDATE musicbot SET ignore = NOT ignore WHERE id = {id};"
 
     cur.execute(SQL)
     conn.commit()
 
-    SQL = f"SELECT * FROM musicbot WHERE id = {id};"
+    SQL = f"SELECT ignore FROM musicbot WHERE id = {id};"
+    cur.execute()
     ignored = cur.fetchone()
-    print(ignored)
+    print(ignored, type(ignored))
 
     # await ctx.send(f"{name} ")
 
