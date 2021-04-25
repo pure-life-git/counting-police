@@ -1606,7 +1606,7 @@ async def ignore(ctx, user: discord.Member):
     conn.commit()
 
     SQL = f"SELECT ignore FROM musicbot WHERE id = {id};"
-    cur.execute()
+    cur.execute(SQL)
     ignored = cur.fetchone()
     print(ignored, type(ignored))
 
