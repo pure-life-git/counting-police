@@ -1442,8 +1442,12 @@ async def play_music(ctx,song):
 
 @bot.command(name="play", description="Plays a song in a voice channel", aliases=["p"])
 async def play(ctx, *args):
+    cur.execute(f"SELECT ignore FROM musicbot WHERE id = {int(ctx.author.id)};")
+    ignored = cur.fetchone()[0]
     if str(ctx.channel) not in ["jukebox", "admins-only"]:
         await ctx.message.delete()
+        return
+    elif ignored:
         return
 
     song = " ".join(args)
@@ -1507,9 +1511,15 @@ async def play(ctx, *args):
 
 @bot.command(name="skip", description="Skips the currently playing song", aliases=["s"])
 async def skip(ctx):
+    cur.execute(f"SELECT ignore FROM musicbot WHERE id = {int(ctx.author.id)};")
+    ignored = cur.fetchone()[0]
     if str(ctx.channel) not in ["jukebox", "admins-only"]:
         await ctx.message.delete()
         return
+    elif ignored:
+        return
+    # elif "Coin Operator" not in [i.name for i in ctx.author.roles]:
+    #     await ctx.send("You need a role called `Coin Operator` to do that.")
 
     voice = discord.utils.get(bot.voice_clients, guild=ctx.guild)
     if voice.is_connected():
@@ -1529,6 +1539,8 @@ async def leave(ctx):
     if str(ctx.channel) not in ["jukebox", "admins-only"]:
         await ctx.message.delete()
         return
+    elif ctx.author.id not in modID:
+        return
     voice = discord.utils.get(bot.voice_clients, guild=ctx.guild)
     if voice.is_connected():
         await voice.disconnect()
@@ -1539,9 +1551,15 @@ async def leave(ctx):
 
 @bot.command(name="clear", description="Clears the queue", aliases=["c"])
 async def clear(ctx):
+    cur.execute(f"SELECT ignore FROM musicbot WHERE id = {int(ctx.author.id)};")
+    ignored = cur.fetchone()[0]
     if str(ctx.channel) not in ["jukebox", "admins-only"]:
         await ctx.message.delete()
         return
+    elif ignored:
+        return
+    # elif "Coin Operator" not in [i.name for i in ctx.author.roles]:
+    #     await ctx.send("You need a role called `Coin Operator` to do that.")
     num_songs = len(music_queue)
     music_queue.clear()
     await ctx.send(f"The queue has been cleared of {num_songs} songs.")
@@ -1584,6 +1602,15 @@ async def queue(ctx):
 
 @bot.command(name="repeat", description="Toggles song repeating", aliases=["r"])
 async def repeat(ctx):
+    cur.execute(f"SELECT ignore FROM musicbot WHERE id = {int(ctx.author.id)};")
+    ignored = cur.fetchone()[0]
+    if str(ctx.channel) not in ["jukebox", "admins-only"]:
+        await ctx.message.delete()
+        return
+    elif ignored:
+        return
+    # elif "Coin Operator" not in [i.name for i in ctx.author.roles]:
+    #     await ctx.send("You need a role called `Coin Operator` to do that.")
     global repeating
     repeating = not repeating
     await ctx.send(f"**Repeating:** {repeating}")
@@ -1591,12 +1618,28 @@ async def repeat(ctx):
 
 @bot.command(name="shuffle", description="Shuffles the music queue")
 async def shuffle(ctx):
+    cur.execute(f"SELECT ignore FROM musicbot WHERE id = {int(ctx.author.id)};")
+    ignored = cur.fetchone()[0]
+    if str(ctx.channel) not in ["jukebox", "admins-only"]:
+        await ctx.message.delete()
+        return
+    elif ignored:
+        return
+    # elif "Coin Operator" not in [i.name for i in ctx.author.roles]:
+    #     await ctx.send("You need a role called `Coin Operator` to do that.")
     random.shuffle(music_queue)
     await ctx.send("Queue successfully shuffled.")
 
 
 @bot.command(name="ignore", description="Lets a Coin Operator take away someone's music bot privileges", aliases=["i"])
 async def ignore(ctx, user: discord.Member):
+    cur.execute(f"SELECT ignore FROM musicbot WHERE id = {int(ctx.author.id)};")
+    ignored = cur.fetchone()[0]
+    if str(ctx.channel) not in ["jukebox", "admins-only"]:
+        await ctx.message.delete()
+        return
+    elif ignored or ctx.author.id not in modID:
+        return
     name = user.name
     id = int(user.id)
     print(id)
@@ -1608,9 +1651,10 @@ async def ignore(ctx, user: discord.Member):
     SQL = f"SELECT ignore FROM musicbot WHERE id = {id};"
     cur.execute(SQL)
     ignored = cur.fetchone()[0]
-    print(ignored, type(ignored))
-
-    # await ctx.send(f"{name} ")
+    if ignored:
+        await ctx.send(f"{name} is now being ignored by the music bot.")
+    else:
+        await ctx.send(f"{name} is no longer being ignored by the music bot.")
 
 
 
