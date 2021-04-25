@@ -11,6 +11,7 @@ import discord
 import os
 import random
 from discord import colour
+from discord import embeds
 from discord.errors import ClientException
 from discord.ext import commands
 import asyncio
@@ -312,12 +313,21 @@ async def help(ctx):
     helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "The prefix of the bot is `.`", color = bot_color)
     helpEmbed.add_field(name = ":slot_machine: **Gambling - 9**", value = "`blackjack`, `roulette`, `slots`, `points`, `claim`, `pay`, `leaderboard`, `totalpointslb`, `store`", inline = False)
     helpEmbed.add_field(name = ":musical_note: **Music - 8**", value = "`play`, `skip`, `clear`, `queue`, `leave`, `shuffle`, `repeat`, `ignore`")
-    helpEmbed.add_field(name = ":game_die: **Miscellaneous - 8**", value = "`tictactoe`, `connect4`, `finn`, `suggestion`, `purge`, `asa`, `strikes`, `purge`", inline = False)
+    helpEmbed.add_field(name = ":game_die: **Miscellaneous - 8**", value = "`tictactoe`, `connect4`, `finn`, `suggestion`, `purge`, `asa`, `strikes`", inline = False)
     helpEmbed.set_footer(text = "For more information try .help (command) or .help (category), ex: .help play or .help gambling")
     await ctx.send(embed=helpEmbed)
 
 # MUSIC HELP COMMANDS
 
+@help.command(name = "music")
+async def music_help(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
+    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the Music category", color = bot_color)
+    helpEmbed.add_field(name = ":musical_note: Music Commands :musical_note:", value = "**.play**\nPlays a song\n**.skip**\nSkips the song\n**.clear**\nClears the queue\n**.queue**\nShows the queue\n**.leave**\nForces the bot to leave\n**.shuffle**\nShuffles the queue\n**.repeat**\nRepeats the song\n**.ignore**\nIgnores a user's commands", inline=False)
+    helpEmbed.set_footer(text="For more help, type .help `command` (ex. .help play)")
+    await ctx.send(embeds=helpEmbed)
 @help.command(name = "play")
 async def play_help(ctx):
     if str(ctx.channel) not in channelList:
@@ -326,7 +336,6 @@ async def play_help(ctx):
     helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the .play command", color = bot_color)
     helpEmbed.add_field(name = ".play `<youtube url, search term, or spotify playlist link>`", value = ".play lets you queue a song from youtube or a playlist from spotify")
     await ctx.send(embed=helpEmbed)
-
 @help.command(name = "skip")
 async def skip_help(ctx):
     if str(ctx.channel) not in channelList:
@@ -335,7 +344,6 @@ async def skip_help(ctx):
     helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the .skip command", color = bot_color)
     helpEmbed.add_field(name = ".skip", value = ".skip lets you skip the currently playing song")
     await ctx.send(embed=helpEmbed)
-
 @help.command(name = "clear")
 async def blackjack_help(ctx):
     if str(ctx.channel) not in channelList:
@@ -344,7 +352,6 @@ async def blackjack_help(ctx):
     helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the .clear command", color = bot_color)
     helpEmbed.add_field(name = ".clear", value = ".clear lets you clear the song queue")
     await ctx.send(embed=helpEmbed)
-
 @help.command(name = "leave")
 async def blackjack_help(ctx):
     if str(ctx.channel) not in channelList:
@@ -353,7 +360,6 @@ async def blackjack_help(ctx):
     helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the .leave command", color = bot_color)
     helpEmbed.add_field(name = ".leave", value = ".leave forces the bot to leave the voice channel")
     await ctx.send(embed=helpEmbed)
-
 @help.command(name = "shuffle")
 async def blackjack_help(ctx):
     if str(ctx.channel) not in channelList:
@@ -362,7 +368,6 @@ async def blackjack_help(ctx):
     helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the .shuffle command", color = bot_color)
     helpEmbed.add_field(name = ".shuffle", value = ".shuffle lets you shuffle the music queue")
     await ctx.send(embed=helpEmbed)
-
 @help.command(name = "repeat")
 async def blackjack_help(ctx):
     if str(ctx.channel) not in channelList:
@@ -371,7 +376,6 @@ async def blackjack_help(ctx):
     helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the .repeat command", color = bot_color)
     helpEmbed.add_field(name = ".repeat", value = ".repeat lets you repeat a song indefinitely")
     await ctx.send(embed=helpEmbed)
-
 @help.command(name = "ignore")
 async def blackjack_help(ctx):
     if str(ctx.channel) not in channelList:
@@ -380,7 +384,6 @@ async def blackjack_help(ctx):
     helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the .ignore command", color = bot_color)
     helpEmbed.add_field(name = ".ignore `<mention member>`", value = ".ignore lets a moderator take away someone's music bot privileges")
     await ctx.send(embed=helpEmbed)
-
 @help.command(name = "queue")
 async def blackjack_help(ctx):
     if str(ctx.channel) not in channelList:
@@ -391,7 +394,15 @@ async def blackjack_help(ctx):
     await ctx.send(embed=helpEmbed)
 
 # GAMBLING HELP COMMANDS
-
+@help.command(name = "gambling")
+async def gambling_help(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
+    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the Gambling category", color = bot_color)
+    helpEmbed.add_field(name = ":slot_machine: Gambling Commands :slot_machine:", value = "**.blackjack**\nPlay a game of blackjack\n**.roulette**\nPlay a game of roulette\n**.slots**\nPlay a game of slots\n**.points**\nShows your number of points\n**.claim**\nLets you claim daily points\n**.pay**\nPay another user points\n**.leaderboard**\nShows a leaderboard\n**.totalpointslb**\nShows another leaderboard\n**.store**\nShows the storefront", inline=False)
+    helpEmbed.set_footer(text="For more help, type .help `command` (ex. .help blackjack)")
+    await ctx.send(embeds=helpEmbed)
 @help.command(name = "blackjack")
 async def blackjack_help(ctx):
     if str(ctx.channel) not in channelList:
@@ -401,7 +412,6 @@ async def blackjack_help(ctx):
     helpEmbed.add_field(name = ".blackjack `<bet>`", value = ".blackjack lets you bet your hard earned points on a game of blackjack")
     helpEmbed.set_footer(text = "All allegations of stacked decks or unfair odds will be ignored")
     await ctx.send(embed=helpEmbed)
-
 @help.command(name = "roulette")
 async def roulette_help(ctx):
     if str(ctx.channel) not in channelList:
@@ -411,7 +421,6 @@ async def roulette_help(ctx):
     helpEmbed.add_field(name = ".roulette `<type of bet>` `<bet>`", value = ".roulette lets you bet your hard earned points on a game of roulette", inline = False)
     helpEmbed.add_field(name = "Types of Bets", value = "- Red: Whether the ball will land on a red space\n- Black: Whether the ball will land on a black space\n- Even: Whether the ball will land on an even space\n- Odd: Whether the ball will land on an odd space\n- Lower: Whether the ball will land on a space whose value is less than 19\n- Greater: Whether the ball will land on a space whose value is greater than 18", inline = False)
     await ctx.send(embed=helpEmbed)
-
 @help.command(name = "slots")
 async def slots_help(ctx):
     if str(ctx.channel) not in channelList:
@@ -421,7 +430,6 @@ async def slots_help(ctx):
     helpEmbed.add_field(name = ".slots", value = ".slots lets you spend 10 of your hard earned points for a chance at big winnings", inline = False)
     helpEmbed.add_field(name = "Payouts", value = "- 🍒🍒🍒: 20 points\n- 🍊🍊🍊: 35 points\n- 🍋🍋🍋: 50 points\n- 🍑🍑🍑: 75 points\n- 🔔🔔🔔: 150 points\n- :seven::seven::seven:: JACKPOT 250 points", inline = False)
     await ctx.send(embed=helpEmbed)
-
 @help.command(name = "points")
 async def points_help(ctx):
     if str(ctx.channel) not in channelList:
@@ -430,7 +438,6 @@ async def points_help(ctx):
     helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the .points command", color = bot_color)
     helpEmbed.add_field(name = ".points", value = ".points allows you to see how many points you have")
     await ctx.send(embed=helpEmbed)
-
 @help.command(name = "claim")
 async def claim_help(ctx):
     if str(ctx.channel) not in channelList:
@@ -439,7 +446,6 @@ async def claim_help(ctx):
     helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the .claim command", color = bot_color)
     helpEmbed.add_field(name = ".claim", value = "Lets you claim 25 points every 24 hours")
     await ctx.send(embed=helpEmbed)
-
 @help.command(name = "pay")
 async def pay_help(ctx):
     if str(ctx.channel) not in channelList:
@@ -448,7 +454,6 @@ async def pay_help(ctx):
     helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the .pay command", color = bot_color)
     helpEmbed.add_field(name = ".pay `<player>` `<points>`", value = "Lets you give some of your hard earned points to another player")
     await ctx.send(embed=helpEmbed)
-
 @help.command(name = "leaderboard")
 async def leaderboard_help(ctx):
     if str(ctx.channel) not in channelList:
@@ -457,7 +462,6 @@ async def leaderboard_help(ctx):
     helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the .leaderboard command", color = bot_color)
     helpEmbed.add_field(name = ".leaderboard", value = "Lets you see the leaderboard of people with the most points")
     await ctx.send(embed=helpEmbed)
-
 @help.command(name = "totalpointslb")
 async def totalpointslb_help(ctx):
     if str(ctx.channel) not in channelList:
@@ -466,7 +470,6 @@ async def totalpointslb_help(ctx):
     helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the .totalpointslb command", color = bot_color)
     helpEmbed.add_field(name = ".totalpointslb", value = "Lets you see the leaderboard of total gained points")
     await ctx.send(embed=helpEmbed)
-
 @help.command(name = "store")
 async def store_help(ctx):
     if str(ctx.channel) not in channelList:
@@ -478,6 +481,15 @@ async def store_help(ctx):
 
 # MISCELLANEOUS HELP COMMANDS
 
+@help.command(name = "miscellaneous")
+async def miscellaneous_help(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
+    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the Miscellaneous category", color = bot_color)
+    helpEmbed.add_field(name = ":game_die: Miscellaneous Commands :game_die:", value = "**.tictactoe**\nPlay a game of tic-tac-toe\n**.connect4**\nPlay a game of connect4\n**.source**\nSends a link to the source repo\n**.strikes**\nShows number of strikes\n**.suggestion**\nSends a suggestion for the bot\n**.purge**\nDeletes past bot messages\n**.asa**\nShows Asa's idle time\n**.finn**\nSends a picture to Finn", inline=False)
+    helpEmbed.set_footer(text="For more help, type .help `command` (ex. .help tictactoe)")
+    await ctx.send(embeds=helpEmbed)
 @help.command(name = "tictactoe")
 async def tictactoe_help(ctx):
     if str(ctx.channel) not in channelList:
@@ -486,7 +498,6 @@ async def tictactoe_help(ctx):
     helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with .tictactoe command", color = bot_color)
     helpEmbed.add_field(name = ".tictactoe `<player>`", value = "Challenge another player to tic-tac-toe. Use 1-9 to indicate the space you would like to place your piece")
     await ctx.send(embed=helpEmbed)
-
 @help.command(name = "finn")
 async def finn_help(ctx):
     if str(ctx.channel) not in channelList:
@@ -495,7 +506,6 @@ async def finn_help(ctx):
     helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with .finn command", color = bot_color)
     helpEmbed.add_field(name = ".finn", value = "Sends a picture of feet to Finn")
     await ctx.send(embed=helpEmbed)
-
 @help.command(name = "suggestion")
 async def suggestion_help(ctx):
     if str(ctx.channel) not in channelList:
@@ -504,7 +514,6 @@ async def suggestion_help(ctx):
     helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with .suggestion command", color = bot_color)
     helpEmbed.add_field(name = ".suggestion `<suggestion>`", value = "Lets you suggest a feature for the bot")
     await ctx.send(embed=helpEmbed)
-
 @help.command(name = "purge")
 async def purge_help(ctx):
     if str(ctx.channel) not in channelList:
@@ -513,7 +522,6 @@ async def purge_help(ctx):
     helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with .purge command", color = bot_color)
     helpEmbed.add_field(name = ".purge `<# of messages>`", value = "Deletes all bot messages within the given number of messages")
     await ctx.send(embed=helpEmbed)
-
 @help.command(name = "asa")
 async def asa_help(ctx):
     if str(ctx.channel) not in channelList:
@@ -522,7 +530,6 @@ async def asa_help(ctx):
     helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with .asa command")
     helpEmbed.add_field(name = ".asa", value = "Displays the amount of time Asa has spent deafened in a VC")
     await ctx.send(embed=helpEmbed)
-
 @help.command(name = "connect4")
 async def connect4_help(ctx):
     if str(ctx.channel) not in channelList:
@@ -531,7 +538,6 @@ async def connect4_help(ctx):
     helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with .connect4 command", color = bot_color)
     helpEmbed.add_field(name = ".connect4 `<player>`", value = "Challenge another player to connect four. Use 1-7 to indicate the column you would like to place your piece")
     await ctx.send(embed=helpEmbed)
-
 @help.command(name = "strikes")
 async def strikes_help(ctx):
     if str(ctx.channel) not in channelList:
@@ -540,7 +546,14 @@ async def strikes_help(ctx):
     helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with .strikes command", color = bot_color)
     helpEmbed.add_field(name = ".strikes", value = "Indicates how many strikes you have in the counting channel")
     await ctx.send(embed=helpEmbed)
-
+@help.command(name = "source")
+async def source_help(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
+    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with .source command", color = bot_color)
+    helpEmbed.add_field(name = ".source", value = "Provides a link to the Git repo for the bot")
+    await ctx.send(embed=helpEmbed)
 #--------------------------------------------------------------------------------------------------------------------------------------#
 #   _____  _____  _       _   __     __
 #  / ____||_   _|| |     | |  \ \   / /
@@ -550,8 +563,14 @@ async def strikes_help(ctx):
 # |_____/ |_____||______||______||_|                                                                              
 
 
-@bot.command(name = "parker")
+@bot.command(name = "source")
+async def source(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return 
+    await ctx.send(f"Here's the link to the source repo.\nhttps://github.com/pure-life-git/counting-police")
 @commands.cooldown(1, 5, commands.BucketType.user)
+@bot.command(name = "parker")
 async def parker(ctx):
     if str(ctx.channel) not in channelList:
         await ctx.message.delete()
@@ -565,8 +584,8 @@ async def parker(ctx):
     await ctx.message.add_reaction('👍')
 
 
-@bot.command(name = "parkercount")
 @commands.cooldown(1, 5, commands.BucketType.user)
+@bot.command(name = "parkercount")
 async def parkercount(ctx):
     if str(ctx.channel) not in channelList:
         await ctx.message.delete()
@@ -699,10 +718,7 @@ async def tictactoe(ctx):
             else:
                 board[getCompMove(board)] = move
                 moves += 1
-                
-
-                
-        
+                               
         #Win Conditions
         if moves >=5:
             if board['1'] == board['2'] == board['3'] != ' ': #3 across the top
@@ -838,8 +854,6 @@ async def connectfour(ctx):
                     except IndexError:
                         continue
 
-
-
         #check for top left -> bot. right
         bottomleft = row > 2 and col < 3
         topright = row < 3 and col > 3
@@ -971,7 +985,6 @@ async def finn(ctx):
     await finn.send(embed=finnEmbed)
     await ctx.message.add_reaction("🦶")
 
-
 @bot.command(name="suggestion", brief="Submit a suggestion for the bot", description = "Submit a suggestion for the bot")
 async def suggestion(ctx, *args):
     if str(ctx.channel) not in channelList:
@@ -1019,7 +1032,6 @@ async def asa(ctx):
 
         cur_time %= 60
         seconds = cur_time #gets number of seconds until next claim time minus hours and minutes
-
         
         await ctx.send(f"Asa has been deafened in a VC for {hours}h {minutes}m {seconds}s.")
 
@@ -1041,7 +1053,6 @@ async def asa(ctx):
 
     return
 
-
 #--------------------------------------------------------------------------------------------------------------------------------------#
 #   __  __   _    _    _____   _____    _____ 
 #  |  \/  | | |  | |  / ____| |_   _|  / ____|
@@ -1050,6 +1061,7 @@ async def asa(ctx):
 #  | |  | | | |__| |  ____) |  _| |_  | |____ 
 #  |_|  |_|  \____/  |_____/  |_____|  \_____|
 # 
+
 def get_track_names(user, playlist_id):
     track_names = []
     playlist = sp.user_playlist(user, playlist_id)
@@ -1126,8 +1138,7 @@ async def check_play_next(ctx):
             await asyncio.sleep(120)
             print("idling...")
             if not voice.is_playing():
-                asyncio.run_coroutine_threadsafe(voice.disconnect(), bot.loop)
-                                          
+                asyncio.run_coroutine_threadsafe(voice.disconnect(), bot.loop)                                 
 
 async def play_music(ctx,song):
     if isinstance(ctx, discord.VoiceChannel):
@@ -1179,7 +1190,6 @@ async def play_music(ctx,song):
     
     await ctx.send(f"**Now Playing:** {title} - {channel} | {runtime}")
     voice.play(FFmpegPCMAudio(source="song.mp3"), after = lambda e: asyncio.run_coroutine_threadsafe(check_play_next(ctx), bot.loop))
-
 
 @bot.command(name="play", description="Plays a song in a voice channel", aliases=["p"])
 async def play(ctx, *args):
