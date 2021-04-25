@@ -1,12 +1,12 @@
 # counting-police
 #### This was a fun project started for a private discord server. It's prefix is "."
 -----------------------------------------------------------------
-##### This bot can do a lot of general purpose stuff and has some fun features built in, like a dice roller, rock paper scissors, and others.
-The main feature of this bot is its ability to monitor a counting channel.
+##### This bot has gambling functionality (blackjack, roulette, etc) and music bot commands (play, skip, clear, etc).
+The main feature of this bot is its ability to monitor a counting channel, a gambling system, and music functionality.
 # Rules
 1. The number you enter in the counting channel must be exactly one after the previous number.
 2. If you enter a number incorrectly, you will receive a strike and the bot will warn you.
-3. If you accumulate three strikes, your typing priviledges in the counting channel will be revoked and you will be the role 'Counting Clown'
+3. If you accumulate three strikes, your typing priviledges in the counting channel will be revoked and you will be given the role 'Counting Clown'
 # To-Do
 - [x] Make a README
 - [x] Implement subcommands for the game system
