@@ -1514,7 +1514,8 @@ async def skip(ctx):
     voice = discord.utils.get(bot.voice_clients, guild=ctx.guild)
     if voice.is_connected():
         if voice.is_playing():
-            await check_play_next(ctx)
+            voice.stop()
+            await play_music(ctx, music_queue.pop(0))
         else:
             await ctx.send("The bot is not currently playing anything")
             return
@@ -1557,7 +1558,7 @@ async def queue(ctx):
     queue_embed.add_field(name=":musical_note: Now Playing :musical_note:", value=f"Title: {now_playing[1]}  |  Channel: {now_playing[2]}\nRuntime: {now_playing[3]}  |  Played by: {now_playing[4]}")
     for num,song in enumerate(music_queue):
         if num < 6:
-            queue_embed.add_field(name=f"{num+1} - {song[1]} | {song[2]}", value=f"Runtime: {song[3]}  |  Played by: {song[4]}", inline=False)
+            queue_embed.add_field(name=f"{num+1} - {song[1]} | {song[2]}", value=f"Runtime: {song[3]}  |  Queued by: {song[4]}", inline=False)
         if len(song[3].split(":")) == 2:
             h=0
             m,s = song[3].split(':')
@@ -1592,6 +1593,23 @@ async def repeat(ctx):
 async def shuffle(ctx):
     random.shuffle(music_queue)
     await ctx.send("Queue successfully shuffled.")
+
+
+@bot.command(name="ignore", description="Lets a Coin Operator take away someone's music bot privileges", aliases=["i"])
+async def ignore(ctx, user: discord.Member):
+    name = user.name
+    id = user.id
+    SQL = f"UPDATE musicbot SET ignore = NOT ignore WHERE id = {id};"
+
+    cur.execute(SQL)
+    conn.commit()
+
+    SQL = f"SELECT * FROM musicbot WHERE id = {id};"
+    ignored = cur.fetchone()[2]
+    print(ignored)
+
+    # await ctx.send(f"{name} ")
+
 
 
 
