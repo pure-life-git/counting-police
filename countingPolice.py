@@ -9,7 +9,6 @@
 
 import discord
 import os
-import re
 import random
 from discord import colour
 from discord.errors import ClientException
@@ -19,7 +18,6 @@ from discord.ext.commands.errors import CommandOnCooldown
 from discord.player import FFmpegPCMAudio
 import psycopg2
 import datetime
-import praw
 import requests
 from youtube_search import YoutubeSearch
 import youtube_dl
@@ -53,16 +51,6 @@ conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 cur = conn.cursor()
 conn.autocommit = True
 
-#sets up wolfram api
-# wolframID = os.environ['WOLFRAM_ID']
-# wolframClient = wolframalpha.Client(wolframID)
-
-reddit = praw.Reddit(
-    client_id = os.environ['REDDIT_ID'], 
-    client_secret = os.environ['REDDIT_SECRET'], 
-    user_agent = "windows:counting-police:v1.0 (by/u/TheosOldUsername)"
-)
-
 find = ctypes.util.find_library('opus')
 discord.opus.load_opus(find)
 
@@ -88,12 +76,6 @@ AutParams = {'client_id': CLIENT_ID,
              'grant_type': 'client_credentials'
              }
 
-key = os.environ['PASTEBIN_KEY']
-login_data = {
-        'api_dev_key': key,
-        'api_user_name': 'TRGoodman',
-        'api_user_password': os.environ['PASTEBIN_PASS']
-        }
 
 channelList = [
     "bot", "admins-only", "testing"
@@ -130,22 +112,6 @@ forbiddenList = [
     "https://www.yourfootpalace.com/wp-content/uploads/morning-foot-stiffness.jpg"
 ]
 
-#attacker list for .operator
-attackerList = [
-    "Zero", "Ace", "Iana", "Kali", "Amaru", "Nøkk", "Gridlock", "Nomad",
-    "Maverick", "Lion", "Finka", "Dokkaebi", "Zofia", "Ying", "Jackal",
-    "Hibana", "Capitão", "Blackbeard", "Buck", "Sledge", "Thatcher", "Ash",
-    "Thermite", "Montagne", "Twitch", "Blitz", "IQ", "Fuze", "Glaz", "Flores"
-]
-
-#defender list for .operator
-defenderList = [
-    "Aruni", "Melusi", "Oryx", "Wamai", "Goyo", "Warden", "Mozzie", "Kaid",
-    "Clash", "Maestro", "Alibi", "Vigil", "Ela", "Lesion", "Mira", "Echo",
-    "Caveira", "Valkyrie", "Frost", "Mute", "Smoke", "Castle", "Pulse", "Doc",
-    "Rook", "Jäger", "Bandit", "Tachanka", "Kapkan"
-]
-
 music_queue = []
 
 ydl_opts = {
@@ -159,7 +125,6 @@ ydl_opts = {
 }
 
 now_playing = ""
-
 
 repeating = False
 
@@ -214,19 +179,6 @@ def countEntry(num, user):
     while True:
         try:
             cur.execute(SQL)
-            break
-        except psycopg2.InterfaceError:
-            reestablish()
-    conn.commit()
-
-
-#enters a game from any channel into the postgresql DB
-def gameEntry(game):
-    SQL = """INSERT INTO gametable (games) VALUES (%s)"""
-    data = (game,)
-    while True:
-        try:
-            cur.execute(SQL,data)
             break
         except psycopg2.InterfaceError:
             reestablish()
@@ -358,56 +310,87 @@ async def help(ctx):
         await ctx.message.delete()
         return
     helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "The prefix of the bot is `.`", color = bot_color)
-    helpEmbed.add_field(name = ":video_game: **Game - 5**", value = "`add`, `remove`, `clear`, `choose`, `list`", inline = False)
     helpEmbed.add_field(name = ":slot_machine: **Gambling - 9**", value = "`blackjack`, `roulette`, `slots`, `points`, `claim`, `pay`, `leaderboard`, `totalpointslb`, `store`", inline = False)
-    helpEmbed.add_field(name = ":game_die: **Miscellaneous - 16**", value = "`rps`, `tictactoe`, `finn`, `poll`, `copypasta`, `suggestion`, `dog`, `cat`, `purge`, `operator`, `decide`, `dice`, `source`, `ytsearch`, `joke`", inline = False)
-    helpEmbed.set_footer(text = "For more information try .help (command) or .help (category), ex: .help rps or .help gambling")
+    helpEmbed.add_field(name = ":musical_note: **Music - 8**", value = "`play`, `skip`, `clear`, `queue`, `leave`, `shuffle`, `repeat`, `ignore`")
+    helpEmbed.add_field(name = ":game_die: **Miscellaneous - 8**", value = "`tictactoe`, `connect4`, `finn`, `suggestion`, `purge`, `asa`, `strikes`, `purge`", inline = False)
+    helpEmbed.set_footer(text = "For more information try .help (command) or .help (category), ex: .help play or .help gambling")
     await ctx.send(embed=helpEmbed)
 
-@help.command(name = "add")
-async def add_help(ctx):
+# MUSIC HELP COMMANDS
+
+@help.command(name = "play")
+async def play_help(ctx):
     if str(ctx.channel) not in channelList:
         await ctx.message.delete()
         return
-    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the .game add command", color = bot_color)
-    helpEmbed.add_field(name = ".game add `<game>`", value = ".game add adds whatever game you enter into the Game List")
+    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the .play command", color = bot_color)
+    helpEmbed.add_field(name = ".play `<youtube url, search term, or spotify playlist link>`", value = ".play lets you queue a song from youtube or a playlist from spotify")
     await ctx.send(embed=helpEmbed)
 
-@help.command(name = "remove")
-async def remove_help(ctx):
+@help.command(name = "skip")
+async def skip_help(ctx):
     if str(ctx.channel) not in channelList:
         await ctx.message.delete()
         return
-    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the .game remove command", color = bot_color)
-    helpEmbed.add_field(name = ".game remove `<game>`", value = ".game remove removes whatever game you enter from the Game List")
+    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the .skip command", color = bot_color)
+    helpEmbed.add_field(name = ".skip", value = ".skip lets you skip the currently playing song")
     await ctx.send(embed=helpEmbed)
 
 @help.command(name = "clear")
-async def clear_help(ctx):
+async def blackjack_help(ctx):
     if str(ctx.channel) not in channelList:
         await ctx.message.delete()
         return
-    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the .game clear command", color = bot_color)
-    helpEmbed.add_field(name = ".game clear", description = "Clears the Game List")
+    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the .clear command", color = bot_color)
+    helpEmbed.add_field(name = ".clear", value = ".clear lets you clear the song queue")
     await ctx.send(embed=helpEmbed)
 
-@help.command(name = "choose")
-async def choose_help(ctx):
+@help.command(name = "leave")
+async def blackjack_help(ctx):
     if str(ctx.channel) not in channelList:
         await ctx.message.delete()
         return
-    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the .game choose command", color = bot_color)
-    helpEmbed.add_field(name = ".game clear", value = ".game choose randomly chooses a game from the Game List")
+    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the .leave command", color = bot_color)
+    helpEmbed.add_field(name = ".leave", value = ".leave forces the bot to leave the voice channel")
     await ctx.send(embed=helpEmbed)
 
-@help.command(name = "list")
-async def list_help(ctx):
+@help.command(name = "shuffle")
+async def blackjack_help(ctx):
     if str(ctx.channel) not in channelList:
         await ctx.message.delete()
         return
-    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the .game list command", color = bot_color)
-    helpEmbed.add_field(name = ".game list", value = ".game list displays the Game List")
+    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the .shuffle command", color = bot_color)
+    helpEmbed.add_field(name = ".shuffle", value = ".shuffle lets you shuffle the music queue")
     await ctx.send(embed=helpEmbed)
+
+@help.command(name = "repeat")
+async def blackjack_help(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
+    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the .repeat command", color = bot_color)
+    helpEmbed.add_field(name = ".repeat", value = ".repeat lets you repeat a song indefinitely")
+    await ctx.send(embed=helpEmbed)
+
+@help.command(name = "ignore")
+async def blackjack_help(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
+    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the .ignore command", color = bot_color)
+    helpEmbed.add_field(name = ".ignore `<mention member>`", value = ".ignore lets a moderator take away someone's music bot privileges")
+    await ctx.send(embed=helpEmbed)
+
+@help.command(name = "queue")
+async def blackjack_help(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
+    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with the .queue command", color = bot_color)
+    helpEmbed.add_field(name = ".queue", value = ".queue lets you view the song queue")
+    await ctx.send(embed=helpEmbed)
+
+# GAMBLING HELP COMMANDS
 
 @help.command(name = "blackjack")
 async def blackjack_help(ctx):
@@ -493,15 +476,7 @@ async def store_help(ctx):
     helpEmbed.add_field(name = ".store `<item>`", value = "Lets you see what items are available to buy at the store\nYou can also see a specific item by doing `.store <item>` where item is one, two, etc. as displayed on the main store page")
     await ctx.send(embed=helpEmbed)
 
-@help.command(name = "rps")
-async def rps_help(ctx):
-    if str(ctx.channel) not in channelList:
-        await ctx.message.delete()
-        return
-    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with .rps command", color = bot_color)
-    helpEmbed.add_field(name = ".rps `<choice>`", value = "Lets you play a game of rock paper scissors with the bot", inline = False)
-    helpEmbed.add_field(name = "Valid Choices", value = "`rock`, `paper`, `scissors`")
-    await ctx.send(embed=helpEmbed)
+# MISCELLANEOUS HELP COMMANDS
 
 @help.command(name = "tictactoe")
 async def tictactoe_help(ctx):
@@ -521,24 +496,6 @@ async def finn_help(ctx):
     helpEmbed.add_field(name = ".finn", value = "Sends a picture of feet to Finn")
     await ctx.send(embed=helpEmbed)
 
-@help.command(name = "poll")
-async def poll_help(ctx):
-    if str(ctx.channel) not in channelList:
-        await ctx.message.delete()
-        return
-    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with .poll command", color = bot_color)
-    helpEmbed.add_field(name = ".poll `<question>` `<seconds>`", value = "Starts a poll with a default time limit of 2 minutes")
-    await ctx.send(embed=helpEmbed)
-
-@help.command(name = "copypasta")
-async def copypasta_help(ctx):
-    if str(ctx.channel) not in channelList:
-        await ctx.message.delete()
-        return
-    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with .copypasta command", color = bot_color)
-    helpEmbed.add_field(name = ".copypasta", value = "Posts a random 'hot' post from r/copypasta")
-    await ctx.send(embed=helpEmbed)
-
 @help.command(name = "suggestion")
 async def suggestion_help(ctx):
     if str(ctx.channel) not in channelList:
@@ -546,24 +503,6 @@ async def suggestion_help(ctx):
         return
     helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with .suggestion command", color = bot_color)
     helpEmbed.add_field(name = ".suggestion `<suggestion>`", value = "Lets you suggest a feature for the bot")
-    await ctx.send(embed=helpEmbed)
-
-@help.command(name = "dog")
-async def dog_help(ctx):
-    if str(ctx.channel) not in channelList:
-        await ctx.message.delete()
-        return
-    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with .dog command", color = bot_color)
-    helpEmbed.add_field(name = ".dog `<breed>`", value = "Sends a random dog picture. You can also specify a breed")
-    await ctx.send(embed=helpEmbed)
-
-@help.command(name = "cat")
-async def cat_help(ctx):
-    if str(ctx.channel) not in channelList:
-        await ctx.message.delete()
-        return
-    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with .cat command", color = bot_color)
-    helpEmbed.add_field(name = ".cat", value = "Sends a random cat picture")
     await ctx.send(embed=helpEmbed)
 
 @help.command(name = "purge")
@@ -575,51 +514,6 @@ async def purge_help(ctx):
     helpEmbed.add_field(name = ".purge `<# of messages>`", value = "Deletes all bot messages within the given number of messages")
     await ctx.send(embed=helpEmbed)
 
-@help.command(name = "operator")
-async def operator_help(ctx):
-    if str(ctx.channel) not in channelList:
-        await ctx.message.delete()
-        return
-    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with .operator command", color = bot_color)
-    helpEmbed.add_field(name = ".operator `<attacker or defender>`", value = "Randomly chooses either an attacker or defender from R6 Siege")
-    await ctx.send(embed=helpEmbed)
-
-@help.command(name = "decide")
-async def decide_help(ctx):
-    if str(ctx.channel) not in channelList:
-        await ctx.message.delete()
-        return
-    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with .decide command", color = bot_color)
-    helpEmbed.add_field(name = ".decide `<integer>` `<integer>`", value = "Picks a number between two given numbers")
-    await ctx.send(embed=helpEmbed)
-
-@help.command(name = "dice")
-async def dice_help(ctx):
-    if str(ctx.channel) not in channelList:
-        await ctx.message.delete()
-        return
-    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with .dice command")
-    helpEmbed.add_field(name = ".dice `<dice>`", value = "Rolls dice for the user. The format for dice is `# of dice` d `# of sides`. Separate multiple dice by spaces")
-    await ctx.send(embed=helpEmbed)
-
-@help.command(name = "source")
-async def source_help(ctx):
-    if str(ctx.channel) not in channelList:
-        await ctx.message.delete()
-        return
-    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with .source command")
-    helpEmbed.add_field(name = ".source", value = "Sends a hastebin link to the source code. Not updated with every new push")
-    await ctx.send(embed=helpEmbed)
-
-@help.command(name = "ytsearch")
-async def ytsearch_help(ctx):
-    if str(ctx.channel) not in channelList:
-        await ctx.message.delete()
-        return
-    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with .ytsearch command")
-    helpEmbed.add_field(name = ".ytsearch `<search terms>`", value = "Sends the first five results from youtube for the provided search term(s)")
-    await ctx.send(embed=helpEmbed)
-
 @help.command(name = "asa")
 async def asa_help(ctx):
     if str(ctx.channel) not in channelList:
@@ -629,150 +523,23 @@ async def asa_help(ctx):
     helpEmbed.add_field(name = ".asa", value = "Displays the amount of time Asa has spent deafened in a VC")
     await ctx.send(embed=helpEmbed)
 
-@help.command(name = "joke")
-async def joke_help(ctx):
+@help.command(name = "connect4")
+async def connect4_help(ctx):
     if str(ctx.channel) not in channelList:
         await ctx.message.delete()
         return
-    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Hel with .joke command")
-    helpEmbed.add_field(name = ".joke", value = "Sends a random joke to the text channel")
+    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with .connect4 command", color = bot_color)
+    helpEmbed.add_field(name = ".connect4 `<player>`", value = "Challenge another player to connect four. Use 1-7 to indicate the column you would like to place your piece")
     await ctx.send(embed=helpEmbed)
 
-
-#--------------------------------------------------------------------------------------------------------------------------------------#
-#   _____            __  __  ______ 
-#  / ____|    /\    |  \/  ||  ____|
-# | |  __    /  \   | \  / || |__   
-# | | |_ |  / /\ \  | |\/| ||  __|  
-# | |__| | / ____ \ | |  | || |____ 
-#  \_____|/_/    \_\|_|  |_||______|                                                                      
-
-
-@bot.group(name='game', invoke_without_command=True)
-async def game(ctx):
+@help.command(name = "strikes")
+async def strikes_help(ctx):
     if str(ctx.channel) not in channelList:
         await ctx.message.delete()
         return
-    await ctx.send("Valid subcommands: add, remove, clear, list, choose")
-
-
-#adds a game provided by the user to the gameList
-@game.command(name = 'add', description = 'Adds a game to the game list')
-async def add(ctx, *, arg):
-    if str(ctx.channel) not in channelList:
-        await ctx.message.delete()
-        return
-    gameLower = str(arg).lower()
-    while True:
-        try:
-            cur.execute("SELECT * FROM gametable") #select every entry in the gametable from the DB 
-            break
-        except psycopg2.InterfaceError:
-            reestablish()
-    conn.commit()
-    rawList = list(cur.fetchall()) #makes a list with every entry
-    games = []
-    for i in rawList: 
-        games.append(i[0]) #takes the list of tuples and appends the first index to a new list
-    if gameLower in games: #checks to see if the game is already in the list
-        await ctx.send('That game is already in the list')
-        return
-    gameEntry(gameLower) #calls a function that adds the game to the sql table
-    message = ctx.message
-    await message.add_reaction('👍')
-
-
-#removes a particular game from the gamelist
-@game.command(name = 'remove', description = 'Removes a game from the game list')
-async def remove(ctx,*,arg):
-    if str(ctx.channel) not in channelList:
-        await ctx.message.delete()
-        return
-    gameLower = str(arg).lower()
-    while True:
-        try:
-            cur.execute("SELECT * FROM gametable") #selects all the entries from the gamelist
-            break
-        except psycopg2.InterfaceError:
-            reestablish()
-    conn.commit()
-    SQL = "DELETE FROM gametable WHERE games=%s;" #deletes the row in the game table with the game name
-    while True:
-        try:
-            cur.execute(SQL,(gameLower,))
-            break
-        except psycopg2.InterfaceError:
-            reestablish()
-    conn.commit()
-    message = ctx.message
-    await message.add_reaction('👍')
-
-
-#clears game list
-@game.command(name = 'clear', description = 'Clears the game list')
-async def clear(ctx):
-    if str(ctx.channel) not in channelList:
-        await ctx.message.delete()
-        return
-    while True:
-        try:
-            cur.execute("DELETE FROM gametable") #deletes all entries from the game list
-            break
-        except psycopg2.InterfaceError:
-            reestablish()
-    conn.commit()
-    message = ctx.message
-    await message.add_reaction('👍')
-
-
-#randomly chooses a game from the game list
-@game.command(name = 'choose', description='Randomly chooses a game from the game list')
-async def choose(ctx):
-    if str(ctx.channel) not in channelList:
-        await ctx.message.delete()
-        return
-    while True:
-        try:
-            cur.execute("SELECT * FROM gametable") #selects all of the entries from the table
-            break
-        except psycopg2.InterfaceError:
-            reestablish()
-    conn.commit()
-    rawList = list(cur.fetchall()) # makes a list out of the selection
-    numSQL = []
-    for i in rawList:
-        numSQL.append(i[0]) #takes the list of tuples and appends the first index to a new list
-    num = random.choice(numSQL) #chooses a game from the list
-    await ctx.send(num + ' has been chosen by machine engineered randomness!') #sends a message with the result
-
-
-#lists all of the games in the gamelist
-@game.command(name = 'list', description = 'Displays the game list')
-async def gamelist(ctx):
-    if str(ctx.channel) not in channelList:
-        await ctx.message.delete()
-        return
-    while True:
-        try:
-            cur.execute("SELECT * FROM gametable") #selects all entries from the game list
-            break
-        except psycopg2.InterfaceError:
-            reestablish()
-    rawList = list(cur.fetchall()) #makes a list out of all the entries
-    games = []
-    for i in rawList:
-            games.append(i[0]) #takes each tuple in the list and appends the first index to a new list
-    if len(games) != 0: #checks if the gamelist is empty
-        #creates a new embed and adds the contents of the gamelist in an ordered list to an embed field
-        gamelistEmbed = discord.Embed(title="Game List", description="List of games entered", color=discord.Color.greyple())
-        gamelistEmbed.add_field(name="Games",value='\n'.join('{}: {}'.format(*k) for k in enumerate(games,1)))
-        await ctx.send(embed = gamelistEmbed) #sends the embed
-    else:
-        #if the gamelist is empty, the embed is sent but with contents that let the user know the list is empty
-        emptygamelistEmbed = discord.Embed(title="Game List", description="List of games entered", color=discord.Color.red())
-        emptygamelistEmbed.add_field(name="No Games!", value="The game list is empty.", inline=False)
-        await ctx.send(embed = emptygamelistEmbed)
-
+    helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with .strikes command", color = bot_color)
+    helpEmbed.add_field(name = ".strikes", value = "Indicates how many strikes you have in the counting channel")
+    await ctx.send(embed=helpEmbed)
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
 #   _____  _____  _       _   __     __
@@ -780,107 +547,7 @@ async def gamelist(ctx):
 # | (___    | |  | |     | |   \ \_/ / 
 #  \___ \   | |  | |     | |    \   /  
 #  ____) | _| |_ | |____ | |____ | |   
-# |_____/ |_____||______||______||_|                                                                               
-
-
-#plays a game of rock paper scissorcs with the user
-@commands.cooldown(2, 15, commands.BucketType.user)
-@bot.command(name = 'rps', description = 'Plays a game of rock paper scissors with you')
-async def rps(ctx, userPick):
-    if str(ctx.channel) not in channelList:
-        await ctx.message.delete()
-        return
-    #initializes a list with the possible choices the bot can make
-    choices = [
-        "rock",
-        "paper",
-        "scissors"
-    ]
-    #checks if the users input is a valid choice
-    if userPick.lower() not in choices:
-        ctx.channel.send("Please enter either 'rock', 'paper' or 'scissors'")
-        return
-    #sets a 1 in 100 chance that the bot chooses gun and automatically wins. else the bot
-    #picks a random choice
-    gunChance = random.randint(1,100)
-    if  gunChance == 69:
-        botPick = "gun"
-    else:
-        botPick = random.choice(choices)
-
-    #if the bot chose gun, then an embed is created and sent with the result
-    if botPick == "gun":
-        resultEmbed = discord.Embed(title="Rock Paper Scissors with {}".format(str(ctx.message.author)), description=" ", color=discord.Color.red())
-        resultEmbed.add_field(name="Your Pick", value="{}".format(userPick), inline=False)
-        resultEmbed.add_field(name="Bot's Pick", value="{}".format(botPick), inline=False)
-        resultEmbed.add_field(name="You Lose!", value="Better luck next time", inline=False)
-        await ctx.channel.send(embed=resultEmbed)
-        return
-
-    #checks for a draw
-    if userPick.lower() == botPick:
-        resultEmbed = discord.Embed(title="Rock Paper Scissors with {}".format(str(ctx.message.author)), description=" ", color=discord.Color.gold())
-        resultEmbed.add_field(name="Your Pick", value="{}".format(userPick), inline=False)
-        resultEmbed.add_field(name="Bot's Pick", value="{}".format(botPick), inline=False)
-        resultEmbed.add_field(name="Draw", value="You both chose the same option", inline=False)
-        await ctx.channel.send(embed=resultEmbed)
-        return
-
-    #handles interactions if the user chooses rock
-    if userPick.lower() == "rock":
-        if botPick == "scissors":
-            resultEmbed = discord.Embed(title="Rock Paper Scissors with {}".format(str(ctx.message.author)), description=" ", color=discord.Color.green())
-            resultEmbed.add_field(name="Your Pick", value="{}".format(userPick), inline=False)
-            resultEmbed.add_field(name="Bot's Pick", value="{}".format(botPick), inline=False)
-            resultEmbed.add_field(name="You Win!", value="Congratulations!", inline=False)
-            await ctx.channel.send(embed=resultEmbed)
-            return
-
-        if botPick == "paper":
-            resultEmbed = discord.Embed(title="Rock Paper Scissors with {}".format(str(ctx.message.author)), description=" ", color=discord.Color.red())
-            resultEmbed.add_field(name="Your Pick", value="{}".format(userPick), inline=False)
-            resultEmbed.add_field(name="Bot's Pick", value="{}".format(botPick), inline=False)
-            resultEmbed.add_field(name="You Lose!", value="Better luck next time", inline=False)
-            await ctx.channel.send(embed=resultEmbed)
-            return
-
-    #handles interactions if the user chooses scissors
-    if userPick.lower() == "scissors":
-        if botPick == "paper":
-            resultEmbed = discord.Embed(title="Rock Paper Scissors with {}".format(str(ctx.message.author)), description=" ", color=discord.Color.green())
-            resultEmbed.add_field(name="Your Pick", value="{}".format(userPick), inline=False)
-            resultEmbed.add_field(name="Bot's Pick", value="{}".format(botPick), inline=False)
-            resultEmbed.add_field(name="You Win!", value="Congratulations!", inline=False)
-            await ctx.channel.send(embed=resultEmbed)
-            return
-            
-
-        if botPick == "rock":
-            resultEmbed = discord.Embed(title="Rock Paper Scissors with {}".format(str(ctx.message.author)), description=" ", color=discord.Color.red())
-            resultEmbed.add_field(name="Your Pick", value="{}".format(userPick), inline=False)
-            resultEmbed.add_field(name="Bot's Pick", value="{}".format(botPick), inline=False)
-            resultEmbed.add_field(name="You Lose!", value="Better luck next time", inline=False)
-            await ctx.channel.send(embed=resultEmbed)
-            return
-
-    #handles interactions if the user chooses paper
-    if userPick.lower() == "paper":
-        if botPick == "rock":
-            resultEmbed = discord.Embed(title="Rock Paper Scissors with {}".format(str(ctx.message.author)), description=" ", color=discord.Color.green())
-            resultEmbed.add_field(name="Your Pick", value="{}".format(userPick), inline=False)
-            resultEmbed.add_field(name="Bot's Pick", value="{}".format(botPick), inline=False)
-            resultEmbed.add_field(name="You Win!", value="Congratulations!", inline=False)
-            await ctx.channel.send(embed=resultEmbed)
-            return
-            
-
-        if botPick == "scissors":
-            resultEmbed = discord.Embed(title="Rock Paper Scissors with {}".format(str(ctx.message.author)), description=" ", color=discord.Color.red())
-            resultEmbed.add_field(name="Your Pick", value="{}".format(userPick), inline=False)
-            resultEmbed.add_field(name="Bot's Pick", value="{}".format(botPick), inline=False)
-            resultEmbed.add_field(name="You Lose!", value="Better luck next time", inline=False)
-            await ctx.channel.send(embed=resultEmbed)
-            return
+# |_____/ |_____||______||______||_|                                                                              
 
 
 @bot.command(name = "parker")
@@ -909,61 +576,9 @@ async def parkercount(ctx):
     res = cur.fetchall()
     await ctx.send(f"Parker has said some derivative of PogChamp {len(res)} times.")
     
-
-
-
-#sends user input to the wolframalpha api and prints out the answer
-# @commands.cooldown(1, 20, commands.BucketType.user)
-# @bot.command(name = 'wolfram', description='Returns the simple answer to a query from Wolfram|Alpha')
-# async def wolfram(ctx,*args):
-#     if str(ctx.channel) not in channelList:
-#         await ctx.message.delete()
-#         return
-#     question = ' '.join(args) #joins the user args into a single string
-#     response = wolframClient.query(question) #gets a query from the wolfram api using the question
-#     wolframEmbed = discord.Embed(title="Wolfram|Alpha API", description=" ", color=discord.Color.from_rgb(255,125,0))
-#     try:
-#         for pod in response.results: #for each returned pod from the query, adds a new field to the answer embed
-#             wolframEmbed.add_field(name=pod.title,value=pod.text,inline=False)
-#         #wolframEmbed.add_field(name="Result", value=response.results.text,inline=False)
-#         if len(wolframEmbed.fields) == 0:
-#             await ctx.send("Wolfram|Alpha could not find any simple results for that query.")
-#             return
-#         else:
-#             await ctx.channel.send(embed=wolframEmbed)
-#     except KeyError:
-#         await ctx.send("Something went wrong. Please try a different query.")
-
-
-# #sends user input to the wolframalpha api and prints out a full answer
-# @commands.cooldown(1, 120, commands.BucketType.user)
-# @bot.command(name = 'wolframfull', description = 'Returns the full answer to a query from Wolfram|Alpha')
-# async def wolframfull(ctx,*args):
-#     if str(ctx.channel) not in channelList:
-#         await ctx.message.delete()
-#         return
-#     question = ' '.join(args) #joins all the user passed args into a single string
-#     res = wolframClient.query(question) #sends the question to be queried from the wolfram api
-#     wolframEmbed = discord.Embed(title="Wolfram|Alpha API", description=" ", color=discord.Color.from_rgb(255,125,0))
-#     for pod in res.pods:
-#         if pod.text:
-#             #printPod
-#             wolframEmbed.add_field(name=pod.title,value=pod.text,inline=False)
-#         for sub in pod.subpods: #checks to see if any of the returned queries subpods contain images
-#             if sub['img']['@src']: #if there is an image, creates a new embed and adds the image
-#                 wolframImgEmbed = discord.Embed(title=pod.title,description=" ", color=discord.Color.from_rgb(255,125,0))
-#                 wolframImgEmbed.set_image(url=sub['img']['@src'])
-#                 await ctx.send(embed=wolframImgEmbed)
-#     await ctx.send(embed=wolframEmbed)
-
-
 #facilitates a tic-tac-toe game between two users
 @commands.cooldown(1, 30, commands.BucketType.user)
-@bot.command(
-    name = "tictactoe", 
-    brief = "Challenge another player to a game of tic-tac-toe", 
-    description = "Simply type the command and then mention someone to start a game with them. To choose your space, treat the board as a numbered grid 1-9 starting at the top left."
-    )
+@bot.command(name = "tictactoe", brief = "Challenge another player to a game of tic-tac-toe", description = "Simply type the command and then mention someone to start a game with them. To choose your space, treat the board as a numbered grid 1-9 starting at the top left.")
 async def tictactoe(ctx):
     def checkWinner(board):
         return board['1'] == board['2'] == board['3'] != ' ' or board['4'] == board['5'] == board['6'] != ' ' or board['7'] == board['8'] == board['9'] != ' ' or board['1'] == board['4'] == board['7'] != ' ' or board['2'] == board['5'] == board['8'] != ' ' or board['3'] == board['6'] == board['9'] != ' ' or board['1'] == board['5'] == board['9'] != ' ' or board['3'] == board['5'] == board['7'] != ' '
@@ -1147,6 +762,199 @@ async def tictactoe(ctx):
             game = False #sets the game to false
             return #returns the function
 
+@commands.cooldown(1, 15, commands.BucketType.user)
+@bot.command(name="connect4")
+async def connectfour(ctx):
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
+    keys = ["1","2","3","4","5","6","7"]
+    def printBoard(board):
+        return(f"""```
+|{board[0][0]}|{board[1][0]}|{board[2][0]}|{board[3][0]}|{board[4][0]}|{board[5][0]}|{board[6][0]}|
+|---+---+---+---+---+---+---|
+|{board[0][1]}|{board[1][1]}|{board[2][1]}|{board[3][1]}|{board[4][1]}|{board[5][1]}|{board[6][1]}|
+|---+---+---+---+---+---+---|
+|{board[0][2]}|{board[1][2]}|{board[2][2]}|{board[3][2]}|{board[4][2]}|{board[5][2]}|{board[6][2]}|
+|---+---+---+---+---+---+---|
+|{board[0][3]}|{board[1][3]}|{board[2][3]}|{board[3][3]}|{board[4][3]}|{board[5][3]}|{board[6][3]}|
+|---+---+---+---+---+---+---|
+|{board[0][4]}|{board[1][4]}|{board[2][4]}|{board[3][4]}|{board[4][4]}|{board[5][4]}|{board[6][4]}|
+|---+---+---+---+---+---+---|
+|{board[0][5]}|{board[1][5]}|{board[2][5]}|{board[3][5]}|{board[4][5]}|{board[5][5]}|{board[6][5]}|
+|---+---+---+---+---+---+---|
+| 1 | 2 | 3 | 4 | 5 | 6 | 7 |
+        ```""")
+
+    def winconds(board, move: tuple, piece: str):
+        col, row = move
+
+        # check for 4 in up/down
+        vertWin = False
+        count = 0
+        for i in range(4):
+            try:
+                if board[col][row+i] == piece:
+                    count+= 1
+                    if count == 4:
+                        vertWin = True
+                        return vertWin
+                
+                else:
+                    break
+            except IndexError:
+                break
+        
+
+        #check for left/right win
+        horWin = False
+        count = 0
+        for i in range(6):
+            try:
+                if board[i][row] == piece:
+                    count += 1
+                    if count == 4:
+                        horWin = True
+                        return horWin
+                else:
+                    count = 0
+            except IndexError:
+                break
+
+
+        #check for bot. left -> top right
+        topleft = row < 3 and col < 3
+        bottomright = row > 2 and col  > 3
+        if topleft or bottomright:
+            bltrWin = False
+        else:
+            for x in range(3):
+                for y in reversed(range(3,6)):
+                    try:
+                        # print("Spaces: \n", x,y,": ",board[x][y], "\n", x+1, y-1,": ", board[x+1][y-1],"\n",x+2,y-2,": ",board[x+2][y-2],"\n",x+3,y-3,": ",board[x+3][y-3])
+                        if board[x][y] == piece and board[x+1][y-1] == piece and board[x+2][y-2] == piece and board[x+3][y-3] == piece:
+                            bltrWin = True
+                            return bltrWin
+                    except IndexError:
+                        continue
+
+
+
+        #check for top left -> bot. right
+        bottomleft = row > 2 and col < 3
+        topright = row < 3 and col > 3
+        if bottomleft or topright:
+            tlbrWin = False
+        else:
+            for x in range(4):
+                for y in range(3):
+                    try:
+                        # print("Spaces: \n", x,y,": ",board[x][y], "\n", x+1, y+1,": ", board[x+1][y+1],"\n",x+2,y+2,": ",board[x+2][y+2],"\n",x+3,y+3,": ",board[x+3][y+3])
+                        if board[x][y] == piece and board[x+1][y+1] == piece and board[x+2][y+2] == piece and board[x+3][y+3] == piece:
+                            tlbrWin = True
+                            return tlbrWin
+                    except IndexError:
+                        continue
+        print("done with winconds")
+        return False
+
+    board = [["   " for i in range(6)] for i in range(7)]
+
+    playerone = ctx.author
+    playertwo = ctx.message.mentions[0]
+    challMsg = await ctx.send(f"{playerone.name} has challenged {playertwo.name} to a game of Connect 4! Do you accept? Y/N")
+    try:
+        msg = await bot.wait_for('message', check = lambda m: m.author == playertwo, timeout = 30.0)
+        if msg.content.lower() in ['y', 'yes']:
+            await ctx.send(f"Challenge accepted! {playerone.name} goes first.")
+            await challMsg.delete()
+        else:
+            await ctx.send('Challenge declined.')
+            await challMsg.delete()
+            return
+    except asyncio.TimeoutError:
+        await challMsg.delete()
+        await ctx.send("Challenge timed out.")
+        return
+    plays = [(playerone, " X "), (playertwo, " O ")]
+    boardEmbed = discord.Embed(title = "Connect 4", color = discord.Color.red())
+    boardEmbed.add_field(name="Board", value=printBoard(board), inline=False)
+    boardEmbed.add_field(name="Turn:", value=f"{playerone.name}", inline=False)
+    ogmessage = await ctx.send(embed=boardEmbed)
+    allimportantid = ogmessage.id
+    game = True
+    movecount = 0
+    while game:
+        boardmessage = await ctx.fetch_message(allimportantid)
+        if movecount % 2 == 0:
+            player = playerone
+            piece = plays[0][1]
+            embedColor = discord.Color.red()
+        else: 
+            player = playertwo
+            piece = plays[1][1]
+            embedColor = discord.Color.gold()
+        if movecount > 0:
+            boardEmbed = discord.Embed(title = "Connect 4", color = embedColor)
+            boardEmbed.add_field(name="Board", value=printBoard(board), inline=False)
+            boardEmbed.add_field(name="Turn:", value=f"{player.name}", inline=False)
+            await boardmessage.edit(embed=boardEmbed)
+
+        move = await bot.wait_for('message', check = lambda m: m.author == player)
+        if move.content.lower() == 'end':
+            game = False
+            await ctx.send(f"Game ended by {player}.")
+            return
+        elif move.content.lower() not in keys:
+            await ctx.send("That is not a valid column. Please enter a number 1-7.")
+            continue
+        elif all(x != "   " for x in board[int(move.content)-1][1:]) == False:
+            await ctx.send("That column is full. Please choose another.")
+            continue
+
+        column = board[int(move.content)-1]
+        for count, row in enumerate(column): 
+            if row != "   ":
+                column[count-1] = piece
+                if winconds(board, (int(move.content)-1, count-1), piece):
+                    await move.delete()
+                    game = False
+                    boardEmbed = discord.Embed(title = "Connect 4", color = embedColor)
+                    boardEmbed.add_field(name="Board", value=printBoard(board), inline=False)
+                    boardEmbed.add_field(name="Turn:", value=f"{player.name}", inline=False)
+                    await boardmessage.edit(embed=boardEmbed)
+                    await ctx.send("You win!")
+                    return
+                break
+            elif count == 5:
+                board[int(move.content)-1][5] = piece
+                win = winconds(board, (int(move.content)-1, 5), piece)
+                if win:
+                    await move.delete()
+                    game = False
+                    boardEmbed = discord.Embed(title = "Connect 4", color = embedColor)
+                    boardEmbed.add_field(name="Board", value=printBoard(board), inline=False)
+                    boardEmbed.add_field(name="Turn:", value=f"{player.name}", inline=False)
+                    await boardmessage.edit(embed=boardEmbed)
+                    await ctx.send("You win!")
+                    return
+                break
+        stalecount = 0
+        for cols in range(6):
+            if all(elem != "   " for elem in board[cols]):
+                stalecount += 1
+                if stalecount == 7:
+                    await move.delete()
+                    game = False
+                    boardEmbed = discord.Embed(title = "Connect 4", color = embedColor)
+                    boardEmbed.add_field(name="Board", value=printBoard(board), inline=False)
+                    boardEmbed.add_field(name="Turn:", value=f"{player.name}", inline=False)
+                    await boardmessage.edit(embed=boardEmbed)
+                    await ctx.send("The game is a stalemate!")
+                    return
+            else: break
+        await move.delete()
+        movecount += 1
 
 #sends a random picture from the forbiddenList directly to Finn
 @commands.cooldown(1, 15, commands.BucketType.user)
@@ -1164,71 +972,6 @@ async def finn(ctx):
     await ctx.message.add_reaction("🦶")
 
 
-#starts a poll with reaction-based voting
-@bot.command(name = 'poll', description = 'Starts a poll. Default time is 120s')
-async def poll(ctx,*args):
-    if str(ctx.channel) not in channelList:
-        await ctx.message.delete()
-        return
-    timer = 120 #sets a default timer as 2 minutes
-
-    argsList = list(args) #gets the list of args passed by the user
-    if len(argsList) != 0:
-        if argsList[len(argsList)-1].isnumeric() == True: #checks if the last argument in the list is a number
-            timer = int(argsList[len(argsList)-1]) #sets the timer as the last argument in the list
-            argsList.pop(len(argsList)-1) #removes the number from the args
-
-    #creates a new embed for the poll
-    embedVar = discord.Embed(title='Poll', description = ' '.join(argsList), color=discord.Color.blue())
-    embedVar.add_field(name="Yes", value='<:white_check_mark:785597865081962528>', inline=False)
-    embedVar.add_field(name="No", value='<:x:785598446983839784>', inline=False)
-    m = await ctx.send(embed=embedVar)
-    #adds reaction to the poll embed
-    await m.add_reaction('✅')
-    await m.add_reaction('❌')
-    #sleeps for 2 minutes or whatever amount the user entered
-    await asyncio.sleep(timer)
-    m = await ctx.channel.fetch_message(m.id)
-    print(m.reactions)
-    counts = {react.emoji: react.count for react in m.reactions} #gets the amount of reactions as a dictionary
-    print(counts)
-    yesResult = counts['✅']-1 #gets the amount of reactions for "yes" minus the bot's vote
-    print('yesresult='+str(yesResult))
-    noResult = counts['❌']-1 #gets the amount of reactions for "no" minus the bot's vote
-    print('noresult='+str(noResult))
-    if noResult == 0 and yesResult == 0: #checks to see if no one voted
-        resultsEmbed = discord.Embed(title="No Votes", description=' '.join(argsList), color=discord.Color.gold())
-        resultsEmbed.add_field(name='No Votes Were Counted', value='No results to be shown', inline=False)
-        await m.delete()
-        await ctx.send(embed=resultsEmbed)
-        return
-    yesPercent = yesResult/(yesResult+noResult) #calculates a percent of yes votes
-    noPercent = noResult/(yesResult+noResult) #calculates a percent of no votes
-    resultsEmbed = discord.Embed(title='Results', description = ' '.join(argsList), color=discord.Color.gold())
-    resultsEmbed.add_field(name='✅', value="{yes} votes - {yespercent:.0%}".format(yes=yesResult,yespercent=yesPercent), inline=False)
-    resultsEmbed.add_field(name='❌', value='{no} votes - {nopercent:.0%}'.format(no=noResult,nopercent=noPercent), inline=False)
-    await m.delete() #deletes the original embed
-    await ctx.send(embed=resultsEmbed) #sends the results embed
-
-
-@commands.cooldown(1, 120, commands.BucketType.user)
-@bot.command(name = "copypasta", brief = "Randomly chooses a post from r/copypasta")
-async def copypasta(ctx):
-    if str(ctx.channel) not in channelList:
-        await ctx.message.delete()
-        return
-    posts = []
-    for submission in reddit.subreddit("copypasta").hot(limit=50):
-        posts.append(submission)
-    while True:
-        post = random.choice(posts)
-        try:
-            await ctx.send(post.selftext)
-            break
-        except discord.errors.HTTPException:
-            continue
-
-
 @bot.command(name="suggestion", brief="Submit a suggestion for the bot", description = "Submit a suggestion for the bot")
 async def suggestion(ctx, *args):
     if str(ctx.channel) not in channelList:
@@ -1237,68 +980,66 @@ async def suggestion(ctx, *args):
     await ctx.message.add_reaction("🖕")
     await ctx.channel.send(f"This --> ({' '.join(args)}) fucking sucks. You should be ashamed.")
 
-
-@commands.cooldown(1, 10, commands.BucketType.user)
-@bot.command(name="joke", brief="Sends a random joke", description="Sends a random joke to the bot channel")
-async def joke(ctx):
-    response = requests.get("https://official-joke-api.appspot.com/jokes/random")
-    setup = response.json()['setup']
-    punchline = response.json()['punchline']
-    joke_embed = discord.Embed(title="Joke", description = " ", color = bot_color)
-    joke_embed.add_field(name="Setup", value=setup, inline=False)
-    joke_embed.add_field(name="Punchline", value=f"||{punchline}||", inline=False)
-    await ctx.send(embed=joke_embed)
-
-
-@commands.cooldown(1, 30, commands.BucketType.user)
-@bot.command(name="dog", brief="Posts a random picture of a dog", description="When used without an arguments, the command will post a picture of a random dog. If given an argument, it will send a random picture of a dog from that breed.")
-async def dog(ctx,*args):
+@commands.cooldown(1, 15, commands.BucketType.user)
+@bot.command(name="asa")
+async def asa(ctx):
     if str(ctx.channel) not in channelList:
         await ctx.message.delete()
         return
+    asa = bot.get_guild(270384027330936835).get_member(227250029788790785)
 
+    if asa.voice != None and asa.voice.self_deaf:
+        SQL = f"SELECT deafenstart FROM asa;"
+        cur.execute(SQL)
+        deafen_start = int(cur.fetchone()[0])
 
-    def getPics(breed = ""):
-        if breed != "":
-            breeds = requests.get("https://dog.ceo/api/breeds/list/all").json()['message']
-            if "/" not in list(breed):
-                if breed not in breeds.keys():
-                    return("That's not a valid dog breed.")
-            breed = "".join((breed,'/'))
-            URL = "https://dog.ceo/api/breed/{}images/random"
-        else:
-            URL = "https://dog.ceo/api/breeds/image/random"
-        response = requests.get(URL.format(breed)).json()['message']
-        return response
+        cur_deaf = int(datetime.datetime.now().timestamp() - deafen_start)
+        cur_deaf_orig = cur_deaf
 
+        hours = cur_deaf // 3600 #gets number of hours asa has been deafened for this session
 
-    if len(args) > 1:
-        subbreeds = requests.get("https://dog.ceo/api/breed/{}/list".format(args[1]))
-        if subbreeds.json()['status'] == "error" or subbreeds.json()['message'] == []:
-            pass
-        else:
-            if args[0] not in subbreeds.json()['message']:
-                await ctx.send("That is not a valid sub-breed of {args[1]}.")
-                return
-            else:
-                breed = "/".join((args[1], args[0]))
-                await ctx.send(getPics(breed))
-                return
-    
-    try:
-        await ctx.send(getPics("".join(args)))
-    except IndexError:
-        await ctx.send(getPics())
+        cur_deaf %= 3600
+        minutes = cur_deaf // 60 #gets number of minutes asa has been deafened for this session
 
+        cur_deaf %= 60
+        seconds = cur_deaf #gets number of seconds asa has been deafened for this session
 
-@commands.cooldown(1, 30, commands.BucketType.user)
-@bot.command(name="cat", brief="Posts a random picture of a cat", description = "Posts a random picture of a cat into the channel. You cannot specify breeds")
-async def cat(ctx):
-    if str(ctx.channel) not in channelList:
-        await ctx.message.delete()
+        
+        await ctx.send(f"Asa is on a {hours}h {minutes}m {seconds}s streak.")
+
+        SQL = f"SELECT idletime FROM asa;"
+        cur.execute(SQL)
+        cur_time = cur.fetchone()[0]
+        cur_time += cur_deaf_orig
+
+        hours = cur_time // 3600 #gets number of hours until next claim time
+
+        cur_time %= 3600
+        minutes = cur_time // 60 #gets number of minutes until next claim time minus hours
+
+        cur_time %= 60
+        seconds = cur_time #gets number of seconds until next claim time minus hours and minutes
+
+        
+        await ctx.send(f"Asa has been deafened in a VC for {hours}h {minutes}m {seconds}s.")
+
         return
-    response = requests.get("https://aws.random.cat/meow").json()['file']
-    await ctx.send(response)
+
+    SQL = f"SELECT idleTime from asa;"
+    cur.execute(SQL)
+    time = int(cur.fetchone()[0])
+
+    hours = time // 3600 #gets number of hours until next claim time
+
+    time %= 3600
+    minutes = time // 60 #gets number of minutes until next claim time minus hours
+
+    time %= 60
+    seconds = time #gets number of seconds until next claim time minus hours and minutes
+
+    await ctx.send(f"Asa has been deafened in a VC for {hours}h {minutes}m {seconds}s.")
+
+    return
 
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
@@ -1505,10 +1246,6 @@ async def play(ctx, *args):
         await uservoice.channel.connect()
         await play_music(ctx,(song,title,channel, runtime, ctx.author.name))
 
-
-
-    
-
 @bot.command(name="skip", description="Skips the currently playing song", aliases=["s"])
 async def skip(ctx):
     cur.execute(f"SELECT ignore FROM musicbot WHERE id = {int(ctx.author.id)};")
@@ -1532,15 +1269,17 @@ async def skip(ctx):
     else:
         await ctx.send("The bot is not connected to an active voice channel.")
 
-
-
 @bot.command(name="leave", description="Makes the bot leave an active voice channel", aliases=["l"])
 async def leave(ctx):
+    cur.execute(f"SELECT ignore FROM musicbot WHERE id = {int(ctx.author.id)};")
+    ignored = cur.fetchone()[0]
     if str(ctx.channel) not in ["jukebox", "admins-only"]:
         await ctx.message.delete()
         return
-    elif ctx.author.id not in modID:
+    elif ignored:
         return
+    # elif "Coin Operator" not in [i.name for i in ctx.author.roles]:
+    #     await ctx.send("You need a role called `Coin Operator` to do that.")
     voice = discord.utils.get(bot.voice_clients, guild=ctx.guild)
     if voice.is_connected():
         await voice.disconnect()
@@ -1563,7 +1302,6 @@ async def clear(ctx):
     num_songs = len(music_queue)
     music_queue.clear()
     await ctx.send(f"The queue has been cleared of {num_songs} songs.")
-
 
 @bot.command(name="queue", description="Displays the queue of songs", aliases=["q"])
 async def queue(ctx):
@@ -1599,7 +1337,6 @@ async def queue(ctx):
 
     await ctx.send(embed=queue_embed)
 
-
 @bot.command(name="repeat", description="Toggles song repeating", aliases=["r"])
 async def repeat(ctx):
     cur.execute(f"SELECT ignore FROM musicbot WHERE id = {int(ctx.author.id)};")
@@ -1615,7 +1352,6 @@ async def repeat(ctx):
     repeating = not repeating
     await ctx.send(f"**Repeating:** {repeating}")
 
-
 @bot.command(name="shuffle", description="Shuffles the music queue")
 async def shuffle(ctx):
     cur.execute(f"SELECT ignore FROM musicbot WHERE id = {int(ctx.author.id)};")
@@ -1630,16 +1366,17 @@ async def shuffle(ctx):
     random.shuffle(music_queue)
     await ctx.send("Queue successfully shuffled.")
 
-
 @bot.command(name="ignore", description="Lets a Coin Operator take away someone's music bot privileges", aliases=["i"])
 async def ignore(ctx, user: discord.Member):
     cur.execute(f"SELECT ignore FROM musicbot WHERE id = {int(ctx.author.id)};")
     ignored = cur.fetchone()[0]
+    print(ignored)
     if str(ctx.channel) not in ["jukebox", "admins-only"]:
         await ctx.message.delete()
         return
     elif ignored or ctx.author.id not in modID:
         return
+
     name = user.name
     id = int(user.id)
     print(id)
@@ -1655,7 +1392,6 @@ async def ignore(ctx, user: discord.Member):
         await ctx.send(f"{name} is now being ignored by the music bot.")
     else:
         await ctx.send(f"{name} is no longer being ignored by the music bot.")
-
 
 
 
@@ -2361,265 +2097,6 @@ async def totalpointslb(ctx):
     await ctx.send(embed=leaderboardEmbed)
 
 
-@commands.cooldown(1, 15, commands.BucketType.user)
-@bot.command(name="asa")
-async def asa(ctx):
-    if str(ctx.channel) not in channelList:
-        await ctx.message.delete()
-        return
-    asa = bot.get_guild(270384027330936835).get_member(227250029788790785)
-
-    if asa.voice != None and asa.voice.self_deaf:
-        SQL = f"SELECT deafenstart FROM asa;"
-        cur.execute(SQL)
-        deafen_start = int(cur.fetchone()[0])
-
-        cur_deaf = int(datetime.datetime.now().timestamp() - deafen_start)
-        cur_deaf_orig = cur_deaf
-
-        hours = cur_deaf // 3600 #gets number of hours asa has been deafened for this session
-
-        cur_deaf %= 3600
-        minutes = cur_deaf // 60 #gets number of minutes asa has been deafened for this session
-
-        cur_deaf %= 60
-        seconds = cur_deaf #gets number of seconds asa has been deafened for this session
-
-        
-        await ctx.send(f"Asa is on a {hours}h {minutes}m {seconds}s streak.")
-
-        SQL = f"SELECT idletime FROM asa;"
-        cur.execute(SQL)
-        cur_time = cur.fetchone()[0]
-        cur_time += cur_deaf_orig
-
-        hours = cur_time // 3600 #gets number of hours until next claim time
-
-        cur_time %= 3600
-        minutes = cur_time // 60 #gets number of minutes until next claim time minus hours
-
-        cur_time %= 60
-        seconds = cur_time #gets number of seconds until next claim time minus hours and minutes
-
-        
-        await ctx.send(f"Asa has been deafened in a VC for {hours}h {minutes}m {seconds}s.")
-
-        return
-
-    SQL = f"SELECT idleTime from asa;"
-    cur.execute(SQL)
-    time = int(cur.fetchone()[0])
-
-    hours = time // 3600 #gets number of hours until next claim time
-
-    time %= 3600
-    minutes = time // 60 #gets number of minutes until next claim time minus hours
-
-    time %= 60
-    seconds = time #gets number of seconds until next claim time minus hours and minutes
-
-    await ctx.send(f"Asa has been deafened in a VC for {hours}h {minutes}m {seconds}s.")
-
-
-
-    return
-        
-@commands.cooldown(1, 15, commands.BucketType.user)
-@bot.command(name="connect4")
-async def connectfour(ctx):
-    if str(ctx.channel) not in channelList:
-        await ctx.message.delete()
-        return
-    keys = ["1","2","3","4","5","6","7"]
-    def printBoard(board):
-        return(f"""```
-|{board[0][0]}|{board[1][0]}|{board[2][0]}|{board[3][0]}|{board[4][0]}|{board[5][0]}|{board[6][0]}|
-|---+---+---+---+---+---+---|
-|{board[0][1]}|{board[1][1]}|{board[2][1]}|{board[3][1]}|{board[4][1]}|{board[5][1]}|{board[6][1]}|
-|---+---+---+---+---+---+---|
-|{board[0][2]}|{board[1][2]}|{board[2][2]}|{board[3][2]}|{board[4][2]}|{board[5][2]}|{board[6][2]}|
-|---+---+---+---+---+---+---|
-|{board[0][3]}|{board[1][3]}|{board[2][3]}|{board[3][3]}|{board[4][3]}|{board[5][3]}|{board[6][3]}|
-|---+---+---+---+---+---+---|
-|{board[0][4]}|{board[1][4]}|{board[2][4]}|{board[3][4]}|{board[4][4]}|{board[5][4]}|{board[6][4]}|
-|---+---+---+---+---+---+---|
-|{board[0][5]}|{board[1][5]}|{board[2][5]}|{board[3][5]}|{board[4][5]}|{board[5][5]}|{board[6][5]}|
-|---+---+---+---+---+---+---|
-| 1 | 2 | 3 | 4 | 5 | 6 | 7 |
-        ```""")
-
-    def winconds(board, move: tuple, piece: str):
-        col, row = move
-
-        # check for 4 in up/down
-        vertWin = False
-        count = 0
-        for i in range(4):
-            try:
-                if board[col][row+i] == piece:
-                    count+= 1
-                    if count == 4:
-                        vertWin = True
-                        return vertWin
-                
-                else:
-                    break
-            except IndexError:
-                break
-        
-
-        #check for left/right win
-        horWin = False
-        count = 0
-        for i in range(6):
-            try:
-                if board[i][row] == piece:
-                    count += 1
-                    if count == 4:
-                        horWin = True
-                        return horWin
-                else:
-                    count = 0
-            except IndexError:
-                break
-
-
-        #check for bot. left -> top right
-        topleft = row < 3 and col < 3
-        bottomright = row > 2 and col  > 3
-        if topleft or bottomright:
-            bltrWin = False
-        else:
-            for x in range(3):
-                for y in reversed(range(3,6)):
-                    try:
-                        # print("Spaces: \n", x,y,": ",board[x][y], "\n", x+1, y-1,": ", board[x+1][y-1],"\n",x+2,y-2,": ",board[x+2][y-2],"\n",x+3,y-3,": ",board[x+3][y-3])
-                        if board[x][y] == piece and board[x+1][y-1] == piece and board[x+2][y-2] == piece and board[x+3][y-3] == piece:
-                            bltrWin = True
-                            return bltrWin
-                    except IndexError:
-                        continue
-
-
-
-        #check for top left -> bot. right
-        bottomleft = row > 2 and col < 3
-        topright = row < 3 and col > 3
-        if bottomleft or topright:
-            tlbrWin = False
-        else:
-            for x in range(4):
-                for y in range(3):
-                    try:
-                        # print("Spaces: \n", x,y,": ",board[x][y], "\n", x+1, y+1,": ", board[x+1][y+1],"\n",x+2,y+2,": ",board[x+2][y+2],"\n",x+3,y+3,": ",board[x+3][y+3])
-                        if board[x][y] == piece and board[x+1][y+1] == piece and board[x+2][y+2] == piece and board[x+3][y+3] == piece:
-                            tlbrWin = True
-                            return tlbrWin
-                    except IndexError:
-                        continue
-        print("done with winconds")
-        return False
-
-    board = [["   " for i in range(6)] for i in range(7)]
-
-    playerone = ctx.author
-    playertwo = ctx.message.mentions[0]
-    challMsg = await ctx.send(f"{playerone.name} has challenged {playertwo.name} to a game of Connect 4! Do you accept? Y/N")
-    try:
-        msg = await bot.wait_for('message', check = lambda m: m.author == playertwo, timeout = 30.0)
-        if msg.content.lower() in ['y', 'yes']:
-            await ctx.send(f"Challenge accepted! {playerone.name} goes first.")
-            await challMsg.delete()
-        else:
-            await ctx.send('Challenge declined.')
-            await challMsg.delete()
-            return
-    except asyncio.TimeoutError:
-        await challMsg.delete()
-        await ctx.send("Challenge timed out.")
-        return
-    plays = [(playerone, " X "), (playertwo, " O ")]
-    boardEmbed = discord.Embed(title = "Connect 4", color = discord.Color.red())
-    boardEmbed.add_field(name="Board", value=printBoard(board), inline=False)
-    boardEmbed.add_field(name="Turn:", value=f"{playerone.name}", inline=False)
-    ogmessage = await ctx.send(embed=boardEmbed)
-    allimportantid = ogmessage.id
-    game = True
-    movecount = 0
-    while game:
-        boardmessage = await ctx.fetch_message(allimportantid)
-        if movecount % 2 == 0:
-            player = playerone
-            piece = plays[0][1]
-            embedColor = discord.Color.red()
-        else: 
-            player = playertwo
-            piece = plays[1][1]
-            embedColor = discord.Color.gold()
-        if movecount > 0:
-            boardEmbed = discord.Embed(title = "Connect 4", color = embedColor)
-            boardEmbed.add_field(name="Board", value=printBoard(board), inline=False)
-            boardEmbed.add_field(name="Turn:", value=f"{player.name}", inline=False)
-            await boardmessage.edit(embed=boardEmbed)
-
-        move = await bot.wait_for('message', check = lambda m: m.author == player)
-        if move.content.lower() == 'end':
-            game = False
-            await ctx.send(f"Game ended by {player}.")
-            return
-        elif move.content.lower() not in keys:
-            await ctx.send("That is not a valid column. Please enter a number 1-7.")
-            continue
-        elif all(x != "   " for x in board[int(move.content)-1][1:]) == False:
-            await ctx.send("That column is full. Please choose another.")
-            continue
-
-        column = board[int(move.content)-1]
-        for count, row in enumerate(column): 
-            if row != "   ":
-                column[count-1] = piece
-                if winconds(board, (int(move.content)-1, count-1), piece):
-                    await move.delete()
-                    game = False
-                    boardEmbed = discord.Embed(title = "Connect 4", color = embedColor)
-                    boardEmbed.add_field(name="Board", value=printBoard(board), inline=False)
-                    boardEmbed.add_field(name="Turn:", value=f"{player.name}", inline=False)
-                    await boardmessage.edit(embed=boardEmbed)
-                    await ctx.send("You win!")
-                    return
-                break
-            elif count == 5:
-                board[int(move.content)-1][5] = piece
-                win = winconds(board, (int(move.content)-1, 5), piece)
-                if win:
-                    await move.delete()
-                    game = False
-                    boardEmbed = discord.Embed(title = "Connect 4", color = embedColor)
-                    boardEmbed.add_field(name="Board", value=printBoard(board), inline=False)
-                    boardEmbed.add_field(name="Turn:", value=f"{player.name}", inline=False)
-                    await boardmessage.edit(embed=boardEmbed)
-                    await ctx.send("You win!")
-                    return
-                break
-        stalecount = 0
-        for cols in range(6):
-            if all(elem != "   " for elem in board[cols]):
-                stalecount += 1
-                if stalecount == 7:
-                    await move.delete()
-                    game = False
-                    boardEmbed = discord.Embed(title = "Connect 4", color = embedColor)
-                    boardEmbed.add_field(name="Board", value=printBoard(board), inline=False)
-                    boardEmbed.add_field(name="Turn:", value=f"{player.name}", inline=False)
-                    await boardmessage.edit(embed=boardEmbed)
-                    await ctx.send("The game is a stalemate!")
-                    return
-            else: break
-        await move.delete()
-        movecount += 1
-
-
-
 #--------------------------------------------------------------------------------------------------------------------------------------#
 #  __  __   ____   _____   ______  _____          _______  _____  ____   _   _ 
 # |  \/  | / __ \ |  __ \ |  ____||  __ \     /\ |__   __||_   _|/ __ \ | \ | |
@@ -2641,40 +2118,6 @@ async def purge(ctx,amount: int):
             await m.delete() #while iterating throught the list, if the message was sent by the bot it deletes it
             counter += 1 #keeps track of how many messages the bot deleted
     await ctx.send(f'Deleted {counter} bot messages') #prints out a message letting the user know how many message were deleted
-
-
-#mutes a member of the server for a specified amount of time
-# @bot.command(name = 'mute',help_command = None)
-# async def mute(ctx, mention, time='5s'):
-#     if str(ctx.channel) not in channelList:
-#         await ctx.message.delete()
-#         return
-#     if time[0] == '-' or time[0].isnumeric() == False:
-#         await ctx.send("Please enter a positive number") #sanitizes input
-#         return
-#     if int(ctx.message.author.id) not in modID:
-#         await ctx.send("You do not have permission to use this command.") #only mods can use this command
-#         return
-    
-#     multiplier = 0
-    
-#     if time[len(time)-1].lower() == 's': #
-#         multiplier = 1                   #   
-#     if time[len(time)-1].lower() == 'm': #   this set of ifs checks to see
-#         multiplier = 60                  #   what unit of time the user 
-#     if time[len(time)-1].lower() == 'h': #   would like to use: seconds,
-#         multiplier = 3600                #   minutes, hours, or days
-#     if time[len(time)-1].lower() == 'd': #
-#         multiplier = 86400               #
-    
-#     member = ctx.message.mentions[0]
-#     await member.edit(mute=True)
-#     await ctx.send(f"{member} has been muted for {time}") #sends a confirmation message to the user
-#     time = int(time[:-1])
-#     time *= multiplier
-#     await asyncio.sleep(time) #sleeps for the duration of time
-#     await member.edit(mute=False) #unmutes after the duration of time
-
 
 #lets the user check how many strikes they have
 @commands.cooldown(1, 10, commands.BucketType.user)
@@ -2707,33 +2150,6 @@ async def strikes(ctx):
                 return
 
     await ctx.message.add_reaction('0️⃣')
-
-
-@bot.command(name = "lock", help_command = None)
-async def lock(ctx, channel: discord.TextChannel):
-    if ctx.author.id not in modID:
-        await ctx.send("You do not have the permissions to use this command.")
-        return
-    channel = channel or ctx.channel
-    role = discord.utils.get(ctx.message.guild.roles,name='Patrons') #assigns the counting clown role to a variable
-    overwrite = channel.overwrites_for(role)
-    overwrite.send_messages = False
-    await channel.set_permissions(role, overwrite=overwrite)
-    await channel.send("Channel locked.")
-
-
-@bot.command(name = "unlock", help_command = None)
-async def unlock(ctx, channel: discord.TextChannel):
-    if ctx.author.id not in modID:
-        await ctx.send("You do not have the permissions to use this command.")
-        return
-    channel = channel or ctx.channel
-    role = discord.utils.get(ctx.message.guild.roles,name='Patrons')
-    overwrite = channel.overwrites_for(role)
-    overwrite.send_messages = True
-    await channel.set_permissions(role, overwrite=overwrite)
-    await channel.send("Channel unlocked.")
-
 
 @commands.cooldown(1,15, commands.BucketType.user)
 @bot.command(name = "claim", brief = "Claims daily points")
@@ -2787,217 +2203,6 @@ async def claim(ctx):
         return
 
 
-# @bot.command(name = "createrole", help_command=None)
-# async def createrole(ctx, name: str, r: int, g: int, b: int):
-#     if ctx.author.id not in modID:
-#         await ctx.send("You do not have the permissions to use this command.")
-#         return
-#     await ctx.guild.create_role(name=name, color=discord.Color.from_rgb(r, g, b)) #creates a role with "name" name and "r,g,b" color
-#     await ctx.send(f"Role created with name {name} and color from rgb({r}, {g}, {b})")
-
-
-@bot.group(invoke_without_command = True, help_command=None)
-async def dev(ctx):
-    if ctx.author.id not in modID:
-        return
-
-@dev.command(name = 'pointtable', help_command=None)
-async def pointtable(ctx):
-    if ctx.author.id not in modID:
-        return
-
-    SQL = "SELECT pointnumber, name, id, bjwins,totalpoints FROM points;"
-    cur.execute(SQL)
-    rows = cur.fetchall()
-    
-    table = "```\n+------------+---------+------------------+-----------+--------+\n|pointnumber |name     |id                |bj wins    |totalpoints |\n+------------+---------+------------------+-----------+------------+\n"
-
-    for row in rows:
-        entry = f"|{row[0]:<12}|{row[1]:<9}|{row[2]:<18}|{row[3]:<11}|{row[4]:<12}|\n"
-        table = "".join((table,entry))
-        #await ctx.send(f"`|{row[0]:<7}|{row[1]:<9}|{row[2]:<18}|{row[3]:<11}|{row[4]:<8}|`")
-    
-    end = "+------------+---------+------------------+-----------+------------+```"
-    table = "".join((table,end))
-    print(len(table))
-    await ctx.send(table)
-
-@dev.command(name = 'striketable', help_command = None)
-async def striketable(ctx):
-    if ctx.author.id not in modID:
-        return
-    
-    SQL = "SELECT name, strikes FROM striketable;"
-    cur.execute(SQL)
-    rows = cur.fetchall()
-    
-    table = "```\n+----------------------+--------------------+---------+\n|name                  |id                  |strikes  |\n+----------------------+--------------------+---------+\n"
-    for row in rows:
-        curUser = await ctx.message.guild.fetch_member(int(row[0]))
-        entry = f"|{curUser.name:<22}|{int(row[0]):<20}|{row[1]:<9}|\n"
-        table = "".join((table,entry))
-    end = "+----------------------+--------------------+---------+```"
-    table = "".join((table,end))
-    await ctx.send(table)
-
-
-@dev.command(name="sql", help_command=None)
-async def devsql(ctx, statement: str):
-    if ctx.author.id not in modID:
-        return
-    try:
-        cur.execute(statement)
-        await ctx.send("Process completed")
-    except psycopg2.Error:
-        await ctx.send("An error occurred")
-        return
-
-# @commands.group(name="ignore")
-# async def ignore(ctx):
-#     pass
-
-# @ignore.command(name = "channel")
-# async def ignorechannel(cts, channel: discord.channel):
-#     server = bot.fetch_guild(270384027330936835)
-#     if channel in server.channels:
-
-    
-
-
-#--------------------------------------------------------------------------------------------------------------------------------------#
-#  __  __  _____   _____   _____    
-# |  \/  ||_   _| / ____| / ____|   
-# | \  / |  | |  | (___  | |        
-# | |\/| |  | |   \___ \ | |        
-# | |  | | _| |_  ____) || |____   _ 
-# |_|  |_||_____||_____/  \_____| (_)                                                                      
-
-
-#randomly chooses an attacker or defender from the respective lists
-@commands.cooldown(1, 15, commands.BucketType.user)
-@bot.command(name = 'operator', description = 'Picks a random Rainbow Six Siege operator from either attack or defense')
-async def operator(ctx,arg1):
-    if str(ctx.channel) not in channelList:
-        await ctx.message.delete()
-        return
-    #checks if the user want an attacker or defender
-    if arg1.lower() == "attacker":
-        #sends a message with a random attacker
-        await ctx.send(random.choice(attackerList))
-        #adds an attacker reaction to the users message
-        await ctx.message.add_reaction("⚔️")
-        return
-    if arg1.lower() == "defender":
-        #sends a message with a random defender
-        await ctx.send(random.choice(defenderList))
-        #adds a defender reaction to the users message
-        await ctx.message.add_reaction("🛡️")
-        return
-    else:
-        #only happens if the user passed something other than attacker or defender
-        await ctx.send("Please enter either 'Attacker' or 'Defender'")
-
-
-#chooses a random number whose bounds are the numbers the user passed
-@commands.cooldown(1, 10, commands.BucketType.user)
-@bot.command(name = 'decide', description = 'Picks a random number between two numbers')
-async def decide(ctx,arg1,arg2):
-    if str(ctx.channel) not in channelList:
-        await ctx.message.delete()
-        return
-    try:
-        if isinstance(int(arg1), int) == False or isinstance(int(arg2),int) == False: #checks if either argument isn't an int
-            await ctx.send("Please enter whole numbers")
-            return
-        number = random.randint(int(arg1),int(arg2))
-        await ctx.send(number)
-    except CommandOnCooldown:
-        pass
-
-
-#common dice roller with parsing
-@bot.command(name = 'dice', description = 'Rolls dice for the user\nFormat: [# of dice]d[# of sides] Separate different dice with spaces')
-async def dice(ctx, *args):
-    if str(ctx.channel) not in channelList:
-        await ctx.message.delete()
-        return
-    #converts all the arguments the user passes into a list
-    argsList = list(args)
-    if len(argsList) == 0:
-        await ctx.send("Please enter dice to roll")
-        return
-    
-    for i in argsList:
-        matched = re.match("^[0-9]+d[0-9]+$", i) #this regex checks to see if the input from the user matches the format of a die
-        is_match = bool(matched)
-        if is_match == False:
-            await ctx.send("Please enter a valid die") #if the input doesn't match, lets the user know and returns
-            return
-    sum = 0
-    rolls = []
-    for i in range(len(argsList)):
-        entry = argsList[i].split('d') #splits the index of argsList into two numbers, splicing at 'd'
-        print(entry)
-        for i in range(int(entry[0])): #repeats the dice roll for a number of times equal to the first index of the split
-            roll = random.randint(1,int(entry[1])) #rolls a dice with the number of sides equal to the second index of the split
-            rolls.append(roll)
-            sum += roll
-    await ctx.send("Rolls: "+', '.join(map(str,rolls))+"\nSum: "+str(sum)) #sends a message containing the rolls and the sum of all the rolls
-
-
-@commands.cooldown(1, 15, commands.BucketType.user)
-@bot.command(name = "source", brief = "Links the source code in pastebin")
-async def source(ctx):
-    await ctx.send("This command is under construction")
-    return
-    with open('countingPolice.py', 'r') as file:
-        data = file.read()
-
-
-    data = {
-        'api_option': 'paste',
-        'api_dev_key':key,
-        'api_paste_code':data,
-        'api_paste_name':"H Welding Machine Source Code",
-        'api_paste_expire_date': 'N',
-        'api_user_key': None,
-        'api_paste_format': 'python',
-        'paste_private': 'private'
-        }
-    
-    login = requests.post("https://pastebin.com/api/api_login.php", data=login_data)
-    print("Login status: ", login.status_code if login.status_code != 200 else "200")
-    data['api_user_key'] = login.text
-    
-    r = requests.post("https://pastebin.com/api/api_post.php", data=data)
-    print("Paste send: ", r.status_code if r.status_code != 200 else "200")
-    await ctx.send(r.text)
-
-
-
-@commands.cooldown(1, 5, commands.BucketType.user)
-@bot.command(name = "ytsearch", brief="Search youtube", description="Displays the first five results for a search term on youtube")
-async def ytsearch(ctx, *args):
-    if str(ctx.channel) not in channelList:
-        await ctx.message.delete()
-        return
-    searchTerm = " ".join(args)
-    resultsDICT = YoutubeSearch(searchTerm, max_results=5).to_dict()
-    if len(resultsDICT) == 0:
-        noResultEmbed = discord.Embed(title = "YtSearch", description = "No results", color = discord.Color.from_rgb(255, 0, 0))
-        await ctx.send(embed = noResultEmbed)
-        return
-    resultsEmbed = discord.Embed(title = "YtSearch", description = "First five results", color = discord.Color.from_rgb(255,0,0))
-    for result in range(len(resultsDICT)):
-        video_title = resultsDICT[result]["title"]
-        video_url = "".join(("https://www.youtube.com", resultsDICT[result]["url_suffix"]))
-        video_channel = resultsDICT[result]["channel"]
-        video_runtime = resultsDICT[result]["duration"]
-        video_views = resultsDICT[result]["views"]
-        resultsEmbed.add_field(name=video_title, value = f"Link: {video_url}\nChannel: {video_channel}\nDuration: {video_runtime}\nViews: {video_views}", inline=False)
-    await ctx.send(embed=resultsEmbed)
-
-
 #--------------------------------------------------------------------------------------------------------------------------------------#
 #  ______  _____   _____    ____   _____  
 # |  ____||  __ \ |  __ \  / __ \ |  __ \ 
@@ -3006,50 +2211,6 @@ async def ytsearch(ctx, *args):
 # | |____ | | \ \ | | \ \ | |__| || | \ \ 
 # |______||_|  \_\|_|  \_\ \____/ |_|  \_\                                                                                  
 
-
-# @wolfram.error
-# async def wolfram_error(ctx,error):
-#     if isinstance(error, commands.CommandOnCooldown):
-#         await ctx.message.delete()
-#         errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:.2f}s')
-#         await asyncio.sleep(error.retry_after)
-#         await errMess.delete()
-
-
-# @wolframfull.error
-# async def wolframfull_error(ctx,error):
-#     if isinstance(error, commands.CommandOnCooldown):
-#         await ctx.message.delete()
-#         errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:.2f}s')
-#         await asyncio.sleep(error.retry_after)
-#         await errMess.delete()
-
-
-@operator.error
-async def operator_error(ctx,error):
-    if isinstance(error, commands.CommandOnCooldown):
-        await ctx.message.delete()
-        errMess = await ctx.send(f'You are on cooldowwn for this command. Try again in {error.retry_after:.2f}s')
-        await asyncio.sleep(error.retry_after)
-        await errMess.delete()
-
-
-@rps.error
-async def rps_error(ctx,error):
-    if isinstance(error, commands.CommandOnCooldown):
-        await ctx.message.delete()
-        errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:.2f}s')
-        await asyncio.sleep(error.retry_after)
-        await errMess.delete()
-
-
-@decide.error
-async def decide_error(ctx,error):
-    if isinstance(error,commands.CommandOnCooldown):
-        await ctx.message.delete()
-        errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:.2f}s')
-        await asyncio.sleep(error.retry_after)
-        await errMess.delete()
 
 
 @finn.error
@@ -3103,30 +2264,6 @@ async def slots_error(ctx,error):
 
 @claim.error
 async def claim_error(ctx, error):
-    if isinstance(error, commands.CommandOnCooldown):
-        await ctx.message.delete()
-        errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:.2f}s')
-        await asyncio.sleep(error.retry_after)
-        await errMess.delete()
-
-@dog.error
-async def dog_error(ctx, error):
-    if isinstance(error, commands.CommandOnCooldown):
-        await ctx.message.delete()
-        errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:.2f}s')
-        await asyncio.sleep(error.retry_after)
-        await errMess.delete()
-
-@cat.error
-async def cat_error(ctx,error):
-    if isinstance(error, commands.CommandOnCooldown):
-        await ctx.message.delete()
-        errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:.2f}s')
-        await asyncio.sleep(error.retry_after)
-        await errMess.delete()
-
-@ytsearch.error
-async def ytsearch_error(ctx, error):
     if isinstance(error, commands.CommandOnCooldown):
         await ctx.message.delete()
         errMess = await ctx.send(f'You are on cooldown for this command. Try again in {error.retry_after:.2f}s')
