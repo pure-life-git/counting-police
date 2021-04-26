@@ -1,9 +1,9 @@
 discord
 psycopg2
 wolframalpha
+praw
 requests
 youtube-search
 youtube_dl
 pynacl
 spotipy
-soundcloud-lib
