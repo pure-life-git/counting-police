@@ -2502,6 +2502,41 @@ async def on_voice_state_update(member, before, after):
     else:
         return
 
+@bot.event
+async def on_member_join(member):
+    #insert into musicbot
+    SQL = f"INSERT INTO musicbot(ignore, id) VALUES (False, '{member.id}';"
+    cur.execute(SQL)
+    conn.commit()
+
+    #insert into points table
+    SQL = f"INSERT INTO points(pointnumber, id, claimtime, bjwins, totalpoints) VALUES (0, {member.id}, {datetime.datetime.now(datetime.timezone.utc)}, 0, 0);"
+    cur.execute(SQL)
+    conn.commit()
+
+
+@bot.event
+async def on_member_leave(member):
+    #check for striketable
+    SQL = "SELECT * FROM striketable;"
+    cur.execute(SQL)
+    entries = cur.fetchall()
+    for entry in [i[0] for i in entries]:
+        if member.id == entry:
+            #delete from striketable
+            SQL = f"DELETE FROM striketable WHERE name='{member.id}';"
+            cur.execute(SQL)
+            conn.commit()
+    
+    #delete from music bot
+    SQL = f"DELETE FROM musicbot WHERE id='{member.id}';"
+    cur.execute(SQL)
+    conn.commit()
+
+    SQL = f"DELETE FROM points WHERE id={member.id};"
+    cur.execute(SQL)
+    conn.commit()
+
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
 #runs the bot using the discord bot token provided within Heroku
