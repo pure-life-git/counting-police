@@ -28,6 +28,7 @@ import spotipy
 import spotipy.oauth2 as oauth2
 from spotipy.oauth2 import SpotifyOAuth
 from spotipy.oauth2 import SpotifyClientCredentials
+from sclib import SoundcloudAPI, Track, Playlist
 
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
@@ -57,6 +58,8 @@ discord.opus.load_opus(find)
 
 auth_manager = SpotifyClientCredentials(client_id=os.environ['spot_id'], client_secret=os.environ['spot_secret'])
 sp = spotipy.Spotify(auth_manager=auth_manager)
+
+scAPI = SoundcloudAPI()
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
 #   _____  _       ____   ____            _      
@@ -1109,6 +1112,23 @@ async def play_spotify(ctx, song):
         await ctx.author.voice.channel.connect()
         await play_music(ctx,(song,title,channel, runtime, ctx.author.name))
 
+async def play_soundcloud(ctx, url):
+    voice = ctx.guild.voice_client
+    track = scAPI.resolve(url)
+    if type(track) is Track:
+        if voice:
+            if voice.is_playing():
+                music_queue.append((url, track.title, track.artist, track.duration, ctx.author.name))
+                return
+            else:
+                await play_music(ctx, (url,track.title,track.artist, track.duration, ctx.author.name))
+        else:
+            await ctx.author.voice.channel.connect()
+            await play_music(ctx,(url,track.title,track.artist, track.duration, ctx.author.name))
+    elif type(track) is Playlist:
+        for song in track.tracks:
+            await play_soundcloud(ctx, song.permalink_url)
+
 
 async def check_play_next(ctx):
     voice = ctx.guild.voice_client
@@ -1184,9 +1204,14 @@ async def play_music(ctx,song):
         os.remove("song.mp3")
 
     voice = ctx.guild.voice_client
-
-    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([song])
+    if song.startswith("https://"):
+        track = scAPI.resolve(song)
+        filename = './song.mp3'
+        with open(filename, 'wb+') as fp:
+            track.write_mp3_to(fp)
+    else:
+        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+            ydl.download([song])
     
     await ctx.send(f"**Now Playing:** {title} - {channel} | {runtime}")
     voice.play(FFmpegPCMAudio(source="song.mp3"), after = lambda e: asyncio.run_coroutine_threadsafe(check_play_next(ctx), bot.loop))
@@ -1215,6 +1240,9 @@ async def play(ctx, *args):
             await play_spotify(ctx, track)
         
         await ctx.send(f"Added `{len(track_names)}` songs to the queue.")
+        return
+    elif song.startswith("https://soundcloud.com/"):
+        await play_soundcloud(ctx, song)
         return
 
     ytresults = YoutubeSearch(song, max_results=1).to_dict()
