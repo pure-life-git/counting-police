@@ -1403,6 +1403,11 @@ async def ignore(ctx, user: discord.Member):
     else:
         await ctx.send(f"{name} is no longer being ignored by the music bot.")
 
+@bot.command(name="remove", description="Lets a user remove a song from the queue")
+async def remove(ctx, index: int):
+    song = music_queue.pop(index-1)
+    await ctx.send(f"Removed `{song[1]} - {song[2]}` queued by `{song[4]}`")
+
 
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
@@ -2329,22 +2334,6 @@ async def on_message(message):
 
     #if the message is from a channel other than counting, it checks to see if it can make a dad joke
     if str(message.channel) != 'counting':
-        if str(message.channel) == "one-word-sentence":
-            if str(message.content) == ".":
-                SQL = "SELECT * FROM sentence;"
-                cur.execute(SQL)
-                wordsListSQL = cur.fetchall()
-                wordsList = []
-                for word in wordsListSQL:
-                    wordsList.append(word[0])
-                await message.channel.send(" ".join(wordsList) + ".")
-                SQL = "DELETE FROM sentence;"
-                cur.execute(SQL)
-                return
-            else:
-                SQL = f"INSERT INTO sentence VALUES ('{str(message.content)}');"
-                cur.execute(SQL)
-                return
         if message.content.lower().startswith('im ') or str(message.content).lower().startswith("i'm"):
             dad = await message.channel.send('Hi ' + message.content.split(' ',1)[1] + ", I'm dad!")
             await dad.add_reaction('👌')
