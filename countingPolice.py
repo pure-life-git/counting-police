@@ -1405,6 +1405,15 @@ async def ignore(ctx, user: discord.Member):
 
 @bot.command(name="remove", description="Lets a user remove a song from the queue")
 async def remove(ctx, index: int):
+    cur.execute(f"SELECT ignore FROM musicbot WHERE id = {int(ctx.author.id)};")
+    ignored = cur.fetchone()[0]
+    if str(ctx.channel) not in ["jukebox", "admins-only"]:
+        await ctx.message.delete()
+        return
+    elif ignored:
+        return
+    # elif "Coin Operator" not in [i.name for i in ctx.author.roles]:
+    #     await ctx.send("You need a role called `Coin Operator` to do that.")
     song = music_queue.pop(index-1)
     await ctx.send(f"Removed `{song[1]} - {song[2]}` queued by `{song[4]}`")
 
