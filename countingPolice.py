@@ -1201,7 +1201,8 @@ async def play_music(ctx,song):
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         ydl.download([song])
     
-    np_embed = discord.Embed(title="Now Playing", description=f"{title} requested by {song[4]}", color=bot_color)
+    np_embed = discord.Embed(title="Now Playing", description="", color=bot_color)
+    np_embed.add_field(name=f"`{title}` requested by {song[4].mention}", value=f"Duration: {runtime}")
     await ctx.send(embed=np_embed)
     # await ctx.send(f"**Now Playing:** {title} - {channel} | {runtime}")
     voice.play(FFmpegPCMAudio(source="song.mp3"), after = lambda e: asyncio.run_coroutine_threadsafe(check_play_next(ctx), bot.loop))
@@ -1253,7 +1254,7 @@ async def play(ctx, *args):
 
     if voice:
         if voice.is_playing():
-            music_queue.append((song, title, channel, runtime, ctx.author.name))
+            music_queue.append((song, title, channel, runtime, ctx.author))
             total_runtime = 0
             for song in music_queue[1:]:
                 total_runtime += col_to_sec(song[3])
@@ -1264,10 +1265,10 @@ async def play(ctx, *args):
             await ctx.send(embed=queueadd_embed)
             return
         else:
-            await play_music(ctx, (song,title,channel, runtime, ctx.author.name))
+            await play_music(ctx, (song,title,channel, runtime, ctx.author))
     else:
         await uservoice.channel.connect()
-        await play_music(ctx,(song,title,channel, runtime, ctx.author.name))
+        await play_music(ctx,(song,title,channel, runtime, ctx.author))
 
 @bot.command(name="skip", description="Skips the currently playing song", aliases=["s"])
 async def skip(ctx):
@@ -1334,10 +1335,10 @@ async def queue(ctx):
     
     total_runtime = 0
     queue_embed = discord.Embed(title="Music Queue", description="", color=bot_color)
-    queue_embed.add_field(name=":musical_note: Now Playing :musical_note:", value=f"Title: {now_playing[1]}  |  Channel: {now_playing[2]}\nRuntime: {now_playing[3]}  |  Played by: {now_playing[4]}")
+    queue_embed.add_field(name=":musical_note: Now Playing :musical_note:", value=f"Title: {now_playing[1]}  |  Channel: {now_playing[2]}\nRuntime: {now_playing[3]}  |  Queued by: {now_playing[4].mention}")
     for num,song in enumerate(music_queue):
         if num < 6:
-            queue_embed.add_field(name=f"{num+1} - {song[1]} | {song[2]}", value=f"Runtime: {song[3]}  |  Queued by: {song[4]}", inline=False)
+            queue_embed.add_field(name=f"{num+1} - {song[1]} | {song[2]}", value=f"Runtime: {song[3]}  |  Queued by: {song[4].mention}", inline=False)
         total_runtime += col_to_sec(song[3])
     
     total_runtime += col_to_sec(now_playing[3])-(int(datetime.datetime.now().timestamp())-now_playing[5])
@@ -1424,12 +1425,12 @@ async def remove(ctx, index: int):
         return
 
     song = music_queue.pop(index-1)
-    await ctx.send(f"Removed `{song[1]} - {song[2]}` queued by `{song[4]}`")
+    await ctx.send(f"Removed `{song[1]} - {song[2]}` queued by `{song[4].mention}`")
 
 @bot.command(name="nowplaying", description="Displays the song that is currently playing", aliases=["np"])
 async def nowplaying(ctx):
     nowplaying_embed = discord.Embed(title = ":musical_note: Now Playing :musical_note:", description="", color=bot_color)
-    nowplaying_embed.add_field(name=f"{now_playing[1]}", value=f"Artist: {now_playing[2]}\nRuntime: {now_playing[3]}\nQueued by: {now_playing[4]}")
+    nowplaying_embed.add_field(name=f"{now_playing[1]}", value=f"Artist: {now_playing[2]}\nRuntime: {now_playing[3]}\nQueued by: {now_playing[4].mention}")
     await ctx.send(embed=nowplaying_embed)
 
 
