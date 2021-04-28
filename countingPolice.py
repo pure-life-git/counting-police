@@ -1214,7 +1214,7 @@ async def play_music(ctx,song):
     
     
     # await ctx.send(f"**Now Playing:** {title} - {channel} | {runtime}")
-    voice.play(FFmpegPCMAudio(source="song.mp3"), after = lambda e: asyncio.run_coroutine_threadsafe(check_play_next(ctx),bot.loop))
+    voice.play(FFmpegPCMAudio(source="song.mp3",after = lambda e: asyncio.run_coroutine_threadsafe(check_play_next(ctx),bot.loop)))
     np_embed = discord.Embed(title="Now Playing", description=f"`{title}` requested by {author.mention}", value=f"Duration: {runtime}", color=bot_color)
     await ctx.send(embed=np_embed)
 
