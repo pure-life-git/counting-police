@@ -1288,8 +1288,11 @@ async def skip(ctx):
     voice = discord.utils.get(bot.voice_clients, guild=ctx.guild)
     if voice.is_connected():
         if voice.is_playing():
+            if len(music_queue)>0:
                 voice.stop()
                 await play_music(ctx, music_queue.pop(0))
+            else:
+                voice.stop()
         else:
             await ctx.send("The bot is not currently playing anything")
             return
