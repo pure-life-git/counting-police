@@ -1155,7 +1155,7 @@ async def check_play_next(ctx):
                 asyncio.run_coroutine_threadsafe(voice.disconnect(), bot.loop)                                 
 
 async def play_music(ctx,song):
-    print(f"playing {song}")
+    print(f"playing {song[1]}")
     if isinstance(ctx, discord.VoiceChannel):
         song_there = os.path.isfile("song.mp3")
 
