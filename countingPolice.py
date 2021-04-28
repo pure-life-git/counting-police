@@ -1114,13 +1114,13 @@ async def play_spotify(ctx, song):
 
     if voice:
         if voice.is_playing():
-            music_queue.append((song, title, channel, runtime, ctx.author.name))
+            music_queue.append((song, title, channel, runtime, ctx.author))
             return
         else:
-            await play_music(ctx, (song,title,channel, runtime, ctx.author.name))
+            await play_music(ctx, (song,title,channel, runtime, ctx.author))
     else:
         await ctx.author.voice.channel.connect()
-        await play_music(ctx,(song,title,channel, runtime, ctx.author.name))
+        await play_music(ctx,(song,title,channel, runtime, ctx.author))
 
 
 async def check_play_next(ctx):
