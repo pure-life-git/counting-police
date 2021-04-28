@@ -1201,7 +1201,9 @@ async def play_music(ctx,song):
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         ydl.download([song])
     
-    await ctx.send(f"**Now Playing:** {title} - {channel} | {runtime}")
+    np_embed = discord.Embed(title="\u200b", description=f"Now playing {title} requested by {song[4]}", color=bot_color)
+    await ctx.send(embeds=np_embed)
+    # await ctx.send(f"**Now Playing:** {title} - {channel} | {runtime}")
     voice.play(FFmpegPCMAudio(source="song.mp3"), after = lambda e: asyncio.run_coroutine_threadsafe(check_play_next(ctx), bot.loop))
 
 @bot.command(name="play", description="Plays a song in a voice channel", aliases=["p"])
@@ -1257,7 +1259,9 @@ async def play(ctx, *args):
                 total_runtime += col_to_sec(song[3])
             
             total_runtime += col_to_sec(now_playing[3])-(int(datetime.datetime.now().timestamp())-now_playing[5])
-            await ctx.send(f"**Added to Queue:** {title} - {channel}\nEstimated Time until Playing: {str(datetime.timedelta(seconds=total_runtime))}")
+
+            queueadd_embed = discord.Embed(title="**Added to Queue**", description=f"Added {title} to the queue.\nEstimated Time until Playing: {str(datetime.timedelta(seconds=total_runtime))}", color=bot_color)
+            await ctx.send(embeds=queueadd_embed)
             return
         else:
             await play_music(ctx, (song,title,channel, runtime, ctx.author.name))
