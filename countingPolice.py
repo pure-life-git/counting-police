@@ -1202,7 +1202,7 @@ async def play_music(ctx,song):
         ydl.download([song])
     
     np_embed = discord.Embed(title="\u200b", description=f"Now playing {title} requested by {song[4]}", color=bot_color)
-    await ctx.send(embeds=np_embed)
+    await ctx.send(embed=np_embed)
     # await ctx.send(f"**Now Playing:** {title} - {channel} | {runtime}")
     voice.play(FFmpegPCMAudio(source="song.mp3"), after = lambda e: asyncio.run_coroutine_threadsafe(check_play_next(ctx), bot.loop))
 
@@ -1261,7 +1261,7 @@ async def play(ctx, *args):
             total_runtime += col_to_sec(now_playing[3])-(int(datetime.datetime.now().timestamp())-now_playing[5])
 
             queueadd_embed = discord.Embed(title="**Added to Queue**", description=f"Added {title} to the queue.\nEstimated Time until Playing: {str(datetime.timedelta(seconds=total_runtime))}", color=bot_color)
-            await ctx.send(embeds=queueadd_embed)
+            await ctx.send(embed=queueadd_embed)
             return
         else:
             await play_music(ctx, (song,title,channel, runtime, ctx.author.name))
@@ -1430,6 +1430,7 @@ async def remove(ctx, index: int):
 async def nowplaying(ctx):
     nowplaying_embed = discord.Embed(title = ":musical_note: Now Playing :musical_note:", description="", color=bot_color)
     nowplaying_embed.add_field(name=f"{now_playing[1]}", value=f"Artist: {now_playing[2]}\nRuntime: {now_playing[3]}\nQueued by: {now_playing[4]}")
+    await ctx.send(embed=nowplaying_embed)
 
 
 
