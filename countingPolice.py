@@ -1132,8 +1132,10 @@ async def check_play_next(ctx):
             if voice.is_playing():
                 voice.stop()
                 await play_music(ctx, now_playing)
+                return
             else:
                 await play_music(ctx, now_playing)
+                return
         else:
             if voice.is_playing():
                 print("check: voice is playing")
@@ -1149,8 +1151,10 @@ async def check_play_next(ctx):
             if voice.is_playing():
                 voice.stop()
                 await play_music(ctx,now_playing)
+                return
             else:
                 await play_music(ctx, now_playing)
+                return
         else:
             voice.stop()
             await asyncio.sleep(120)
