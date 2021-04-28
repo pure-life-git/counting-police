@@ -1154,6 +1154,7 @@ async def check_play_next(ctx):
                 asyncio.run_coroutine_threadsafe(voice.disconnect(), bot.loop)                                 
 
 async def play_music(ctx,song):
+    print(f"playing {song}")
     if isinstance(ctx, discord.VoiceChannel):
         song_there = os.path.isfile("song.mp3")
 
@@ -1286,7 +1287,7 @@ async def skip(ctx):
     voice = discord.utils.get(bot.voice_clients, guild=ctx.guild)
     if voice.is_connected():
         if voice.is_playing():
-            if music_queue:
+            if len(music_queue) > 0:
                 voice.stop()
                 await play_music(ctx, music_queue.pop(0))
             else:
