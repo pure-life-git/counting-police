@@ -1139,9 +1139,11 @@ async def check_play_next(ctx):
                 print("check: voice is playing")
                 voice.stop()
                 await play_music(ctx, music_queue.pop(0))
+                return
             else:
                 print("check: voice isn't playing")
                 await play_music(ctx, music_queue.pop(0))
+                return
     else:
         if repeating:
             if voice.is_playing():
