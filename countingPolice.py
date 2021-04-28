@@ -1136,9 +1136,11 @@ async def check_play_next(ctx):
                 await play_music(ctx, now_playing)
         else:
             if voice.is_playing():
+                print("check: voice is playing")
                 voice.stop()
                 await play_music(ctx, music_queue.pop(0))
             else:
+                print("check: voice isn't playing")
                 await play_music(ctx, music_queue.pop(0))
     else:
         if repeating:
@@ -1288,7 +1290,6 @@ async def skip(ctx):
     if voice.is_connected():
         if voice.is_playing():
             if len(music_queue)>0:
-                voice.stop()
                 await check_play_next(ctx)
             else:
                 voice.stop()
