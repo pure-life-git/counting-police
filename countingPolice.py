@@ -1189,6 +1189,7 @@ async def play_music(ctx,song):
     title = song[1]
     channel = song[2]
     runtime = song[3]
+    author = song[4]
     song = song[0]
 
     song_there = os.path.isfile("song.mp3")
@@ -1202,7 +1203,7 @@ async def play_music(ctx,song):
         ydl.download([song])
     
     np_embed = discord.Embed(title="Now Playing", description="", color=bot_color)
-    np_embed.add_field(name=f"`{title}` requested by {song[4].mention}", value=f"Duration: {runtime}")
+    np_embed.add_field(name=f"`{title}` requested by {author.mention}", value=f"Duration: {runtime}")
     await ctx.send(embed=np_embed)
     # await ctx.send(f"**Now Playing:** {title} - {channel} | {runtime}")
     voice.play(FFmpegPCMAudio(source="song.mp3"), after = lambda e: asyncio.run_coroutine_threadsafe(check_play_next(ctx), bot.loop))
