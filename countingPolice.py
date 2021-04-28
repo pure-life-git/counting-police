@@ -1062,6 +1062,19 @@ async def asa(ctx):
 #  |_|  |_|  \____/  |_____/  |_____|  \_____|
 # 
 
+
+def col_to_sec(time:str):
+    if len(time.split(":")) == 2:
+        h=0
+        m,s = time.split(':')
+    elif len(time.split(":")) == 1:
+        h,m = 0,0
+        s=time
+    else:
+        h, m, s = time.split(':')
+
+    return(int(h) * 3600 + int(m) * 60 + int(s))
+
 def get_track_names(user, playlist_id):
     track_names = []
     playlist = sp.user_playlist(user, playlist_id)
@@ -1172,7 +1185,7 @@ async def play_music(ctx,song):
         
     global now_playing
     if song != now_playing:
-        now_playing = song
+        now_playing = (song[0], song[1], song[2], song[3], song[4], datetime.datetime.now().timestamp())
     title = song[1]
     channel = song[2]
     runtime = song[3]
@@ -1228,16 +1241,7 @@ async def play(ctx, *args):
         channel = ytresults[0]["channel"]
         runtime = ytresults[0]["duration"]
 
-    if len(runtime.split(":")) == 2:
-        h=0
-        m,s = runtime.split(':')
-    elif len(runtime.split(":")) == 1:
-        h,m = 0,0
-        s=runtime
-    else:
-        h, m, s = runtime.split(':')
-
-    runtime_sec = int(h) * 3600 + int(m) * 60 + int(s)
+    runtime_sec = col_to_sec(runtime)
 
     if runtime_sec > 7200:
         await ctx.send("Cannot queue a song longer than 2 hours.")
@@ -1248,7 +1252,12 @@ async def play(ctx, *args):
     if voice:
         if voice.is_playing():
             music_queue.append((song, title, channel, runtime, ctx.author.name))
-            await ctx.send(f"**Added to Queue:** {title} - {channel}")
+            total_runtime = 0
+            for song in music_queue:
+                total_runtime += col_to_sec(song[3])
+            
+            total_runtime += col_to_sec(now_playing[3])-(datetime.datetime.now().timestamp()-now_playing[5])
+            await ctx.send(f"**Added to Queue:** {title} - {channel}\nTime Estimated until Playing: {datetime.timedelta(seconds=total_runtime)}")
             return
         else:
             await play_music(ctx, (song,title,channel, runtime, ctx.author.name))
@@ -1325,17 +1334,9 @@ async def queue(ctx):
     for num,song in enumerate(music_queue):
         if num < 6:
             queue_embed.add_field(name=f"{num+1} - {song[1]} | {song[2]}", value=f"Runtime: {song[3]}  |  Queued by: {song[4]}", inline=False)
-        if len(song[3].split(":")) == 2:
-            h=0
-            m,s = song[3].split(':')
-        elif len(song[3].split(":")) == 1:
-            h,m = 0,0
-            s=song[3]
-        else:
-            h, m, s = song[3].split(':')
-
-        runtime_sec = int(h) * 3600 + int(m) * 60 + int(s)
-        total_runtime += runtime_sec
+        total_runtime += col_to_sec(song[3])
+    
+    total_runtime += col_to_sec(now_playing[3])-(datetime.datetime.now().timestamp()-now_playing[5])
     if len(music_queue) > 7:
         queue_embed.add_field(name="-=-=-=-=-=-=-=-=-=-=-==-=-=-=-", value=f"+ {len(music_queue)-5} more")
     
@@ -1414,8 +1415,17 @@ async def remove(ctx, index: int):
         return
     # elif "Coin Operator" not in [i.name for i in ctx.author.roles]:
     #     await ctx.send("You need a role called `Coin Operator` to do that.")
+    if index < 1 or index > len(music_queue):
+        await ctx.send("That is not a valid queue position.")
+        return
+
     song = music_queue.pop(index-1)
     await ctx.send(f"Removed `{song[1]} - {song[2]}` queued by `{song[4]}`")
+
+@bot.command(name="nowplaying", description="Displays the song that is currently playing", aliases=["np"])
+async def nowplaying(ctx):
+    nowplaying_embed = discord.Embed(title = ":musical_note: Now Playing :musical_note:", description="", color=bot_color)
+    nowplaying_embed.add_field(name=f"{now_playing[1]}", value=f"Artist: {now_playing[2]}\nRuntime: {now_playing[3]}\nQueued by: {now_playing[4]}")
 
 
 
@@ -1997,7 +2007,6 @@ async def one(ctx):
         except psycopg2.InterfaceError:
             reestablish()
     await ctx.send(f"Thank you for your purchase! You now have {points-cost} points.")
-
 
 @bot.command(name = "leaderboard", brief = "Displays a leaderboard of points")
 async def leaderboard(ctx):
