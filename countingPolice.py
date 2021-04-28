@@ -1191,6 +1191,7 @@ async def play_music(ctx,song):
     runtime = song[3]
     author = song[4]
     song = song[0]
+    print(author, type(author))
 
     song_there = os.path.isfile("song.mp3")
 
