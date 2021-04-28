@@ -1185,7 +1185,7 @@ async def play_music(ctx,song):
         
     global now_playing
     if song != now_playing:
-        now_playing = (song[0], song[1], song[2], song[3], song[4], datetime.datetime.now().timestamp())
+        now_playing = (song[0], song[1], song[2], song[3], song[4], int(datetime.datetime.now().timestamp()))
     title = song[1]
     channel = song[2]
     runtime = song[3]
@@ -1253,11 +1253,11 @@ async def play(ctx, *args):
         if voice.is_playing():
             music_queue.append((song, title, channel, runtime, ctx.author.name))
             total_runtime = 0
-            for song in music_queue:
+            for song in music_queue[1:]:
                 total_runtime += col_to_sec(song[3])
             
-            total_runtime += col_to_sec(now_playing[3])-(datetime.datetime.now().timestamp()-now_playing[5])
-            await ctx.send(f"**Added to Queue:** {title} - {channel}\nTime Estimated until Playing: {datetime.timedelta(seconds=total_runtime)}")
+            total_runtime += col_to_sec(now_playing[3])-(int(datetime.datetime.now().timestamp())-now_playing[5])
+            await ctx.send(f"**Added to Queue:** {title} - {channel}\nEstimated Time until Playing: {str(datetime.timedelta(seconds=total_runtime))}")
             return
         else:
             await play_music(ctx, (song,title,channel, runtime, ctx.author.name))
@@ -1336,7 +1336,7 @@ async def queue(ctx):
             queue_embed.add_field(name=f"{num+1} - {song[1]} | {song[2]}", value=f"Runtime: {song[3]}  |  Queued by: {song[4]}", inline=False)
         total_runtime += col_to_sec(song[3])
     
-    total_runtime += col_to_sec(now_playing[3])-(datetime.datetime.now().timestamp()-now_playing[5])
+    total_runtime += col_to_sec(now_playing[3])-(int(datetime.datetime.now().timestamp())-now_playing[5])
     if len(music_queue) > 7:
         queue_embed.add_field(name="-=-=-=-=-=-=-=-=-=-=-==-=-=-=-", value=f"+ {len(music_queue)-5} more")
     
