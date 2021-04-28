@@ -1261,7 +1261,7 @@ async def play(ctx, *args):
             
             total_runtime += col_to_sec(now_playing[3])-(int(datetime.datetime.now().timestamp())-now_playing[5])
 
-            queueadd_embed = discord.Embed(title="**Added to Queue**", description=f"Added {title} to the queue.\nEstimated Time until Playing: {str(datetime.timedelta(seconds=total_runtime))}", color=bot_color)
+            queueadd_embed = discord.Embed(title="**Added to Queue**", description=f"Added `{title}` to the queue.\nEstimated Time until Playing: `{str(datetime.timedelta(seconds=total_runtime))}`", color=bot_color)
             await ctx.send(embed=queueadd_embed)
             return
         else:
@@ -1285,8 +1285,11 @@ async def skip(ctx):
     voice = discord.utils.get(bot.voice_clients, guild=ctx.guild)
     if voice.is_connected():
         if voice.is_playing():
-            voice.stop()
-            await play_music(ctx, music_queue.pop(0))
+            if music_queue:
+                voice.stop()
+                await play_music(ctx, music_queue.pop(0))
+            else:
+                voice.stop()
         else:
             await ctx.send("The bot is not currently playing anything")
             return
