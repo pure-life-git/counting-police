@@ -1124,7 +1124,7 @@ async def play_spotify(ctx, song):
         await play_music(ctx,(song,title,channel, runtime, ctx.author))
 
 
-async def check_play_next(ctx):
+async def check_play_next(ctx, skipping=False):
     voice = ctx.guild.voice_client
 
     if len(music_queue) > 0:
@@ -1137,7 +1137,7 @@ async def check_play_next(ctx):
                 await play_music(ctx, now_playing)
                 return
         else:
-            if voice.is_playing():
+            if voice.is_playing() and not skipping:
                 print("check: voice is playing")
                 voice.stop()
                 await play_music(ctx, music_queue.pop(0))
@@ -1298,7 +1298,7 @@ async def skip(ctx):
         if voice.is_playing():
             voice.stop()
             if len(music_queue)>0:
-                await check_play_next(ctx)
+                await check_play_next(ctx, True)
         else:
             await ctx.send("The bot is not currently playing anything")
             return
