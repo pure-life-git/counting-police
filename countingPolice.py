@@ -122,7 +122,7 @@ ydl_opts = {
         'preferredcodec': 'mp3',
         'preferredquality': '192',
     }],
-    'outtmpl': 'song.mp3'
+    'outtmpl': './song.mp3'
 }
 
 now_playing = ""
