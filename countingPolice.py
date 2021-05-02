@@ -1065,6 +1065,8 @@ async def asa(ctx):
 #  |_|  |_|  \____/  |_____/  |_____|  \_____|
 # 
 
+def make_task(ctx):
+    bot.loop.create_task(check_play_next(ctx))
 
 def col_to_sec(time:str):
     if len(time.split(":")) == 2:
@@ -1217,7 +1219,7 @@ async def play_music(ctx,song):
     
     
     # await ctx.send(f"**Now Playing:** {title} - {channel} | {runtime}")
-    voice.play(discord.FFmpegPCMAudio(source="song.mp3"),after=lambda e: bot.loop.create_task(check_play_next(ctx)))
+    voice.play(discord.FFmpegPCMAudio(source="song.mp3"),after=make_task(ctx))
     print("played audio...")
     np_embed = discord.Embed(title="Now Playing", description=f"`{title}` requested by {author.mention}", value=f"Duration: {runtime}", color=bot_color)
     await ctx.send(embed=np_embed)
