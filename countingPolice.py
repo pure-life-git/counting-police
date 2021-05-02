@@ -1297,7 +1297,10 @@ async def skip(ctx):
     if voice.is_connected():
         if voice.is_playing():
             if len(music_queue)>0:
-                asyncio.run_coroutine_threadsafe(check_play_next(ctx),bot.loop)
+                voice.stop()
+                
+                fut = asyncio.run_coroutine_threadsafe(check_play_next(ctx),bot.loop)
+                fut.result()
         else:
             await ctx.send("The bot is not currently playing anything")
             return
