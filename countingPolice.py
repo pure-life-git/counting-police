@@ -1216,7 +1216,7 @@ async def play_music(ctx,song):
     
     # await ctx.send(f"**Now Playing:** {title} - {channel} | {runtime}")
     try:
-        task = voice.play(discord.FFmpegPCMAudio(source="song.mp3"),after=lambda e: asyncio.ensure_future(check_play_next(ctx), bot.loop))
+        task = voice.play(discord.FFmpegPCMAudio(source="song.mp3"),after=lambda e: asyncio.ensure_future(check_play_next(ctx), loop=bot.loop))
     except RuntimeError:
         print("runtime error")
     print("played audio...")
