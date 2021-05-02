@@ -1215,6 +1215,7 @@ async def play_music(ctx,song):
     
     # await ctx.send(f"**Now Playing:** {title} - {channel} | {runtime}")
     voice.play(discord.FFmpegPCMAudio(source="song.mp3"),after=lambda e: asyncio.run_coroutine_threadsafe(check_play_next(ctx),bot.loop))
+    print("played audio...")
     np_embed = discord.Embed(title="Now Playing", description=f"`{title}` requested by {author.mention}", value=f"Duration: {runtime}", color=bot_color)
     await ctx.send(embed=np_embed)
 
@@ -1283,6 +1284,7 @@ async def play(ctx, *args):
 
 @bot.command(name="skip", description="Skips the currently playing song", aliases=["s"])
 async def skip(ctx):
+    print("skipping...")
     cur.execute(f"SELECT ignore FROM musicbot WHERE id = {int(ctx.author.id)};")
     ignored = cur.fetchone()[0]
     if str(ctx.channel) not in ["jukebox", "admins-only"]:
@@ -1299,8 +1301,7 @@ async def skip(ctx):
             if len(music_queue)>0:
                 voice.stop()
                 
-                fut = asyncio.run_coroutine_threadsafe(check_play_next(ctx),bot.loop)
-                fut.result()
+                asyncio.run_coroutine_threadsafe(check_play_next(ctx), bot.loop)
         else:
             await ctx.send("The bot is not currently playing anything")
             return
