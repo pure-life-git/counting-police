@@ -1127,6 +1127,7 @@ async def play_spotify(ctx, song):
 async def check_play_next(ctx):
     voice = ctx.guild.voice_client
     print("beginning of check...")
+    print(asyncio.current_task(bot.loop))
     if len(music_queue) > 0:
         if repeating:
             if voice.is_playing():
@@ -1215,8 +1216,7 @@ async def play_music(ctx,song):
     
     
     # await ctx.send(f"**Now Playing:** {title} - {channel} | {runtime}")
-    # voice.play(discord.FFmpegPCMAudio(source="song.mp3"),after=lambda e: asyncio.run_coroutine_threadsafe(check_play_next(ctx),bot.loop))
-    voice.play(discord.FFmpegPCMAudio(source="song.mp3"),after=lambda e: bot.loop.create_task(check_play_next(ctx)))
+    voice.play(discord.FFmpegPCMAudio(source="song.mp3"),after=lambda e: asyncio.run_coroutine_threadsafe(check_play_next(ctx),bot.loop))
     print("played audio...")
     np_embed = discord.Embed(title="Now Playing", description=f"`{title}` requested by {author.mention}", value=f"Duration: {runtime}", color=bot_color)
     await ctx.send(embed=np_embed)
