@@ -130,6 +130,8 @@ now_playing = ""
 
 repeating = False
 
+music_loop = asyncio.new_event_loop()
+
 #--------------------------------------------------------------------------------------------------------------------------------------#
 #  ______  _    _  _   _   _____  _______  _____  ____   _   _   _____ 
 # |  ____|| |  | || \ | | / ____||__   __||_   _|/ __ \ | \ | | / ____|
@@ -1215,7 +1217,7 @@ async def play_music(ctx,song):
     
     
     # await ctx.send(f"**Now Playing:** {title} - {channel} | {runtime}")
-    voice.play(discord.FFmpegPCMAudio(source="song.mp3"),after=lambda e: bot.loop.create_task(check_play_next(ctx), name="play song"))
+    voice.play(discord.FFmpegPCMAudio(source="song.mp3"),after=lambda e: music_loop.create_task(check_play_next(ctx), name="play song"))
     print("played audio...")
     np_embed = discord.Embed(title="Now Playing", description=f"`{title}` requested by {author.mention}", value=f"Duration: {runtime}", color=bot_color)
     await ctx.send(embed=np_embed)
