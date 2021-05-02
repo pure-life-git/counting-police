@@ -1190,7 +1190,8 @@ async def play_music(ctx,song):
             voice.play(FFmpegPCMAudio(source="song.mp3"))
         await asyncio.sleep(120)
         if not voice.is_playing():
-            asyncio.run_coroutine_threadsafe(voice.disconnect(), bot.loop)    
+            # asyncio.run_coroutine_threadsafe(voice.disconnect(), bot.loop)
+            await voice.disconnect()    
         return
         
     global now_playing
@@ -1214,7 +1215,8 @@ async def play_music(ctx,song):
     
     
     # await ctx.send(f"**Now Playing:** {title} - {channel} | {runtime}")
-    voice.play(discord.FFmpegPCMAudio(source="song.mp3"),after=lambda e: asyncio.run_coroutine_threadsafe(check_play_next(ctx),bot.loop))
+    # voice.play(discord.FFmpegPCMAudio(source="song.mp3"),after=lambda e: asyncio.run_coroutine_threadsafe(check_play_next(ctx),bot.loop))
+    voice.play(discord.FFmpegPCMAudio(source="song.mp3"),after=lambda e: bot.loop.create_task(check_play_next(ctx)))
     print("played audio...")
     np_embed = discord.Embed(title="Now Playing", description=f"`{title}` requested by {author.mention}", value=f"Duration: {runtime}", color=bot_color)
     await ctx.send(embed=np_embed)
