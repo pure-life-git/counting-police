@@ -15,7 +15,6 @@ from discord import embeds
 from discord.errors import ClientException
 from discord.ext import commands
 import asyncio
-from asyncio import create_task
 from discord.ext.commands.errors import CommandOnCooldown
 from discord.player import FFmpegPCMAudio
 import psycopg2
@@ -1217,7 +1216,7 @@ async def play_music(ctx,song):
     
     # await ctx.send(f"**Now Playing:** {title} - {channel} | {runtime}")
     try:
-        task = voice.play(discord.FFmpegPCMAudio(source="song.mp3"),after=lambda e: create_task(check_play_next(ctx)))
+        task = voice.play(discord.FFmpegPCMAudio(source="song.mp3"),after=lambda e: asyncio.create_task(check_play_next(ctx)))
     except RuntimeError:
         print("runtime error")
     print("played audio...")
