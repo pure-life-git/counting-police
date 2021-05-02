@@ -1189,7 +1189,7 @@ async def play_music(ctx,song):
                 await asyncio.sleep(120)
                 print("idling...")
                 if not voice.is_playing():
-                    asyncio.run_coroutine_threadsafe(voice.disconnect(), bot.loop)    
+                    asyncio.run_coroutine_threadsafe(voice.disconnect(), bot.loop)
         
     
     if await check_play_next(ctx):
