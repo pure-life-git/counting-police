@@ -1127,7 +1127,6 @@ async def play_spotify(ctx, song):
 async def check_play_next(ctx):
     voice = ctx.guild.voice_client
     print("beginning of check...")
-    print(asyncio.current_task(bot.loop))
     if len(music_queue) > 0:
         if repeating:
             if voice.is_playing():
@@ -1302,8 +1301,9 @@ async def skip(ctx):
         if voice.is_playing():
             if len(music_queue)>0:
                 voice.stop()
-                
-                asyncio.run_coroutine_threadsafe(check_play_next(ctx), bot.loop)
+                await play_music(music_queue.pop(0))
+            else:
+                voice.stop()
         else:
             await ctx.send("The bot is not currently playing anything")
             return
