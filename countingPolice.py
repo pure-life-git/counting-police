@@ -1303,7 +1303,7 @@ async def skip(ctx):
         if voice.is_playing():
             if len(music_queue)>0:
                 voice.stop()
-               bot.loop.create_task(play_music(ctx,music_queue.pop(0)))
+                bot.loop.create_task(play_music(ctx,music_queue.pop(0)))
             else:
                 voice.stop()
         else:
