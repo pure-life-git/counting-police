@@ -1124,46 +1124,12 @@ async def play_spotify(ctx, song):
         await play_music(ctx,(song,title,channel, runtime, ctx.author))
 
 
-async def check_play_next(ctx):
-    voice = ctx.guild.voice_client
-
-    if len(music_queue) > 0:
-        if repeating:
-            if voice.is_playing():
-                voice.stop()
-                await play_music(ctx, now_playing)
-                return
-            else:
-                await play_music(ctx, now_playing)
-                return
-        else:
-            if voice.is_playing():
-                print("check: voice is playing")
-                voice.stop()
-                await play_music(ctx, music_queue.pop(0))
-                return
-            else:
-                print("check: voice isn't playing")
-                await play_music(ctx, music_queue.pop(0))
-                return
-    else:
-        if repeating:
-            if voice.is_playing():
-                voice.stop()
-                await play_music(ctx,now_playing)
-                return
-            else:
-                await play_music(ctx, now_playing)
-                return
-        else:
-            voice.stop()
-            await asyncio.sleep(120)
-            print("idling...")
-            if not voice.is_playing():
-                asyncio.run_coroutine_threadsafe(voice.disconnect(), bot.loop)                                 
+                             
 
 async def play_music(ctx,song):
     print(f"playing {song[1]}")
+
+
     if isinstance(ctx, discord.VoiceChannel):
         song_there = os.path.isfile("song.mp3")
 
@@ -1192,7 +1158,41 @@ async def play_music(ctx,song):
         if not voice.is_playing():
             asyncio.run_coroutine_threadsafe(voice.disconnect(), bot.loop)    
         return
+    
+    async def check_play_next(ctx):
+        voice = ctx.guild.voice_client
+
+        if len(music_queue) > 0:
+            if repeating:
+                if voice.is_playing():
+                    voice.stop()
+                    return(now_playing)
+                else:
+                    return(now_playing)
+            else:
+                if voice.is_playing():
+                    print("check: voice is playing")
+                    voice.stop()
+                    return(music_queue.pop(0))
+                else:
+                    print("check: voice isn't playing")
+                    return(music_queue.pop(0))
+        else:
+            if repeating:
+                if voice.is_playing():
+                    voice.stop()
+                    return(now_playing)
+                else:
+                    return(now_playing)
+            else:
+                voice.stop()
+                await asyncio.sleep(120)
+                print("idling...")
+                if not voice.is_playing():
+                    asyncio.run_coroutine_threadsafe(voice.disconnect(), bot.loop)    
         
+    
+    song = check_play_next(ctx)
     global now_playing
     if song != now_playing:
         now_playing = (song[0], song[1], song[2], song[3], song[4], int(datetime.datetime.now().timestamp()))
@@ -1297,8 +1297,8 @@ async def skip(ctx):
     if voice.is_connected():
         if voice.is_playing():
             voice.stop()
-            if len(music_queue)>0:
-                await check_play_next(ctx)
+            if len(music_queue) > 0:
+                await play_music(ctx, music_queue.pop(0))
         else:
             await ctx.send("The bot is not currently playing anything")
             return
