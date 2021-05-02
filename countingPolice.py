@@ -1295,7 +1295,7 @@ async def skip(ctx):
         return
     elif ignored:
         return
-    # elif "Coin Operator" not in [i.name for i in ctx.author.roles]:
+    # elif "Coin Operator" not in [i.name for i in ctx.author.roles]
     #     await ctx.send("You need a role called `Coin Operator` to do that.")
 
     voice = discord.utils.get(bot.voice_clients, guild=ctx.guild)
@@ -1303,7 +1303,7 @@ async def skip(ctx):
         if voice.is_playing():
             if len(music_queue)>0:
                 voice.stop()
-                await play_music(ctx, music_queue.pop(0))
+                await check_play_next(ctx)
             else:
                 voice.stop()
         else:
