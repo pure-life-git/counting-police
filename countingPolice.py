@@ -1126,7 +1126,7 @@ async def play_spotify(ctx, song):
 
 async def check_play_next(ctx):
     voice = ctx.guild.voice_client
-
+    print("beginning of check...")
     if len(music_queue) > 0:
         if repeating:
             if voice.is_playing():
