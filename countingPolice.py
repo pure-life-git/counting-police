@@ -1192,7 +1192,8 @@ async def play_music(ctx,song):
                     asyncio.run_coroutine_threadsafe(voice.disconnect(), bot.loop)    
         
     
-    song = check_play_next(ctx)
+    if await check_play_next(ctx):
+        song = await check_play_next(ctx)
     global now_playing
     if song != now_playing:
         now_playing = (song[0], song[1], song[2], song[3], song[4], int(datetime.datetime.now().timestamp()))
