@@ -1248,7 +1248,7 @@ async def play(ctx, *args):
         await ctx.send(f"Added `{len(track_names)}` songs to the queue.")
         return
     # https://open.spotify.com/track/4XRaGryj589Fee9HqIDwup?si=4e5baa2d82774901
-    elif song.startwith("https://open.spotify.com/track/"):
+    elif song.startswith("https://open.spotify.com/track/"):
         track_name = sp.track(song.split("track/")[1].split("?")[0])['name']
         song = track_name
 
