@@ -2514,8 +2514,8 @@ async def on_voice_state_update(member, before, after):
     if not before.self_deaf and after.self_deaf:
         await asyncio.sleep(300)
         if member.voice.self_deaf and member.voice != None:
-            await member.move_to([channel for channel in member.guild.voice_channels if str(channel.name) == "Out to Lunch - AFK"][0])
-            admins = [channel for channel in member.guild.channels if str(channel.name) == "admins-only"][0]
+            await member.move_to(member.guild.afk_channel)
+            admins = discord.utils.get(member.guild.channels, name="admins-only")
             await admins.send(f"{member.name} moved to AFK")
             
 
