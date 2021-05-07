@@ -42,7 +42,7 @@ from spotipy.oauth2 import SpotifyClientCredentials
 #initialize client and bot
 #client = discord.Client()
 intents = discord.Intents.all()
-bot = commands.Bot(command_prefix = '.', description = 'Help for the H Welding Machine Bot', intents = intents)
+bot = commands.Bot(command_prefix = '.', description = 'Help for the H Welding Machine Bot', intents = intents, case_insensitive=True)
 bot.remove_command('help')
 bot_color = discord.Color.from_rgb(231, 76, 60)
 
@@ -572,6 +572,7 @@ async def source(ctx):
         await ctx.message.delete()
         return 
     await ctx.send(f"Here's the link to the source repo.\nhttps://github.com/pure-life-git/counting-police")
+
 @commands.cooldown(1, 5, commands.BucketType.user)
 @bot.command(name = "parker")
 async def parker(ctx):
@@ -585,7 +586,6 @@ async def parker(ctx):
     cur.execute(SQL)
 
     await ctx.message.add_reaction('👍')
-
 
 @commands.cooldown(1, 5, commands.BucketType.user)
 @bot.command(name = "parkercount")
@@ -1192,7 +1192,6 @@ async def play_music(ctx,song):
             voice.play(FFmpegPCMAudio(source="song.mp3"))
         await asyncio.sleep(120)
         if not voice.is_playing():
-            # asyncio.run_coroutine_threadsafe(voice.disconnect(), bot.loop)
             await voice.disconnect()    
         return
         
@@ -1247,7 +1246,9 @@ async def play(ctx, *args):
         
         await ctx.send(f"Added `{len(track_names)}` songs to the queue.")
         return
-    # https://open.spotify.com/track/4XRaGryj589Fee9HqIDwup?si=4e5baa2d82774901
+
+
+        # https://open.spotify.com/track/0w8ECuZLCUP3a9O9LpYUbo?si=040051ee2b754823
     elif song.startswith("https://open.spotify.com/track/"):
         track_name = sp.track(song.split("track/")[1].split("?")[0])['name']
         song = track_name
@@ -1497,7 +1498,7 @@ async def points(ctx):
 
 #lets the user play blackjack and gamble their points
 @commands.cooldown(1, 15, commands.BucketType.user)
-@bot.command(name = "blackjack", brief = "Allows the user to bet their points on a game of blackjack", description = "Type the command and then the amount of points you would like to bet")
+@bot.command(name = "blackjack", brief = "Allows the user to bet their points on a game of blackjack", description = "Type the command and then the amount of points you would like to bet", aliases=["bj"])
 async def blackjack(ctx, bet: int):
     if str(ctx.channel) not in channelList:
         await ctx.message.delete()
@@ -1929,7 +1930,6 @@ async def slots(ctx):
         await ctx.send("You didn't win. Good luck next time.")
         return
 
-
 @bot.group(name='store', brief = 'Displays the store page', invoke_without_command = True)
 async def store(ctx):
     if str(ctx.channel) not in channelList:
@@ -1947,7 +1947,6 @@ async def store(ctx):
     storeEmbed.add_field(name = "Your Points", value = f"{points}", inline = False)
     storeEmbed.add_field(name = "One - Remove a strike", value = "Removes a strike from your counting record\nCost: 250 points", inline = False)
     await ctx.send(embed=storeEmbed)
-
 
 @store.command(name = "one", description = "Removes a strike from your counting record")
 async def one(ctx):
@@ -2065,7 +2064,6 @@ async def leaderboard(ctx):
     userIndex = memberList.index(ctx.author)
     leaderboardEmbed.add_field(name = "Your place", value = f"{userIndex+1}. {memberList[userIndex].name} - {pointList[userIndex]} points ({winList[userIndex]} wins)")
     await ctx.send(embed=leaderboardEmbed)
-
 
 @bot.command(name = "pay", brief = "Gives another user some of your points")
 async def pay(ctx, recipient: discord.User, amount:int):
@@ -2512,6 +2510,15 @@ async def on_voice_state_update(member, before, after):
                 SQL = f"UPDATE asa SET idleTime = idleTime + {int(deafen_time)};"
                 cur.execute(SQL)
                 conn.commit()
+    
+    if not before.self_deaf and after.self_deaf:
+        await asyncio.sleep(300)
+        if member.voice.self_deaf and member.voice != None:
+            await member.move_to([channel for channel in member.guild.voice_channels if str(channel.name) == "Out to Lunch - AFK"][0])
+            admins = [channel for channel in member.guild.channels if str(channel.name) == "admins-only"][0]
+            await admins.send(f"{member.name} moved to AFK")
+            
+
 
     if before.channel != after.channel and after.channel is not None:
         vc = after.channel
