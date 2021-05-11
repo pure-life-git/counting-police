@@ -2479,8 +2479,8 @@ async def on_voice_state_update(member, before, after):
 
     #if the member is asa
     if member == asa:
-        if after.channel and not before.channel:
-            await play_music(after.channel, "https://www.youtube.com/watch?v=PS_cV18z67Y")
+        # if after.channel and not before.channel:
+        #     await play_music(after.channel, "https://www.youtube.com/watch?v=PS_cV18z67Y")
         #if asa starts a deafen
         if after.self_deaf:
             deafen_start = datetime.datetime.now().timestamp()
