@@ -579,15 +579,15 @@ async def tts(ctx, *args):
         if voice.is_connected():
             if voice.is_playing():
                 voice.stop()
-                voice.play(FFmpegPCMAudio(source="song.mp3"),after=lambda error: bot.loop.create_task(check_play_next(ctx)))
+                voice.play(FFmpegPCMAudio(source="tts.mp3"),after=lambda error: bot.loop.create_task(check_play_next(ctx)))
             else:
-                voice.play(FFmpegPCMAudio(source="song.mp3"),after=lambda error: bot.loop.create_task(check_play_next(ctx)))
+                voice.play(FFmpegPCMAudio(source="tts.mp3"),after=lambda error: bot.loop.create_task(check_play_next(ctx)))
         else:
             await ctx.connect()
-            voice.play(FFmpegPCMAudio(source="song.mp3"),after=lambda error: bot.loop.create_task(check_play_next(ctx)))
+            voice.play(FFmpegPCMAudio(source="tts.mp3"),after=lambda error: bot.loop.create_task(check_play_next(ctx)))
     else:
         voice = await ctx.connect()
-        voice.play(FFmpegPCMAudio(source="song.mp3"),after=lambda error: bot.loop.create_task(check_play_next(ctx)))
+        voice.play(FFmpegPCMAudio(source="tts.mp3"),after=lambda error: bot.loop.create_task(check_play_next(ctx)))
 
 
 

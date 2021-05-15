@@ -7,3 +7,4 @@ youtube-search
 youtube_dl
 pynacl
 spotipy
+gtts
