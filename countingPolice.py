@@ -565,7 +565,7 @@ async def tts(ctx, *args):
     if str(ctx.channel) not in channelList or ctx.author.id not in modID:
         await ctx.message.delete()
         return
-    sentence = args.join(" ")
+    sentence = list(args).join(" ")
     
 
     if os.path.isfile("tts.mp3"):
