@@ -28,6 +28,7 @@ import spotipy
 import spotipy.oauth2 as oauth2
 from spotipy.oauth2 import SpotifyOAuth
 from spotipy.oauth2 import SpotifyClientCredentials
+import pyttsx3
 
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
@@ -57,6 +58,8 @@ discord.opus.load_opus(find)
 
 auth_manager = SpotifyClientCredentials(client_id=os.environ['spot_id'], client_secret=os.environ['spot_secret'])
 sp = spotipy.Spotify(auth_manager=auth_manager)
+
+ttsEngine = pyttsx3.init()
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
 #   _____  _       ____   ____            _      
@@ -565,6 +568,31 @@ async def source_help(ctx):
 #  ____) | _| |_ | |____ | |____ | |   
 # |_____/ |_____||______||______||_|                                                                              
 
+
+@bot.command(name = "tts")
+async def tts(ctx, *args):
+    if str(ctx.channel) not in channelList or ctx.suthor.id not in modID:
+        await ctx.message.delete()
+        return
+
+    ttsEngine.save_to_file(args.join(" "), "tts.mp3")
+    
+    voice = ctx.guild.voice_client
+
+    if voice:
+        if voice.is_connected():
+            if voice.is_playing():
+                voice.stop()
+                voice.play(FFmpegPCMAudio(source="tts.mp3"),after=lambda error: bot.loop.create_task(check_play_next(ctx)))
+            else:
+                voice.play(FFmpegPCMAudio(source="tts.mp3"),after=lambda error: bot.loop.create_task(check_play_next(ctx)))
+        else:
+            await ctx.connect()
+            voice.play(FFmpegPCMAudio(source="tts.mp3"),after=lambda error: bot.loop.create_task(check_play_next(ctx)))
+    else:
+        voice = await ctx.connect()
+        voice.play(FFmpegPCMAudio(source="tts.mp3"),after=lambda error: bot.loop.create_task(check_play_next(ctx)))
+    
 
 @bot.command(name = "source")
 async def source(ctx):
