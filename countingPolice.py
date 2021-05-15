@@ -287,18 +287,9 @@ def Check(user):
 @bot.event
 async def on_ready():
     print(f'{bot.user.name} has connected to Discord!')
-    while True:
-        try:
-            cur.execute("SELECT COUNT(name) FROM striketable;")
-            break
-        except psycopg2.InterfaceError:
-            reestablish()
-    conn.commit()
-    numCriminalsTable = cur.fetchall()
-    numCriminals = numCriminalsTable[0][0]
-    print(numCriminals)
-    presence = str(numCriminals) + " criminals"
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,name=presence))
+    version = os.environ['HEROKU_RELEASE_VERSION']
+    game = discord.Game(str(version))
+    await bot.change_presence(status=discord.Status.online, activity=game)
 
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
