@@ -571,7 +571,7 @@ async def tts(ctx, *args):
     if os.path.isfile("tts.mp3"):
         os.remove("tts.mp3")
     
-    gTTS(str(sentence)).save('tts.mp3')
+    gTTS(str(sentence), slow=True).save('tts.mp3')
 
     voice = ctx.guild.voice_client
 
