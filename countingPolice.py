@@ -583,10 +583,10 @@ async def tts(ctx, *args):
             else:
                 voice.play(FFmpegPCMAudio(source="tts.mp3"),after=lambda error: bot.loop.create_task(check_play_next(ctx)))
         else:
-            await ctx.connect()
+            await voice.connect()
             voice.play(FFmpegPCMAudio(source="tts.mp3"),after=lambda error: bot.loop.create_task(check_play_next(ctx)))
     else:
-        voice = await ctx.connect()
+        voice = await ctx.author.voice.channel.connect()
         voice.play(FFmpegPCMAudio(source="tts.mp3"),after=lambda error: bot.loop.create_task(check_play_next(ctx)))
 
 
