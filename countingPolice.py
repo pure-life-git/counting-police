@@ -2512,6 +2512,13 @@ async def on_voice_state_update(member, before, after):
             SQL = f"UPDATE asa SET deafenstart = {deafen_start};"
             cur.execute(SQL)
             conn.commit()
+
+        if not before.self_mute and after.self_mute:
+            await asyncio.sleep(300)
+            if member.voice.self_mute and member.voice != None:
+                await member.move_to(member.guild.afk_channel)
+                admins = discord.utils.get(member.guild.channels, name="admins-only")
+                await admins.send(f"{member.name} moved to AFK for muting")
         
         #if asa ends a deafen
         if before.self_deaf and not after.self_deaf:
@@ -2541,7 +2548,7 @@ async def on_voice_state_update(member, before, after):
         if member.voice.self_deaf and member.voice != None:
             await member.move_to(member.guild.afk_channel)
             admins = discord.utils.get(member.guild.channels, name="admins-only")
-            await admins.send(f"{member.name} moved to AFK")
+            await admins.send(f"{member.name} moved to AFK for deafening")
             
 
 
