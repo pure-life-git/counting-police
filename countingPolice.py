@@ -2470,18 +2470,6 @@ async def on_message(message):
             await message.delete() #deletes their message
             #sends a message alerting everyone to the user's infraction
             await message.channel.send(message.author.mention + ' entered ' + str(message.content) + ' and screwed up the count. This is their 1st infraction.')
-            while True:
-                try:
-                    cur.execute("SELECT COUNT(name) FROM striketable;") #updates the status of the bot to match the new number of criminals
-                    break
-                except psycopg2.InterfaceError:
-                    reestablish()
-
-            numCriminalsTable = cur.fetchall()
-            numCriminals = numCriminalsTable[0][0]
-            print(numCriminals)
-            presence = str(numCriminals) + " criminals"
-            await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,name=presence))
         else:
             #if the message was in the counting channel but was the right number, 
             #then we just call the function that adds their number to the DB
