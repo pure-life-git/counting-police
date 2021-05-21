@@ -4,7 +4,7 @@ wolframalpha
 praw
 requests
 youtube-search
-youtube_dl
+youtube_dl==2021.05.16
 pynacl
 spotipy
 gtts
