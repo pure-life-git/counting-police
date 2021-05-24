@@ -1331,9 +1331,10 @@ async def skip(ctx):
     voice = discord.utils.get(bot.voice_clients, guild=ctx.guild)
     if voice.is_connected():
         if voice.is_playing():
-            voice.stop()
             skip_embed = discord.Embed(title=f"**:fast_forward: Skipped**", description=f"Skipped {now_playing[1]}", color=bot_color)
-            await ctx.send(embed=bot_color)
+            await ctx.send(embeds=skip_embed)
+            voice.stop()
+            
         else:
             await ctx.send("The bot is not currently playing anything")
             return
