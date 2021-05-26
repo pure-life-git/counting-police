@@ -1275,7 +1275,7 @@ async def play(ctx, *args):
 
         # https://open.spotify.com/track/0w8ECuZLCUP3a9O9LpYUbo?si=040051ee2b754823
     elif song.startswith("https://open.spotify.com/track/"):
-        track_name = sp.track(song.split("track/")[1].split("?")[0])['name']
+        track_name = sp.track(song.split("track/")[1].split("?")[0])['name']+" "+sp.track(song.split("track/")[1].split("?")[0])['artists'][0]['name']
         song = track_name
 
     ytresults = YoutubeSearch(song, max_results=1).to_dict()
