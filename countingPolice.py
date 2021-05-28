@@ -1155,7 +1155,6 @@ async def play_spotify(ctx, song):
 
 async def check_play_next(ctx):
     voice = ctx.guild.voice_client
-    print("beginning of check...")
     if len(music_queue) > 0:
         if song_repeating:
             if voice.is_playing():
@@ -1174,12 +1173,9 @@ async def check_play_next(ctx):
                 await play_music(ctx, music_queue.pop(0))
         else:
             if voice.is_playing():
-                print("check: voice is playing")
                 voice.stop()
                 await play_music(ctx, music_queue.pop(0))
-
             else:
-                print("check: voice isn't playing")
                 await play_music(ctx, music_queue.pop(0))
 
     else:
@@ -1404,7 +1400,7 @@ async def queue(ctx):
     
     hms_runtime = str(datetime.timedelta(seconds = total_runtime))
 
-    queue_embed.add_field(name="Length", value=f"{len(music_queue)}", inline = False)
+    queue_embed.add_field(name="Length", value=f"{len(music_queue)}" if not queue_repeating else "∞", inline = False)
     queue_embed.add_field(name="Queue Repeating", value=queue_repeating, inline=True)
     queue_embed.add_field(name="Song Repeating", value=song_repeating, inline=True)
     queue_embed.add_field(name = "Total Playtime", value = hms_runtime, inline=True)
@@ -1437,6 +1433,23 @@ async def song_repeat(ctx):
     global song_repeating
     song_repeating = not song_repeating
     await ctx.send(f"**Song Repeating:** {song_repeating}")
+
+@repeat.command(name="none", description="Doesn't repeat", aliases=["n"])
+async def none_repeat(ctx):
+    cur.execute(f"SELECT ignore FROM musicbot WHERE id = {int(ctx.author.id)};")
+    ignored = cur.fetchone()[0]
+    if str(ctx.channel) not in ["jukebox", "admins-only"]:
+        await ctx.message.delete()
+        return
+    elif ignored:
+        return
+    
+    global song_repeating
+    global queue_repeating
+    song_repeating, queue_repeating = False, False
+    await ctx.send(f"**Repeating:**: None" )
+
+    
 
 @repeat.command(name="queue", description="Repeats the current queue", aliases=["q"])
 async def queue_repeat(ctx):
