@@ -132,7 +132,8 @@ ydl_opts = {
 
 now_playing = ""
 
-repeating = False
+song_repeating = False
+queue_repeating = False
 
 music_loop = asyncio.new_event_loop()
 
@@ -1156,14 +1157,21 @@ async def check_play_next(ctx):
     voice = ctx.guild.voice_client
     print("beginning of check...")
     if len(music_queue) > 0:
-        if repeating:
+        if song_repeating:
             if voice.is_playing():
                 voice.stop()
                 await play_music(ctx, now_playing)
 
             else:
                 await play_music(ctx, now_playing)
-
+        elif queue_repeating:
+            if voice.is_playing():
+                voice.stop()
+                music_queue.append(now_playing)
+                await play_music(ctx, music_queue.pop(0))
+            else:
+                music_queue.append(now_playing)
+                await play_music(ctx, music_queue.pop(0))
         else:
             if voice.is_playing():
                 print("check: voice is playing")
@@ -1175,14 +1183,13 @@ async def check_play_next(ctx):
                 await play_music(ctx, music_queue.pop(0))
 
     else:
-        if repeating:
+        if song_repeating:
             if voice.is_playing():
                 voice.stop()
                 await play_music(ctx,now_playing)
 
             else:
                 await play_music(ctx, now_playing)
-
         else:
             voice.stop()
             await asyncio.sleep(120)
@@ -1398,25 +1405,54 @@ async def queue(ctx):
     hms_runtime = str(datetime.timedelta(seconds = total_runtime))
 
     queue_embed.add_field(name="Length", value=f"{len(music_queue)}", inline = False)
-    queue_embed.add_field(name="Repeating", value=repeating, inline=True)
+    queue_embed.add_field(name="Queue Repeating", value=queue_repeating, inline=True)
+    queue_embed.add_field(name="Song Repeating", value=song_repeating, inline=True)
     queue_embed.add_field(name = "Total Playtime", value = hms_runtime, inline=True)
 
     await ctx.send(embed=queue_embed)
 
 @bot.command(name="repeat", description="Toggles song repeating", aliases=["r"])
 async def repeat(ctx):
+    if str(ctx.channel) not in ["jukebox", "admins-only"]:
+        await ctx.message.delete()
+        return
+    # elif "Coin Operator" not in [i.name for i in ctx.author.roles]:
+    #     await ctx.send("You need a role called `Coin Operator` to do that.")
+    global song_repeating
+    global queue_repeating
+    repeat_embed = discord.Embed(title="Repeat", description=f"**Song Repeating:** {song_repeating}\n**Queue Repeating:** {queue_repeating}", color=bot_color)
+    await ctx.send(embed=repeat_embed)
+
+
+@repeat.command(name="song", description="Repeats the current song")
+async def song_repeat(ctx):
     cur.execute(f"SELECT ignore FROM musicbot WHERE id = {int(ctx.author.id)};")
     ignored = cur.fetchone()[0]
-    if str(ctx.channel) not in ["jukebox", "admins-only"]:
+    if str(ctx.channel) not in channelList:
         await ctx.message.delete()
         return
     elif ignored:
         return
-    # elif "Coin Operator" not in [i.name for i in ctx.author.roles]:
-    #     await ctx.send("You need a role called `Coin Operator` to do that.")
-    global repeating
-    repeating = not repeating
-    await ctx.send(f"**Repeating:** {repeating}")
+    
+    global song_repeating
+    song_repeating = not song_repeating
+    await ctx.send(f"**Song Repeating:** {song_repeating}")
+
+@repeat.command(name="queue", description="Repeats the current queue")
+async def queue_repeat(ctx):
+    cur.execute(f"SELECT ignore FROM musicbot WHERE id = {int(ctx.author.id)};")
+    ignored = cur.fetchone()[0]
+    if str(ctx.channel) not in channelList:
+        await ctx.message.delete()
+        return
+    elif ignored:
+        return
+
+    global queue_repeating
+    queue_repeating = not queue_repeating
+    await ctx.send(f"**Queue Repeating:** {queue_repeating}")
+
+    
 
 @bot.command(name="shuffle", description="Shuffles the music queue")
 async def shuffle(ctx):
@@ -2537,7 +2573,7 @@ async def on_voice_state_update(member, before, after):
     
     if not before.self_deaf and after.self_deaf:
         await asyncio.sleep(300)
-        if member.voice.self_deaf and member.voice != None and str(member.voice.channel) != "Out to Lunch - AFK":
+        if member.voice != None and member.voice.self_deaf and str(member.voice.channel) != "Out to Lunch - AFK":
             await member.move_to(member.guild.afk_channel)
             admins = discord.utils.get(member.guild.channels, name="admins-only")
             await admins.send(f"{member.name} moved to AFK for deafening")
