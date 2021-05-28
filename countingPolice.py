@@ -1428,7 +1428,7 @@ async def repeat(ctx):
 async def song_repeat(ctx):
     cur.execute(f"SELECT ignore FROM musicbot WHERE id = {int(ctx.author.id)};")
     ignored = cur.fetchone()[0]
-    if str(ctx.channel) not in channelList:
+    if str(ctx.channel) not in ["jukebox", "admins-only"]:
         await ctx.message.delete()
         return
     elif ignored:
@@ -1442,7 +1442,7 @@ async def song_repeat(ctx):
 async def queue_repeat(ctx):
     cur.execute(f"SELECT ignore FROM musicbot WHERE id = {int(ctx.author.id)};")
     ignored = cur.fetchone()[0]
-    if str(ctx.channel) not in channelList:
+    if str(ctx.channel) not in ["jukebox", "admins-only"]:
         await ctx.message.delete()
         return
     elif ignored:
