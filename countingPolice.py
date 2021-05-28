@@ -1411,7 +1411,7 @@ async def queue(ctx):
 
     await ctx.send(embed=queue_embed)
 
-@bot.command(name="repeat", description="Toggles song repeating", aliases=["r"])
+@bot.group(name="repeat", description="Deals with song and queue repeating", invoke_without_command=True)
 async def repeat(ctx):
     if str(ctx.channel) not in ["jukebox", "admins-only"]:
         await ctx.message.delete()
@@ -1424,7 +1424,7 @@ async def repeat(ctx):
     await ctx.send(embed=repeat_embed)
 
 
-@repeat.command(name="song", description="Repeats the current song")
+@repeat.command(name="song", description="Repeats the current song", aliases=["s"])
 async def song_repeat(ctx):
     cur.execute(f"SELECT ignore FROM musicbot WHERE id = {int(ctx.author.id)};")
     ignored = cur.fetchone()[0]
@@ -1438,7 +1438,7 @@ async def song_repeat(ctx):
     song_repeating = not song_repeating
     await ctx.send(f"**Song Repeating:** {song_repeating}")
 
-@repeat.command(name="queue", description="Repeats the current queue")
+@repeat.command(name="queue", description="Repeats the current queue", aliases=["q"])
 async def queue_repeat(ctx):
     cur.execute(f"SELECT ignore FROM musicbot WHERE id = {int(ctx.author.id)};")
     ignored = cur.fetchone()[0]
