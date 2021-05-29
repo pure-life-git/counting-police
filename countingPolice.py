@@ -1416,7 +1416,7 @@ async def queue(ctx):
     
     total_runtime = 0
     queue_embed = discord.Embed(title="Music Queue", description="", color=bot_color)
-    queue_embed.add_field(name=":musical_note: Now Playing :musical_note:", value=f"Title: {now_playing[1]}  |  Channel: {now_playing[2]}\nRuntime: {now_playing[3]}  |  Queued by: {now_playing[4].mention}")
+    queue_embed.add_field(name=":musical_note: Now Playing :musical_note:", value=f"Title: {now_playing[1]}  |  Channel: {now_playing[2]}\nRuntime: {now_playing[3]}  |  Queued by: {now_playing[4].mention}" if int(col_to_sec(str(now_playing[3])))>0 else f"Title: {now_playing[1]}  |  Channel: {now_playing[2]}\nRuntime: :red_circle: LIVE  |  Queued by: {now_playing[4].mention}")
     for num,song in enumerate(music_queue):
         if num < 6:
             queue_embed.add_field(name=f"{num+1} - {song[1]} | {song[2]}", value=f"Runtime: {song[3]}  |  Queued by: {song[4].mention}" if int(col_to_sec(str(song[3]))) > 0 else f"Runtime: :red_circle: LIVE  |  Queued by: {song[4].mention}", inline=False)
