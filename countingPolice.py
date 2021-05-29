@@ -2646,7 +2646,7 @@ async def on_voice_state_update(member, before, after):
 @bot.event
 async def on_member_join(member):
     #insert into musicbot
-    SQL = f"INSERT INTO musicbot(ignore, id) VALUES (False, '{member.id}';"
+    SQL = f"INSERT INTO musicbot(ignore, id) VALUES (False, '{member.id}');"
     cur.execute(SQL)
     conn.commit()
 
