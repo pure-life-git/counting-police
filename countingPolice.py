@@ -1269,7 +1269,11 @@ async def play(ctx, *args):
         return
     
     if song.startswith("https://open.spotify.com/playlist"):
-        track_names = get_track_names('spotify', song.split('playlist/')[1].split('?')[0])
+        track_names = []
+        track_list = sp.user_playlist_tracks('spotify', song.split('playlist/')[1].split('?')[0])
+        for spottrack in track_list['items']:
+            track_names.append(spottrack['track']['name'] + " " + spottrack['track']['artists'][0]['name'])
+        
         for track in track_names:
             await play_spotify(ctx, track)
         
