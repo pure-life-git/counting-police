@@ -1420,9 +1420,9 @@ async def queue(ctx):
     for num,song in enumerate(music_queue):
         if num < 6:
             queue_embed.add_field(name=f"{num+1} - {song[1]} | {song[2]}", value=f"Runtime: {song[3]}  |  Queued by: {song[4].mention}" if int(col_to_sec(str(song[3]))) > 0 else f"Runtime: :red_circle: LIVE  |  Queued by: {song[4].mention}", inline=False)
-        total_runtime += col_to_sec(song[3])
+        total_runtime += col_to_sec(str(song[3]))
     
-    total_runtime += col_to_sec(now_playing[3])-(int(datetime.datetime.now().timestamp())-now_playing[5])
+    total_runtime += col_to_sec(str(now_playing[3]))-(int(datetime.datetime.now().timestamp())-now_playing[5])
     if len(music_queue) > 7:
         queue_embed.add_field(name="-=-=-=-=-=-=-=-=-=-=-==-=-=-=-", value=f"+ {len(music_queue)-5} more")
     
