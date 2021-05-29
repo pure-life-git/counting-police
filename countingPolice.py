@@ -1321,7 +1321,7 @@ async def play(ctx, *args):
         runtime = ytresults[0]["duration"]
         live = False
 
-    runtime_sec = col_to_sec(runtime)
+    runtime_sec = col_to_sec(str(runtime))
 
     if runtime_sec > 7200:
         await ctx.send("Cannot queue a song longer than 2 hours.")
