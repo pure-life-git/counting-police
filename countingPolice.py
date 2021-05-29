@@ -1336,7 +1336,7 @@ async def play(ctx, *args):
             for song in music_queue[1:]:
                 total_runtime += col_to_sec(song[3])
             
-            total_runtime += col_to_sec(now_playing[3])-(int(datetime.datetime.now().timestamp())-now_playing[5])
+            total_runtime += col_to_sec(str(now_playing[3]))-(int(datetime.datetime.now().timestamp())-now_playing[5])
 
             queueadd_embed = discord.Embed(title="**Added to Queue**", description=f"Added `{title}` to the queue.\nEstimated Time until Playing: `{str(datetime.timedelta(seconds=total_runtime))}`", color=bot_color)
             await ctx.send(embed=queueadd_embed)
