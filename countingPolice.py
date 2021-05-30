@@ -1125,16 +1125,7 @@ async def play_spotify(ctx, song):
         channel = ytresults[0]["channel"]
         runtime = ytresults[0]["duration"]
 
-    if len(runtime.split(":")) == 2:
-        h=0
-        m,s = runtime.split(':')
-    elif len(runtime.split(":")) == 1:
-        h,m = 0,0
-        s=runtime
-    else:
-        h, m, s = runtime.split(':')
-
-    runtime_sec = int(h) * 3600 + int(m) * 60 + int(s)
+    runtime_sec = col_to_sec(runtime)
 
     if runtime_sec > 7200:
         await ctx.send("Cannot queue a song longer than 2 hours.")
@@ -1144,13 +1135,30 @@ async def play_spotify(ctx, song):
 
     if voice:
         if voice.is_playing():
-            music_queue.append((song, title, channel, runtime, ctx.author))
+            music_queue.append((song, title, channel, runtime, ctx.author, False))
             return
         else:
-            await play_music(ctx, (song,title,channel, runtime, ctx.author))
+            await play_music(ctx, (song,title,channel, runtime, ctx.author, False))
     else:
         await ctx.author.voice.channel.connect()
-        await play_music(ctx,(song,title,channel, runtime, ctx.author))
+        await play_music(ctx,(song,title,channel, runtime, ctx.author, False))
+
+async def play_soundcloud(ctx, song):
+    if col_to_sec(song[3]) > 7200:
+        await ctx.send("Cannot queue a song longer than 2 hours.")
+        return
+    
+    voice = ctx.guild.voice_client
+
+    if voice:
+        if voice.is_playing():
+            music_queue.append(song)
+            return
+        else:
+            await play_music(ctx, song)
+    else:
+        await ctx.author.voice.channel.connect()
+        await play_music(ctx, song)
 
 
 async def check_play_next(ctx):
@@ -1294,7 +1302,7 @@ async def play(ctx, *args):
         for track in track_names:
             await play_spotify(ctx, track)
         
-        await ctx.send(f"Added `{len(track_names)}` songs to the queue.")
+        await ctx.send(f"Queued `{len(track_names)}` songs.")
         return
 
 
@@ -1305,13 +1313,18 @@ async def play(ctx, *args):
     elif song.startswith("https://soundcloud.com"):
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url = song)
-            title = info['title']
-            channel = info['uploader']
-            runtime = str(datetime.timedelta(seconds=int(info['duration'])))
-            live = False
-            if int(info['duration']) > 7200:
-                await ctx.send("Cannot queue a song longer than 2 hours.")
-                return
+            if bool(info.get('_type')):
+                for entry in info['entries']:
+                    await play_soundcloud(ctx, (entry['webpage_url'], entry['title'], entry['uploader'], str(datetime.timedelta(seconds=int(entry['duration']))), ctx.author, False))
+                await ctx.send(f"Queued `{len(info['entries'])}` songs.")
+            else:
+                title = info['title']
+                channel = info['uploader']
+                runtime = str(datetime.timedelta(seconds=int(info['duration'])))
+                live = False
+                if int(info['duration']) > 7200:
+                    await ctx.send("Cannot queue a song longer than 2 hours.")
+                    return
     else:
         ytresults = YoutubeSearch(song, max_results=1).to_dict()
 
