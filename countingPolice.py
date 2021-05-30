@@ -1302,30 +1302,40 @@ async def play(ctx, *args):
     elif song.startswith("https://open.spotify.com/track/"):
         track_name = sp.track(song.split("track/")[1].split("?")[0])['name']+" "+sp.track(song.split("track/")[1].split("?")[0])['artists'][0]['name']
         song = track_name
-
-    ytresults = YoutubeSearch(song, max_results=1).to_dict()
-
-    if len(ytresults) == 0:
-        await ctx.send("No results.")
-        return
-    elif ytresults[0]['duration'] == 0:
-        song = "".join(("https://www.youtube.com", ytresults[0]['url_suffix']))
-        title = ytresults[0]['title']
-        channel = ytresults[0]["channel"]
-        runtime = 0
-        live = True
+    elif song.startswith("https://soundcloud.com"):
+        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(url = song)
+            title = info['title']
+            channel = info['uploader']
+            runtime = str(datetime.timedelta(seconds=int(info['duration'])))
+            live = False
+            if int(info['duration']) > 7200:
+                await ctx.send("Cannot queue a song longer than 2 hours.")
+                return
     else:
-        song = "".join(("https://www.youtube.com", ytresults[0]["url_suffix"]))
-        title = ytresults[0]["title"]
-        channel = ytresults[0]["channel"]
-        runtime = ytresults[0]["duration"]
-        live = False
+        ytresults = YoutubeSearch(song, max_results=1).to_dict()
 
-    runtime_sec = col_to_sec(str(runtime))
+        if len(ytresults) == 0:
+            await ctx.send("No results.")
+            return
+        elif ytresults[0]['duration'] == 0:
+            song = "".join(("https://www.youtube.com", ytresults[0]['url_suffix']))
+            title = ytresults[0]['title']
+            channel = ytresults[0]["channel"]
+            runtime = 0
+            live = True
+        else:
+            song = "".join(("https://www.youtube.com", ytresults[0]["url_suffix"]))
+            title = ytresults[0]["title"]
+            channel = ytresults[0]["channel"]
+            runtime = ytresults[0]["duration"]
+            live = False
 
-    if runtime_sec > 7200:
-        await ctx.send("Cannot queue a song longer than 2 hours.")
-        return
+        runtime_sec = col_to_sec(str(runtime))
+
+        if runtime_sec > 7200:
+            await ctx.send("Cannot queue a song longer than 2 hours.")
+            return
 
     voice = ctx.guild.voice_client
 
