@@ -1310,6 +1310,7 @@ async def play(ctx, *args):
     elif song.startswith("https://open.spotify.com/track/"):
         track_name = sp.track(song.split("track/")[1].split("?")[0])['name']+" "+sp.track(song.split("track/")[1].split("?")[0])['artists'][0]['name']
         song = track_name
+        
     elif song.startswith("https://soundcloud.com"):
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url = song)
