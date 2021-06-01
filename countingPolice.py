@@ -1259,7 +1259,7 @@ async def play_music(ctx,song):
         # np_embed = discord.Embed(title="Now Playing", description=f"`{title}` requested by {author.mention}", value=f"Duration: {runtime}", color=bot_color)
         # np_embed.add_field(name=f"Duration: {runtime}", value=f"Channel: {channel}", inline=False)
         # await ctx.send(embed=np_embed)
-        LIVE_YDL_OPTIONS = {'format': 'bestaudio/best', 'noplaylist':'True'}
+        LIVE_YDL_OPTIONS = {'format': 'bestaudio/best', 'noplaylist':'True', 'quiet':'True'}
  
         FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
 
