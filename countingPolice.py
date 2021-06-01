@@ -1242,23 +1242,37 @@ async def play_music(ctx,song):
     live = song[5]
     song = song[0]
     if not live:
-        song_there = os.path.isfile("song.mp3")
+        # song_there = os.path.isfile("song.mp3")
 
-        if song_there:
-            os.remove("song.mp3")
+        # if song_there:
+        #     os.remove("song.mp3")
+
+        # voice = ctx.guild.voice_client
+
+        # with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+        #     ydl.download([song])
+        
+        
+        # # await ctx.send(f"**Now Playing:** {title} - {channel} | {runtime}")
+        # voice.play(discord.FFmpegPCMAudio(source="song.mp3"),after=lambda error: bot.loop.create_task(check_play_next(ctx)))
+        # print("played audio...")
+        # np_embed = discord.Embed(title="Now Playing", description=f"`{title}` requested by {author.mention}", value=f"Duration: {runtime}", color=bot_color)
+        # np_embed.add_field(name=f"Duration: {runtime}", value=f"Channel: {channel}", inline=False)
+        # await ctx.send(embed=np_embed)
+        LIVE_YDL_OPTIONS = {'format': 'bestaudio/best', 'noplaylist':'True'}
+ 
+        FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
 
         voice = ctx.guild.voice_client
-
-        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-            ydl.download([song])
-        
-        
-        # await ctx.send(f"**Now Playing:** {title} - {channel} | {runtime}")
-        voice.play(discord.FFmpegPCMAudio(source="song.mp3"),after=lambda error: bot.loop.create_task(check_play_next(ctx)))
-        print("played audio...")
-        np_embed = discord.Embed(title="Now Playing", description=f"`{title}` requested by {author.mention}", value=f"Duration: {runtime}", color=bot_color)
-        np_embed.add_field(name=f"Duration: {runtime}", value=f"Channel: {channel}", inline=False)
-        await ctx.send(embed=np_embed)
+        with youtube_dl.YoutubeDL(LIVE_YDL_OPTIONS) as ydl:
+            info = ydl.extract_info(song, download=False)
+            I_URL = info['formats'][0]['url']
+            source = await discord.FFmpegOpusAudio.from_probe(I_URL, **FFMPEG_OPTIONS)
+            voice.play(source, after = lambda error: bot.loop.create_task(check_play_next(ctx)))
+            print("played live audio...")
+            np_embed = discord.Embed(title="Now Playing", description=f"`{title}` request by {author.mention}", color = bot_color)
+            np_embed.add_field(name=f"Duration: {runtime}", value=f"Channel: {channel}", inline=False)
+            await ctx.send(embed=np_embed)
     else:
         LIVE_YDL_OPTIONS = {'format': 'bestaudio/best', 'noplaylist':'True'}
  
