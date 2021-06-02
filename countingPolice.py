@@ -2501,7 +2501,7 @@ async def on_message(message):
     if message.author == bot.user and str(message.channel) != "admins-only": #checks to see if the message author is the bot and returns
         return
     
-    print('Message recieved: ', message.content, 'by', message.author, 'in '+ str(message.channel))
+    print('Message recieved: ', message.content, 'by', message.author, 'in '+ str(message.channel), 'doing', message.author.activities)
     # april fools
     # await message.add_reaction("<:amongsus:826690527138938911>")
 
