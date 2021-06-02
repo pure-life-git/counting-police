@@ -2592,7 +2592,7 @@ async def on_message(message):
 @bot.event
 async def on_voice_state_update(member, before, after):
     #checks for octave bot joining the vc
-    if member == bot.get_user(201503408652419073):
+    if member.bot:
         return
     asa = bot.get_user(227250029788790785)
 
@@ -2637,7 +2637,7 @@ async def on_voice_state_update(member, before, after):
                 cur.execute(SQL)
                 conn.commit()
     
-    if not before.self_deaf and after.self_deaf:
+    if not before.self_deaf and after.self_deaf and str(member.activities[0].name).lower() != "phasmophobia":
         await asyncio.sleep(300)
         if member.voice != None and member.voice.self_deaf and str(member.voice.channel) != "Out to Lunch - AFK":
             await member.move_to(member.guild.afk_channel)
