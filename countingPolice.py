@@ -2639,7 +2639,7 @@ async def on_voice_state_update(member, before, after):
     
     if not before.self_deaf and after.self_deaf and str(member.activities[0].name).lower() != "phasmophobia":
         await asyncio.sleep(300)
-        if member.voice != None and member.voice.self_deaf and str(member.voice.channel) != "Out to Lunch - AFK":
+        if member.voice != None and member.voice.self_deaf and str(member.voice.channel) != "Out to Lunch - AFK" and str(member.activities[0].name).lower() != "phasmophobia":
             await member.move_to(member.guild.afk_channel)
             admins = discord.utils.get(member.guild.channels, name="admins-only")
             await admins.send(f"{member.name} moved to AFK for deafening")
