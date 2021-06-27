@@ -93,7 +93,7 @@ modID = [
 
 streamerList = {
     173202512977854466: "AGallonofRaccoons",
-    221115052038684683: "smartinmoose",
+    221115052038684683: "moos3",
     288710564367171595: "purelife_tv"
 }
 
@@ -2637,15 +2637,14 @@ async def on_voice_state_update(member, before, after):
                 cur.execute(SQL)
                 conn.commit()
 
-    ind = len(member.activities)-1
-    if not before.self_deaf and after.self_deaf and str(member.activities[ind].name).lower() != "phasmophobia":
-        await asyncio.sleep(300)
-        if member.voice != None and member.voice.self_deaf and str(member.voice.channel) != "Out to Lunch - AFK" and str(member.activities[ind].name).lower() != "phasmophobia":
-            await member.move_to(member.guild.afk_channel)
-            admins = discord.utils.get(member.guild.channels, name="admins-only")
-            await admins.send(f"{member.name} moved to AFK for deafening")
-            
-
+    ind = len(member.activities)-1 
+    if not before.self_deaf and after.self_deaf and str(member.activities[ind].name).lower() != "phasmophobia" if ind != -2:
+        if str(member.activities[ind].name).lower() != "phasmophobia":
+            await asyncio.sleep(300)
+            if member.voice != None and member.voice.self_deaf and str(member.voice.channel) != "Out to Lunch - AFK" and str(member.activities[ind].name).lower() != "phasmophobia":
+                await member.move_to(member.guild.afk_channel)
+                admins = discord.utils.get(member.guild.channels, name="admins-only")
+                await admins.send(f"{member.name} moved to AFK for deafening")
 
     if before.channel != after.channel and after.channel is not None:
         vc = after.channel
