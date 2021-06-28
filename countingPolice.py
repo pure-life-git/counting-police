@@ -1545,6 +1545,21 @@ async def ignore(ctx, user: discord.Member):
     elif ignored or ctx.author.id not in modID:
         return
 
+    if not user:
+        cur.execute("SELECT * FROM musicbot WHERE ignore=true;")
+        entries = cur.fetchall()
+        ignore_embed = discord.Embed(title="Ignored Users", description="List of users ignored by the music bot", color=bot_color)
+        if len(entries) > 0:
+            for entry in entries:
+                member = ctx.guild.get_member(entry[2])
+                ignore_embed.add_field(name = member.name, value = "Ignored", inline=False)
+            await ctx.send(embeds=ignore_embed)
+            return
+        else:
+            ignore_embed.add_field(name="No Ignored Users", value="No users are currently ignored by the music bot.", inline=False)
+            await ctx.send(embeds=ignore_embed)
+            return
+
     name = user.name
     id = int(user.id)
     print(id)
