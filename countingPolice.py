@@ -1535,7 +1535,7 @@ async def shuffle(ctx):
     await ctx.send("Queue successfully shuffled.")
 
 @bot.command(name="ignore", description="Lets a Coin Operator take away someone's music bot privileges", aliases=["i"])
-async def ignore(ctx, user: discord.Member):
+async def ignore(ctx, *args):
     cur.execute(f"SELECT ignore FROM musicbot WHERE id = {int(ctx.author.id)};")
     ignored = cur.fetchone()[0]
     print(ignored)
@@ -1545,7 +1545,7 @@ async def ignore(ctx, user: discord.Member):
     elif ignored or ctx.author.id not in modID:
         return
 
-    if not user:
+    if len(args) < 1:
         cur.execute("SELECT * FROM musicbot WHERE ignore=true;")
         entries = cur.fetchall()
         ignore_embed = discord.Embed(title="Ignored Users", description="List of users ignored by the music bot", color=bot_color)
@@ -1559,7 +1559,14 @@ async def ignore(ctx, user: discord.Member):
             ignore_embed.add_field(name="No Ignored Users", value="No users are currently ignored by the music bot.", inline=False)
             await ctx.send(embeds=ignore_embed)
             return
+    elif len(args) > 1:
+        await ctx.send("Cannot ignore more than one user at once.")
+        return
+    elif not isinstance(args[0], discord.member):
+        await ctx.send("That is not a valid user.")
+        return
 
+    user = args[0]
     name = user.name
     id = int(user.id)
     print(id)
