@@ -1553,11 +1553,11 @@ async def ignore(ctx, *args):
             for entry in entries:
                 member = ctx.guild.get_member(entry[2])
                 ignore_embed.add_field(name = member.name, value = "Ignored", inline=False)
-            await ctx.send(embeds=ignore_embed)
+            await ctx.send(embed=ignore_embed)
             return
         else:
             ignore_embed.add_field(name="No Ignored Users", value="No users are currently ignored by the music bot.", inline=False)
-            await ctx.send(embeds=ignore_embed)
+            await ctx.send(embed=ignore_embed)
             return
     elif len(args) > 1:
         await ctx.send("Cannot ignore more than one user at once.")
