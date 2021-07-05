@@ -54,9 +54,11 @@ conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 cur = conn.cursor()
 conn.autocommit = True
 
+#loads opus library to enable audio playback
 find = ctypes.util.find_library('opus')
 discord.opus.load_opus(find)
 
+#connects with the spotify api to get song information
 auth_manager = SpotifyClientCredentials(client_id=os.environ['spot_id'], client_secret=os.environ['spot_secret'])
 sp = spotipy.Spotify(auth_manager=auth_manager)
 
@@ -70,7 +72,7 @@ sp = spotipy.Spotify(auth_manager=auth_manager)
 #  \_____||______|\____/ |____//_/    \_\|______|
 
 
-
+#sets up information for twitch integration
 CLIENT_ID = os.environ['TWITCH_ID']
 CLIENT_SECRET = os.environ['TWITCH_SECRET']
 URL = "https://api.twitch.tv/helix/streams?user_login={}"
@@ -80,7 +82,7 @@ AutParams = {'client_id': CLIENT_ID,
              'grant_type': 'client_credentials'
              }
 
-
+#initializes a list of channels where bot commands are allowed
 channelList = [
     "bot", "admins-only", "testing"
 ]
@@ -91,13 +93,14 @@ modID = [
     288710564367171595
 ]
 
+#list of twitch streamers
 streamerList = {
     173202512977854466: "AGallonofRaccoons",
     221115052038684683: "moos3",
     288710564367171595: "purelife_tv"
 }
 
-#foot picture list for .finn
+#list of pics for .finn
 forbiddenList = [
     "https://img.webmd.com/dtmcms/live/webmd/consumer_assets/site_images/articles/health_tools/ways_to_make_your_feet_feel_better_slideshow/493ss_thinkstock_rf_woman_stretching_feet.jpg",
     "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/gh-why-do-my-feet-hurt-toes-1594663599.png?crop=0.914xw:0.687xh;0.0864xw,0.110xh&resize=480:*",
@@ -116,8 +119,10 @@ forbiddenList = [
     "https://www.yourfootpalace.com/wp-content/uploads/morning-foot-stiffness.jpg"
 ]
 
+#initializes an empty list for the music queue
 music_queue = []
 
+#sets opts for downloading youtube videos for the bot
 ydl_opts = {
     'quiet': True,
     'format': 'bestaudio/best',
@@ -135,8 +140,6 @@ now_playing = ""
 song_repeating = False
 queue_repeating = False
 
-music_loop = asyncio.new_event_loop()
-
 #--------------------------------------------------------------------------------------------------------------------------------------#
 #  ______  _    _  _   _   _____  _______  _____  ____   _   _   _____ 
 # |  ____|| |  | || \ | | / ____||__   __||_   _|/ __ \ | \ | | / ____|
@@ -146,6 +149,7 @@ music_loop = asyncio.new_event_loop()
 # |_|      \____/ |_| \_| \_____|   |_|   |_____|\____/ |_| \_||_____/                                                                       
                                                                       
 
+#reestablishes conenction with the database 
 def reestablish():
     conn = psycopg2.connect(DATABASE_URL, sslmode='require')
     global cur 
@@ -1160,6 +1164,21 @@ async def play_soundcloud(ctx, song):
         await ctx.author.voice.channel.connect()
         await play_music(ctx, song)
 
+async def playlist(ctx, song):
+    voice = ctx.guild.voice_client
+
+    if voice:
+        if voice.is_playing():
+            music_queue.append(song)
+            return
+        else:
+            await play_music(ctx, song)
+            return
+    else:
+        await ctx.author.voice.channel.connect()
+        await play_music(ctx, song)
+        return
+
 
 async def check_play_next(ctx):
     voice = ctx.guild.voice_client
@@ -1295,19 +1314,13 @@ async def play(ctx, *args):
         return
     
     if song.startswith("https://open.spotify.com/playlist"):
-        track_names = []
-        track_list = sp.user_playlist_tracks('spotify', song.split('playlist/')[1].split('?')[0])
-        for spottrack in track_list['items']:
-            track_names.append(spottrack['track']['name'] + " " + spottrack['track']['artists'][0]['name'])
-        
+        track_names = [spottrack for spottrack in sp.user_playlist_tracks('spotify', song.split('playlist/')[1].split('?')[0])['items']]
+
         for track in track_names:
-            await play_spotify(ctx, track)
+            await playlist(ctx, song)
         
         await ctx.send(f"Queued `{len(track_names)}` songs.")
-        return
 
-
-        # https://open.spotify.com/track/0w8ECuZLCUP3a9O9LpYUbo?si=040051ee2b754823
     elif song.startswith("https://open.spotify.com/track/"):
         track_name = sp.track(song.split("track/")[1].split("?")[0])['name']+" "+sp.track(song.split("track/")[1].split("?")[0])['artists'][0]['name']
         song = track_name
@@ -1317,14 +1330,52 @@ async def play(ctx, *args):
             info = ydl.extract_info(url = song)
             if bool(info.get('_type')):
                 for entry in info['entries']:
-                    await play_soundcloud(ctx, (entry['webpage_url'], entry['title'], entry['uploader'], str(datetime.timedelta(seconds=int(entry['duration']))), ctx.author, False))
+                    title = entry['title']
+                    channel = entry['uploader']
+                    runtime = str(datetime.timedelta(seconds=int(entry['duration'])))
+                    author = ctx.author
+                    live = False if int(entry['duration']) == 0 else True
+                    if int(entry['duration']) > 7200:
+                        await ctx.send("Cannot queue a song longer than 2 hours.")
+                        return
+                    await playlist(ctx, (song, title, channel, runtime, author, live))
+                    # await play_soundcloud(ctx, (entry['webpage_url'], entry['title'], entry['uploader'], str(datetime.timedelta(seconds=int(entry['duration']))), ctx.author, False))
                 await ctx.send(f"Queued `{len(info['entries'])}` songs.")
             else:
                 title = info['title']
                 channel = info['uploader']
                 runtime = str(datetime.timedelta(seconds=int(info['duration'])))
+                author = ctx.author
                 live = False
                 if int(info['duration']) > 7200:
+                    await ctx.send("Cannot queue a song longer than 2 hours.")
+                    return
+    elif song.split('.')[0].startswith("youtube.com"):
+        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(url = song)
+            if bool(info.get('_type')):
+                for entry in info['entries']:
+                    song = entry['webpage_url']
+                    title = entry['title']
+                    channel = entry['uploader']
+                    runtime = str(datetime.timedelta(seconds=int(entry['duration'])))
+                    author = ctx.author
+                    live = False if int(entry['duration']) == 0 else True
+
+                    if int(entry['duration']) > 7200:
+                        await ctx.send("Cannot queue a song longer than 2 hours.")
+                        continue
+                    
+                    await playlist(ctx, (song, title, channel, runtime, author, live))
+            else:
+                song = info['webpage_url']
+                title = info['title']
+                channel = info['uploader']
+                runtime = str(datetime.timedelta(seconds=int(info['duration'])))
+                author = ctx.author
+                live = False if int(info['duration']) == 0 else True
+
+                if int(entry['duration']) > 7200:
                     await ctx.send("Cannot queue a song longer than 2 hours.")
                     return
     else:
