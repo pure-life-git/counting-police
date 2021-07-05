@@ -1368,7 +1368,6 @@ async def play(ctx, *args):
                     
                     await playlist(ctx, (song, title, channel, runtime, author, live))
             else:
-                song = info['webpage_url']
                 title = info['title']
                 channel = info['uploader']
                 runtime = str(datetime.timedelta(seconds=int(info['duration'])))
