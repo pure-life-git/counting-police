@@ -1350,7 +1350,7 @@ async def play(ctx, *args):
                 if int(info['duration']) > 7200:
                     await ctx.send("Cannot queue a song longer than 2 hours.")
                     return
-    elif song.split('.')[0].startswith("youtube.com"):
+    elif song.split('.')[1].startswith("youtube.com"):
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url = song)
             if bool(info.get('_type')):
