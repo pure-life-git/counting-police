@@ -1375,7 +1375,7 @@ async def play(ctx, *args):
                 author = ctx.author
                 live = False if int(info['duration']) == 0 else True
 
-                if int(entry['duration']) > 7200:
+                if int(info['duration']) > 7200:
                     await ctx.send("Cannot queue a song longer than 2 hours.")
                     return
     else:
