@@ -1350,7 +1350,7 @@ async def play(ctx, *args):
                 if int(info['duration']) > 7200:
                     await ctx.send("Cannot queue a song longer than 2 hours.")
                     return
-    elif song.split('.',1)[1].startswith("youtube.com"):
+    elif len(song.split('.')) < 2 and song.split('.',1)[1].startswith("youtube.com"):
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url = song)
             if bool(info.get('_type')):
@@ -1360,7 +1360,7 @@ async def play(ctx, *args):
                     channel = entry['uploader']
                     runtime = str(datetime.timedelta(seconds=int(entry['duration'])))
                     author = ctx.author
-                    live = False if int(entry['duration']) == 0 else True
+                    live = True if int(entry['duration']) == 0 else False
 
                     if int(entry['duration']) > 7200:
                         await ctx.send("Cannot queue a song longer than 2 hours.")
@@ -1373,7 +1373,7 @@ async def play(ctx, *args):
                 channel = info['uploader']
                 runtime = str(datetime.timedelta(seconds=int(info['duration'])))
                 author = ctx.author
-                live = False if int(info['duration']) == 0 else True
+                live = True if int(entry['duration']) == 0 else False
 
                 if int(info['duration']) > 7200:
                     await ctx.send("Cannot queue a song longer than 2 hours.")
