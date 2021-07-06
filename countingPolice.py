@@ -1373,7 +1373,7 @@ async def play(ctx, *args):
                 channel = info['uploader']
                 runtime = str(datetime.timedelta(seconds=int(info['duration'])))
                 author = ctx.author
-                live = True if int(entry['duration']) == 0 else False
+                live = True if int(info['duration']) == 0 else False
 
                 if int(info['duration']) > 7200:
                     await ctx.send("Cannot queue a song longer than 2 hours.")
