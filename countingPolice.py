@@ -1319,7 +1319,7 @@ async def play(ctx, *args):
         for track in track_names:
             song_name = item['name'], item['artists'][0]['name']
         
-            ytresults = YoutubeSearch(song, max_results=1).to_dict()
+            ytresults = YoutubeSearch(song_name, max_results=1).to_dict()
 
             if len(ytresults) == 0:
                 await ctx.send(f"No results for {item['name']} by {item['artists'][0]['name']}.")
@@ -1348,7 +1348,7 @@ async def play(ctx, *args):
         for item in tracks:
             song_name = item['name'], item['artists'][0]['name']
         
-            ytresults = YoutubeSearch(song, max_results=1).to_dict()
+            ytresults = YoutubeSearch(song_name, max_results=1).to_dict()
 
             if len(ytresults) == 0:
                 await ctx.send(f"No results for {item['name']} by {item['artists'][0]['name']}.")
@@ -1368,6 +1368,8 @@ async def play(ctx, *args):
                 continue
 
             await playlist(ctx, (song, title, channel, runtime, author, live))
+        
+        await ctx.send(f"Queued `{len(track_names)}` songs.")
 
     elif song.startswith("https://open.spotify.com/track/"):
         track_name = sp.track(song.split("track/")[1].split("?")[0])['name']+" "+sp.track(song.split("track/")[1].split("?")[0])['artists'][0]['name']
