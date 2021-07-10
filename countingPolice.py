@@ -1317,7 +1317,7 @@ async def play(ctx, *args):
         track_names = [spottrack for spottrack in sp.user_playlist_tracks('spotify', song.split('playlist/')[1].split('?')[0])['items']]
 
         for track in track_names:
-            song_name = item['name'], item['artists'][0]['name']
+            song_name = item['name'] + item['artists'][0]['name']
         
             ytresults = YoutubeSearch(song_name, max_results=1).to_dict()
 
@@ -1346,7 +1346,7 @@ async def play(ctx, *args):
         tracks = [spottrack for spottrack in sp.album_tracks(song.split('album/')[1].split('?')[0])['items']]
 
         for item in tracks:
-            song_name = item['name'], item['artists'][0]['name']
+            song_name = item['name'] + item['artists'][0]['name']
         
             ytresults = YoutubeSearch(song_name, max_results=1).to_dict()
 
