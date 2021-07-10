@@ -1342,7 +1342,7 @@ async def play(ctx, *args):
         
         await ctx.send(f"Queued `{len(track_names)}` songs.")
     
-    elif song.starts("https://open.spotify.com/album/"):
+    elif song.startswith("https://open.spotify.com/album/"):
         tracks = [spottrack for spottrack in sp.album_tracks(song.split('album/')[1].split('?')[0])['items']]
 
         for item in tracks:
