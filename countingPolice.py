@@ -1317,12 +1317,12 @@ async def play(ctx, *args):
         track_names = [spottrack for spottrack in sp.user_playlist_tracks('spotify', song.split('playlist/')[1].split('?')[0])['items']]
 
         for track in track_names:
-            song_name = track['name'] + track['artists'][0]['name']
+            song_name = track['track']['name'] + track['track']['artists'][0]['name']
         
             ytresults = YoutubeSearch(song_name, max_results=1).to_dict()
 
             if len(ytresults) == 0:
-                await ctx.send(f"No results for {track['name']} by {track['artists'][0]['name']}.")
+                await ctx.send(f"No results for {track['track']['name']} by {track['track']['artists'][0]['name']}.")
                 continue
             else:
                 song = "".join(("https://www.youtube.com", ytresults[0]["url_suffix"]))
