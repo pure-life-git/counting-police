@@ -1317,9 +1317,57 @@ async def play(ctx, *args):
         track_names = [spottrack for spottrack in sp.user_playlist_tracks('spotify', song.split('playlist/')[1].split('?')[0])['items']]
 
         for track in track_names:
-            await playlist(ctx, song)
+            song_name = item['name'], item['artists'][0]['name']
+        
+            ytresults = YoutubeSearch(song, max_results=1).to_dict()
+
+            if len(ytresults) == 0:
+                await ctx.send(f"No results for {item['name']} by {item['artists'][0]['name']}.")
+                continue
+            else:
+                song = "".join(("https://www.youtube.com", ytresults[0]["url_suffix"]))
+                title = ytresults[0]["title"]
+                channel = ytresults[0]["channel"]
+                runtime = ytresults[0]["duration"]
+                author = ctx.author
+                live = False
+
+            runtime_sec = col_to_sec(runtime)
+
+            if runtime_sec > 7200:
+                await ctx.send("Cannot queue a song longer than 2 hours.")
+                continue
+
+            await playlist(ctx, (song, title, channel, runtime, author, live))
         
         await ctx.send(f"Queued `{len(track_names)}` songs.")
+    
+    elif song.starts("https://open.spotify.com/album/"):
+        tracks = [spottrack for spottrack in sp.album_tracks(song.split('album/')[1].split('?')[0])['items']]
+
+        for item in tracks:
+            song_name = item['name'], item['artists'][0]['name']
+        
+            ytresults = YoutubeSearch(song, max_results=1).to_dict()
+
+            if len(ytresults) == 0:
+                await ctx.send(f"No results for {item['name']} by {item['artists'][0]['name']}.")
+                continue
+            else:
+                song = "".join(("https://www.youtube.com", ytresults[0]["url_suffix"]))
+                title = ytresults[0]["title"]
+                channel = ytresults[0]["channel"]
+                runtime = ytresults[0]["duration"]
+                author = ctx.author
+                live = False
+
+            runtime_sec = col_to_sec(runtime)
+
+            if runtime_sec > 7200:
+                await ctx.send("Cannot queue a song longer than 2 hours.")
+                continue
+
+            await playlist(ctx, (song, title, channel, runtime, author, live))
 
     elif song.startswith("https://open.spotify.com/track/"):
         track_name = sp.track(song.split("track/")[1].split("?")[0])['name']+" "+sp.track(song.split("track/")[1].split("?")[0])['artists'][0]['name']
