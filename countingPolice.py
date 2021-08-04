@@ -29,6 +29,7 @@ import spotipy.oauth2 as oauth2
 from spotipy.oauth2 import SpotifyOAuth
 from spotipy.oauth2 import SpotifyClientCredentials
 from gtts import gTTS
+import math
 
 
 
@@ -1697,8 +1698,26 @@ async def remove(ctx, index: int):
 
 @bot.command(name="nowplaying", description="Displays the song that is currently playing", aliases=["np"])
 async def nowplaying(ctx):
+
+    percent_done = int(round(now_playing[5]/int(datetime.datetime.now().timestamp()), 2)*100)
+    bar_string = ""
+    current_time = ""
+    for i in range(math.floor(percent_done/10)-1):
+        bar_string += ":white_large_square:"
+        current_time += " "*6
+
+    bar_string += ":white_square_button:"
+    current_time += f"{int(datetime.datetime.now().timestamp()-now_playing[5]}"
+    for i in range(10-math.floor(percent_done/10)):
+        bar_string += ":white_large_square:"
+        current_time += " "*6
+    
+    for i in range()
+
+    progress_string = f"0:00 || {now_playing[3]}"
     nowplaying_embed = discord.Embed(title = ":musical_note: Now Playing :musical_note:", description="", color=bot_color)
     nowplaying_embed.add_field(name=f"{now_playing[1]}", value=f"Artist: {now_playing[2]}\nRuntime: {now_playing[3]}\nQueued by: {now_playing[4].mention}")
+    nowplaying_embed.add_field(name="Song Progress", value=f"{current_time} \n 0:00 |{bar_string}| {now_playing[5]}")
     await ctx.send(embed=nowplaying_embed)
 
 
