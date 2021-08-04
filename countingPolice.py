@@ -1705,13 +1705,11 @@ async def nowplaying(ctx):
     current_time = f"{str(datetime.timedelta(seconds=int(int(datetime.datetime.now().timestamp())-now_playing[5])))}"
     for i in range(math.floor(percent_done/10)-1):
         bar_string += ":white_large_square:"
-        current_time += " "*6
 
     bar_string += ":white_square_button:"
     
     for i in range((10-math.floor(percent_done/10))-1):
         bar_string += ":white_large_square:"
-        current_time += " "*6
     
     nowplaying_embed = discord.Embed(title = ":musical_note: Now Playing :musical_note:", description="", color=bot_color)
     nowplaying_embed.add_field(name=f"{now_playing[1]}", value=f"Artist: {now_playing[2]}\nRuntime: {now_playing[3]}\nQueued by: {now_playing[4].mention}", inline=False)
