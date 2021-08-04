@@ -1707,7 +1707,7 @@ async def nowplaying(ctx):
         current_time += " "*6
 
     bar_string += ":white_square_button:"
-    current_time += f"{int(datetime.datetime.now().timestamp()-now_playing[5]}"
+    current_time += f"{int(datetime.datetime.now().timestamp()-now_playing[5])}"
     for i in range(10-math.floor(percent_done/10)):
         bar_string += ":white_large_square:"
         current_time += " "*6
