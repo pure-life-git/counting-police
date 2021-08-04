@@ -1700,6 +1700,7 @@ async def remove(ctx, index: int):
 async def nowplaying(ctx):
 
     percent_done = int(round(now_playing[5]/int(datetime.datetime.now().timestamp()), 2)*100)
+    print(now_playing[5]/int(datetime.datetime.now().timestamp())
     print(percent_done)
     bar_string = ""
     current_time = ""
