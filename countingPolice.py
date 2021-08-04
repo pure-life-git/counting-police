@@ -1699,7 +1699,7 @@ async def remove(ctx, index: int):
 @bot.command(name="nowplaying", description="Displays the song that is currently playing", aliases=["np"])
 async def nowplaying(ctx):
 
-    percent_done = int(round(now_playing[5]/int(datetime.datetime.now().timestamp()), 2)*100)
+    percent_done = int((1-round(now_playing[5]/int(datetime.datetime.now().timestamp()), 2))*100)
     print(now_playing[5]/int(datetime.datetime.now().timestamp()))
     print(percent_done)
     bar_string = ""
@@ -1709,7 +1709,7 @@ async def nowplaying(ctx):
         current_time += " "*6
 
     bar_string += ":white_square_button:"
-    current_time += f"{int(int(datetime.datetime.now().timestamp())-now_playing[5])}"
+    current_time += f"{str(datetime.timedelta(seconds=int(int(datetime.datetime.now().timestamp())-now_playing[5])))}"
     
     for i in range(10-math.floor(percent_done/10)):
         bar_string += ":white_large_square:"
