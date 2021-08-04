@@ -1698,17 +1698,16 @@ async def remove(ctx, index: int):
 
 @bot.command(name="nowplaying", description="Displays the song that is currently playing", aliases=["np"])
 async def nowplaying(ctx):
-
-    percent_done = int((1-round(now_playing[5]/int(datetime.datetime.now().timestamp()), 2))*100)
+    percent_done = (1-round(now_playing[5]/int(datetime.datetime.now().timestamp()), 2))*100
 
     bar_string = ""
     current_time = f"{str(datetime.timedelta(seconds=int(int(datetime.datetime.now().timestamp())-now_playing[5])))}"
-    for i in range(math.floor(percent_done/10)-1):
+    for i in range(math.floor(int(percent_done)/10)-1):
         bar_string += ":white_large_square:"
 
     bar_string += ":white_square_button:"
     
-    for i in range((10-math.floor(percent_done/10))-1):
+    for i in range((10-math.floor(int(percent_done)/10))-1):
         bar_string += ":white_large_square:"
     
     nowplaying_embed = discord.Embed(title = ":musical_note: Now Playing :musical_note:", description="", color=bot_color)
