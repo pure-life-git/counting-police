@@ -1699,6 +1699,7 @@ async def remove(ctx, index: int):
 @bot.command(name="nowplaying", description="Displays the song that is currently playing", aliases=["np"])
 async def nowplaying(ctx):
     percent_done = (1-round(now_playing[5]/int(datetime.datetime.now().timestamp()), 2))*100
+    print(now_playing[5]/int(datetime.datetime.now().timestamp()))
 
     print(percent_done)
     bar_string = ""
