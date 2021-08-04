@@ -1702,7 +1702,7 @@ async def nowplaying(ctx):
     percent_done = int((1-round(now_playing[5]/int(datetime.datetime.now().timestamp()), 2))*100)
 
     bar_string = ""
-    current_time = f"{str(datetime.timedelta(seconds=int(int(datetime.datetime.now().timestamp())-now_playing[5])))}
+    current_time = f"{str(datetime.timedelta(seconds=int(int(datetime.datetime.now().timestamp())-now_playing[5])))}"
     for i in range(math.floor(percent_done/10)-1):
         bar_string += ":white_large_square:"
         current_time += " "*6
