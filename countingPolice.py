@@ -1700,6 +1700,7 @@ async def remove(ctx, index: int):
 async def nowplaying(ctx):
 
     percent_done = int(round(now_playing[5]/int(datetime.datetime.now().timestamp()), 2)*100)
+    print(percent_done)
     bar_string = ""
     current_time = ""
     for i in range(math.floor(percent_done/10)-1):
@@ -1707,16 +1708,18 @@ async def nowplaying(ctx):
         current_time += " "*6
 
     bar_string += ":white_square_button:"
-    current_time += f"{int(datetime.datetime.now().timestamp()-now_playing[5])}"
+    current_time += f"{int(int(datetime.datetime.now().timestamp())-now_playing[5])}"
+    
     for i in range(10-math.floor(percent_done/10)):
         bar_string += ":white_large_square:"
         current_time += " "*6
     
-
-    progress_string = f"0:00 || {now_playing[3]}"
+    print(bar_string)
+    print(current_time)
+    
     nowplaying_embed = discord.Embed(title = ":musical_note: Now Playing :musical_note:", description="", color=bot_color)
-    nowplaying_embed.add_field(name=f"{now_playing[1]}", value=f"Artist: {now_playing[2]}\nRuntime: {now_playing[3]}\nQueued by: {now_playing[4].mention}")
-    nowplaying_embed.add_field(name="Song Progress", value=f"{current_time} \n 0:00 |{bar_string}| {now_playing[5]}")
+    nowplaying_embed.add_field(name=f"{now_playing[1]}", value=f"Artist: {now_playing[2]}\nRuntime: {now_playing[3]}\nQueued by: {now_playing[4].mention}", inline=False)
+    nowplaying_embed.add_field(name="Song Progress", value=f"{current_time} \n 0:00 |{bar_string}| {now_playing[3]}", inline=False)
     await ctx.send(embed=nowplaying_embed)
 
 
