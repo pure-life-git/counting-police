@@ -1712,7 +1712,6 @@ async def nowplaying(ctx):
         bar_string += ":white_large_square:"
         current_time += " "*6
     
-    for i in range()
 
     progress_string = f"0:00 || {now_playing[3]}"
     nowplaying_embed = discord.Embed(title = ":musical_note: Now Playing :musical_note:", description="", color=bot_color)
