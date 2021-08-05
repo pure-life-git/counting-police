@@ -1698,7 +1698,7 @@ async def remove(ctx, index: int):
 
 @bot.command(name="nowplaying", description="Displays the song that is currently playing", aliases=["np"])
 async def nowplaying(ctx):
-    percent_done = (round((int(datetime.datetime.now().timestamp())-now_playing[5])/col_to_sec(now_playing[3]),3)*100)
+    percent_done = (round((int(datetime.datetime.now().timestamp())-now_playing[5])/col_to_sec(now_playing[3]),2)*100)
     print(now_playing[5])
     print((int(datetime.datetime.now().timestamp())-now_playing[5])/col_to_sec(now_playing[3]))
 
@@ -1715,7 +1715,7 @@ async def nowplaying(ctx):
     
     nowplaying_embed = discord.Embed(title = ":musical_note: Now Playing :musical_note:", description="", color=bot_color)
     nowplaying_embed.add_field(name=f"{now_playing[1]}", value=f"Artist: {now_playing[2]}\nRuntime: {now_playing[3]}\nQueued by: {now_playing[4].mention}", inline=False)
-    nowplaying_embed.add_field(name="Song Progress", value=f"Current Time: {current_time} - {percent_done}% \n 0:00 |{bar_string}| {now_playing[3]}", inline=False)
+    nowplaying_embed.add_field(name="Song Progress", value=f"Current Time: {current_time} - {percent_done:.2f}% \n 0:00 |{bar_string}| {now_playing[3]}", inline=False)
     await ctx.send(embed=nowplaying_embed)
 
 
