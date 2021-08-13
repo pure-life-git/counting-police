@@ -1830,7 +1830,7 @@ async def blackjack(ctx, bet: int):
         await ctx.send("Would you like to [H]it, [S]tand, [D]ouble or [Q]uit") #asks the user for their input
         try:
             move = await bot.wait_for('message', check = lambda m: m.author == ctx.author) #waits for the message from the user
-            if move.content.lower() == "h"or move.content.lower() == "hit": #checks if they want to hit
+            if move.content.lower() == "h" or move.content.lower() == "hit": #checks if they want to hit
                 playerHand = hit(playerHand, deck) #calls the hit function
                 await ctx.send(f"{ctx.author.mention} Your Hand: {', '.join(map(str,playerHand))}\nTotal: {total(playerHand)}") #sends the players hand
                 if total(playerHand) == 21: #checks for blackjack
@@ -1922,9 +1922,14 @@ async def blackjack(ctx, bet: int):
                     break
 
             else: #else they quit the game
-                game = False
-                await ctx.send("You quit.")
-                return
+                await ctx.send("Are you sure you want to quit? You will not get your points back. [Y]es or [N]o.")
+                quit_decision = await bot.wait_for('message', check = lambda m: m.author == ctx.author) #waits for the message from the user
+                if quit_decision.content.lower() in ['n', 'no']:
+                    continue
+                else:
+                    game = False
+                    await ctx.send("You quit.")
+                    return
 
         except asyncio.TimeoutError: #check for TimeoutError
             await ctx.send("The game timed out")
