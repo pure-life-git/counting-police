@@ -558,6 +558,7 @@ async def source_help(ctx):
     helpEmbed = discord.Embed(title = "H Welding Machine Help", description = "Help with .source command", color = bot_color)
     helpEmbed.add_field(name = ".source", value = "Provides a link to the Git repo for the bot")
     await ctx.send(embed=helpEmbed)
+
 #--------------------------------------------------------------------------------------------------------------------------------------#
 #   _____  _____  _       _   __     __
 #  / ____||_   _|| |     | |  \ \   / /
@@ -565,37 +566,6 @@ async def source_help(ctx):
 #  \___ \   | |  | |     | |    \   /  
 #  ____) | _| |_ | |____ | |____ | |   
 # |_____/ |_____||______||______||_|                                                                              
-
-
-@bot.command(name="tts")
-async def tts(ctx, *args):
-    if str(ctx.channel) not in channelList or ctx.author.id not in modID:
-        await ctx.message.delete()
-        return
-    sentence = "".join(list(args))
-    
-
-    if os.path.isfile("tts.mp3"):
-        os.remove("tts.mp3")
-    
-    gTTS(str(sentence), slow=True, lang='en', tld='com.au').save('tts.mp3')
-
-    voice = ctx.guild.voice_client
-
-    if voice:
-        if voice.is_connected():
-            if voice.is_playing():
-                voice.stop()
-                voice.play(FFmpegPCMAudio(source="tts.mp3"),after=lambda error: bot.loop.create_task(check_play_next(ctx)))
-            else:
-                voice.play(FFmpegPCMAudio(source="tts.mp3"),after=lambda error: bot.loop.create_task(check_play_next(ctx)))
-        else:
-            await voice.connect()
-            voice.play(FFmpegPCMAudio(source="tts.mp3"),after=lambda error: bot.loop.create_task(check_play_next(ctx)))
-    else:
-        voice = await ctx.author.voice.channel.connect()
-        voice.play(FFmpegPCMAudio(source="tts.mp3"),after=lambda error: bot.loop.create_task(check_play_next(ctx)))
-
 
 
 @bot.command(name = "source")
