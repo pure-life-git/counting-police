@@ -7,31 +7,28 @@
 # |_____||_|  |_||_|      \____/ |_|  \_\  |_|  |_____/ 
 
 
-import discord
-import os
-import random
-from discord import colour
-from discord import embeds
-from discord.errors import ClientException
-from discord.ext import commands
 import asyncio
-from discord.ext.commands.errors import CommandOnCooldown
-from discord.player import FFmpegPCMAudio
-import psycopg2
-import datetime
-import requests
-from youtube_search import YoutubeSearch
-import youtube_dl
 import ctypes
 import ctypes.util
+import datetime
+import math
+import os
+import random
+
+import discord
+import psycopg2
+import requests
 import spotipy
 import spotipy.oauth2 as oauth2
-from spotipy.oauth2 import SpotifyOAuth
-from spotipy.oauth2 import SpotifyClientCredentials
+import youtube_dl
+from discord import colour, embeds
+from discord.errors import ClientException
+from discord.ext import commands
+from discord.ext.commands.errors import CommandOnCooldown
+from discord.player import FFmpegPCMAudio
 from gtts import gTTS
-import math
-
-
+from spotipy.oauth2 import SpotifyClientCredentials, SpotifyOAuth
+from youtube_search import YoutubeSearch
 
 #--------------------------------------------------------------------------------------------------------------------------------------#
 #  _____  _   _  _____  _______  _____            _       _____  ______        _______  _____  ____   _   _   _____ 
@@ -1340,7 +1337,7 @@ async def play(ctx, *args):
 
             await playlist(ctx, (song, title, channel, runtime, author, live))
         
-        await ctx.send(f"Queued `{len(track_names)}` songs.")
+        await ctx.send(f"Queued `{len(tracks)}` songs.")
 
     elif song.startswith("https://open.spotify.com/track/"):
         track_name = sp.track(song.split("track/")[1].split("?")[0])['name']+" "+sp.track(song.split("track/")[1].split("?")[0])['artists'][0]['name']
